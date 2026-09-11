@@ -4,6 +4,43 @@
   const year = document.querySelector('#year');
   if (year) year.textContent = String(new Date().getFullYear());
 
+  document.querySelectorAll('.site-menu').forEach((menu) => {
+    const summary = menu.querySelector('summary');
+    if (!summary) return;
+
+    function returnFocusIfHidden() {
+      if (!menu.open && menu.contains(document.activeElement) && document.activeElement !== summary) {
+        summary.focus({ preventScroll: true });
+      }
+    }
+
+    function closeMenu(restoreFocus = false) {
+      if (!menu.open) return;
+      menu.open = false;
+      if (restoreFocus) summary.focus({ preventScroll: true });
+      else returnFocusIfHidden();
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || !menu.open) return;
+      event.preventDefault();
+      closeMenu(true);
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!menu.contains(event.target)) closeMenu();
+    });
+
+    menu.addEventListener('click', (event) => {
+      if (event.defaultPrevented || event.button !== 0) return;
+      if (event.target.closest('.menu-panel a[href]')) closeMenu();
+    });
+
+    // Native details works without JavaScript; closing it must not hide keyboard focus.
+    menu.addEventListener('toggle', returnFocusIfHidden);
+  });
+
+  // Archive navigation points back to index.html and does not participate in scrollspy.
   const links = [...document.querySelectorAll('.main-nav a[href^="#"]')];
   const sections = links
     .map((link) => document.getElementById(link.hash.slice(1)))

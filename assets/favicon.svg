@@ -1,1 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#285b4e"/><text x="32" y="44" fill="#f9f8f4" text-anchor="middle" font-family="Georgia,serif" font-size="37" font-weight="bold">a</text><circle cx="47" cy="43" r="3" fill="#e4b58a"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>Green Iron Man mask</title>
+  <path d="M20 4h24l11 12v24L44 59H20L9 40V16Z" fill="#285b4e"/>
+  <path d="m20 10 5 12h14l5-12 6 8v19l-8 8-3 9H25l-3-9-8-8V18Z" fill="#e6ebe2"/>
+  <path d="m20 10 5 12h14l5-12M14 37l8 8 3 9h14l3-9 8-8" fill="none" stroke="#184438" stroke-width="2" stroke-linejoin="round"/>
+  <path d="m16 27 13 4v5l-12-3ZM48 27l-13 4v5l12-3Z" fill="#285b4e"/>
+  <path d="m19 29 8 2v2l-8-2ZM45 29l-8 2v2l8-2Z" fill="#f9f8f4"/>
+  <path d="m26 43 6-3 6 3M25 49h14" fill="none" stroke="#285b4e" stroke-width="2" stroke-linecap="square"/>
+</svg>

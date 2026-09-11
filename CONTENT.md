@@ -1,6 +1,10 @@
 # Adding project media and certifications
 
-The portfolio is edited in `index.html`. Project photos and videos appear inside
+The home page is `index.html`. The complete collections are `projects.html` and
+`certifications.html`. All pages are plain HTML, sharing `style.css` and
+`script.js`; no build step is needed. The top-right Menu links them together.
+
+Project photos and videos appear inside
 the expandable **Project details & media** area. They work without JavaScript.
 The current boxes are intentional placeholders; they do not request missing
 files or pretend to be playable videos.
@@ -14,7 +18,7 @@ eight-second fallback also releases the page if a file stalls. Reduced-motion
 preferences disable the moving indicator, and the page still works without
 JavaScript.
 
-Its styles and script stay near the top of `index.html` so the screen can appear
+Its styles and script stay near the top of each HTML page so the screen can appear
 while `style.css` is still loading. Keep the stylesheet's `id="site-styles"`
 and the accompanying `noscript` fallback when editing this area. This screen
 covers initial loading; future photos and videos load within their project
@@ -24,8 +28,10 @@ areas using the settings below.
 
 1. Create `assets/projects/` and put your image there. Use a short filename without
    spaces, for example `fruityvens-scale.webp`.
-2. Find the project in `index.html`: `id="fruityvens"`, `id="robotic-arm"`, or
-   `id="ballclub"`.
+2. Find the project in `projects.html`. Featured projects also appear in
+   `index.html`; update both copies. The research scale is `id="vision-scale"`,
+   and the separate companion app is `id="fruityvens"`. Other featured IDs are
+   `robotic-arm` and `ballclub`.
 3. Inside its `.project-media` area, replace the entire photo
    `<figure class="media-item">…</figure>` with this example. Update the filename,
    image description, caption, and dimensions to match your actual image.
@@ -90,17 +96,20 @@ the result without watching the video.
 
 ## Certifications
 
-The **Certifications** section follows Background and has a jump link from it.
-It currently contains clearly marked placeholders for **Cybersecurity**,
-**Data Analytics**, and **Artificial Intelligence**. These are categories,
-not claims about specific credentials.
+The home page shows three selected credentials. The complete set of certificates
+and participation records is in `certifications.html`, including expandable
+ISC2 domain and assessment certificates. Each preview opens its original PDF
+in a new tab. The supplied files are in `assets/certifications/`.
 
-1. Create `assets/certifications/` and add the certificate image and, optionally,
-   a PDF. Use only the version you want to publish.
-2. Find `id="certifications"` in `index.html`.
-3. Replace one entire `<article class="certificate-card certificate-placeholder">`
-   with the template below. Replace every uppercase placeholder with the actual
-   information. The example filenames must match the files you add.
+1. Add the new original PDF and a JPEG or WebP preview to `assets/certifications/`.
+2. Duplicate an existing `.certificate-card` in the appropriate section of
+   `certifications.html`. Update the title, issuer, date, image, and PDF links.
+3. Set the status to what the document establishes, such as **Course completion**,
+   **Professional certificate**, or **Webinar participation**. Add a verification
+   link only when one exists.
+4. If you also feature that credential on the home page, update `index.html` too.
+
+The following is a reusable card template:
 
 ```html
 <article class="certificate-card">
@@ -113,7 +122,7 @@ not claims about specific credentials.
          width="1200" height="900" loading="lazy" decoding="async">
   </a>
   <div class="certificate-info">
-    <p class="certificate-status">CYBERSECURITY</p>
+    <p class="certificate-status">COURSE COMPLETION</p>
     <h3>EXACT CERTIFICATE TITLE</h3>
     <p class="certificate-issuer">ISSUING ORGANIZATION</p>
     <p class="certificate-date">Issued MONTH YEAR</p>
@@ -126,7 +135,6 @@ not claims about specific credentials.
 </article>
 ```
 
-Use **DATA ANALYTICS** or **ARTIFICIAL INTELLIGENCE** for the other categories.
 Duplicate a complete article to add more credentials. If there is no verification
 URL, omit the `certificate-link` element. If there is no PDF, link the preview to
 the certificate image instead. Set image width and height to the actual file
@@ -136,3 +144,22 @@ After editing, preview the page locally and open each project disclosure. Check
 that your photos display, videos play with sound/captions as appropriate, and
 certificate links reach the intended documents. Commit and push when ready to
 publish; these local changes do not update the live site automatically.
+
+## Profile, navigation, and résumé
+
+- Replace `assets/profile.jpg` to update the portrait. The homepage profile uses
+  `.profile-photo`; its framing is set by `object-fit` and `object-position`.
+- The green mask is the SVG in `assets/favicon.svg`. It is used in the header,
+  loading screen, and browser tab.
+- The header and menu appear in all three HTML files. Make matching edits in
+  each file when adding a page. `script.js` handles closing the native menu.
+- Edit your Word résumé, export it to PDF, and replace
+  `assets/Amir-Al-Hamadani-Resume.pdf`. Website text is edited separately.
+  If your browser still shows an older PDF, refresh its tab or open it with a
+  version query such as `?v=2026-09-11`.
+
+## Preview and publish
+
+From the portfolio directory, run `python3 -m http.server 4173`, then open
+`http://localhost:4173`. Check the home page, both collection pages, Menu,
+certificates, and résumé before committing. Changes remain local until you push.
