@@ -13,7 +13,116 @@
     <meta property="og:url" content="https://alhamadaniamir.github.io/">
     <link rel="canonical" href="https://alhamadaniamir.github.io/">
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="style.css">
+    <!-- Keep the loader styles inline so they can render while the main stylesheet loads. -->
+    <style>
+      html.page-preparing { background: #f9f8f4; }
+      html.page-preparing body { visibility: hidden; }
+      html.page-loading { overflow: hidden; }
+      .page-loader { position: fixed; inset: 0; z-index: 100; visibility: visible; display: grid; place-items: center; padding: 28px; background: #f9f8f4; color: #242c29; text-align: center; }
+      .page-loader-content { width: min(100%, 340px); }
+      .page-loader-mark { margin: 0 0 38px; font: 700 40px/1 Georgia, serif; letter-spacing: -2px; }
+      .page-loader-mark span { color: #285b4e; }
+      .page-loader-track { height: 2px; overflow: hidden; background: #dddfd6; }
+      .page-loader-track::after { content: ""; display: block; width: 40%; height: 100%; background: #285b4e; animation: loading-sweep 1.4s ease-in-out infinite; }
+      .page-loader h2 { margin: 26px 0 12px; font: 400 27px/1.2 Georgia, serif; letter-spacing: -.5px; }
+      .page-loader p { margin: 0; font: 14px/1.7 "Segoe UI", Arial, sans-serif; color: #626d65; }
+      .page-loader button { margin-top: 26px; padding: 10px 16px; border: 1px solid #285b4e; border-radius: 0; background: transparent; color: #285b4e; font: 600 12px/1.5 "Segoe UI", Arial, sans-serif; cursor: pointer; }
+      .page-loader button:hover { background: #e6ebe2; }
+      .page-loader button:focus-visible { outline: 2px solid #285b4e; outline-offset: 4px; }
+      @keyframes loading-sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(350%); } }
+      @media (prefers-reduced-motion: reduce) { .page-loader-track::after { animation: none; width: 100%; } }
+      @media print { html.page-preparing body { visibility: visible; } .page-loader { display: none !important; } }
+    </style>
+    <script>
+      (() => {
+        document.documentElement.classList.add('page-preparing');
+        let finished = false;
+        let stylesReady = false;
+        let pageReady = false;
+        let loader;
+        let previousFocus;
+        let observer;
+        let showTimer;
+        const inertElements = new Map();
+
+        function finishWhenReady() {
+          if (stylesReady && pageReady) restorePage();
+        }
+
+        function restorePage() {
+          if (finished) return;
+          finished = true;
+          window.clearTimeout(showTimer);
+          window.clearTimeout(fallbackTimer);
+          observer?.disconnect();
+          document.documentElement.classList.remove('page-loading', 'page-preparing');
+          inertElements.forEach((wasInert, element) => { element.inert = wasInert; });
+          if (loader?.contains(document.activeElement)) previousFocus?.focus({ preventScroll: true });
+          loader?.remove();
+        }
+
+        function makeInert(element) {
+          if (element === loader || inertElements.has(element)) return;
+          inertElements.set(element, element.inert);
+          element.inert = true;
+        }
+
+        function showLoader() {
+          if (finished) return;
+          if (!document.body) {
+            showTimer = window.setTimeout(showLoader, 50);
+            return;
+          }
+          previousFocus = document.activeElement;
+          loader = document.createElement('div');
+          loader.id = 'page-loader';
+          loader.className = 'page-loader';
+          loader.setAttribute('role', 'dialog');
+          loader.setAttribute('aria-modal', 'true');
+          loader.setAttribute('aria-labelledby', 'page-loader-title');
+          loader.setAttribute('aria-describedby', 'page-loader-description');
+          loader.innerHTML = '<div class="page-loader-content"><div class="page-loader-mark" aria-hidden="true">amir<span>.</span></div><div class="page-loader-track" aria-hidden="true"></div><h2 id="page-loader-title">Loading portfolio</h2><p id="page-loader-description">Getting things ready. You can continue while the rest loads.</p><button type="button">Continue to portfolio <span aria-hidden="true">↗</span></button></div>';
+          [...document.body.children].forEach(makeInert);
+          observer = new MutationObserver((records) => {
+            records.forEach((record) => record.addedNodes.forEach((node) => {
+              if (node.nodeType === Node.ELEMENT_NODE) makeInert(node);
+            }));
+          });
+          observer.observe(document.body, { childList: true });
+          document.body.append(loader);
+          document.documentElement.classList.add('page-loading');
+          const continueButton = loader.querySelector('button');
+          continueButton.addEventListener('click', restorePage);
+          loader.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') restorePage();
+            if (event.key === 'Tab') { event.preventDefault(); continueButton.focus(); }
+          });
+          continueButton.focus({ preventScroll: true });
+        }
+
+        // Load the main CSS without delaying the first paint of the loading screen.
+        document.addEventListener('load', (event) => {
+          if (event.target.id === 'site-styles') {
+            event.target.media = 'all';
+            document.documentElement.classList.remove('page-preparing');
+            stylesReady = true;
+            finishWhenReady();
+          }
+        }, true);
+        document.addEventListener('error', (event) => {
+          if (event.target.id === 'site-styles') restorePage();
+        }, true);
+        window.addEventListener('load', () => {
+          pageReady = true;
+          finishWhenReady();
+        }, { once: true });
+        window.addEventListener('pageshow', (event) => { if (event.persisted) restorePage(); });
+        const fallbackTimer = window.setTimeout(restorePage, 8000);
+        showTimer = window.setTimeout(showLoader, 350);
+      })();
+    </script>
+    <link id="site-styles" rel="stylesheet" href="style.css" media="print">
+    <noscript><link rel="stylesheet" href="style.css"></noscript>
     <script src="script.js" defer></script>
   </head>
   <body>
@@ -96,7 +205,7 @@
           <div class="section-heading"><div><p class="section-eyebrow">IDEAS, PUT INTO PRACTICE</p><h2 id="work-title">Selected work.</h2></div><span class="section-index" aria-hidden="true">02</span></div>
           <p class="section-intro">A few projects that have shaped the way I approach engineering.</p>
 
-          <article class="project">
+          <article class="project" id="fruityvens">
             <div class="project-topline"><span class="project-category">EMBEDDED SYSTEMS · COMPUTER VISION</span><span class="project-number" aria-hidden="true">01</span></div>
             <h3>FruityVens</h3>
             <p class="project-subtitle">Connecting a fruit scale to a smarter workflow.</p>
@@ -104,33 +213,81 @@
             <div class="system-flow" aria-label="System components: ESP32 scale and camera, Rust API and Gemini, Flutter and Firebase">
               <span><span class="flow-label">SENSE</span>ESP32 + camera</span><span class="flow-arrow" aria-hidden="true">→</span><span><span class="flow-label">IDENTIFY</span>Rust + Gemini</span><span class="flow-arrow" aria-hidden="true">→</span><span><span class="flow-label">CONNECT</span>Flutter + Firebase</span>
             </div>
-            <details class="project-details"><summary>A closer look <span aria-hidden="true">+</span></summary><div class="details-content">
+            <details class="project-details"><summary>Project details &amp; media <span aria-hidden="true">+</span></summary><div class="details-content">
               <p>The system normalizes detections into 23 fruit labels and uses five-point load-cell calibration. ESP-NOW connects the boards, while Firebase synchronization includes upload retries. The identification API uses bearer-token authentication and keeps Gemini credentials on the server.</p>
               <p>This project brought together the details at each boundary: measurement, device communication, API handling, and a mobile interface that makes the readings useful.</p>
+              <div class="project-media" role="group" aria-label="FruityVens photos and video">
+                <figure class="media-item">
+                  <div class="media-placeholder">
+                    <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="2"/><circle cx="12" cy="12" r="2"/><path d="m5 23 7-7 5 5 4-4 6 6"/></svg>
+                    <strong>Project photo goes here</strong><span>The scale, camera, or companion app.</span>
+                  </div>
+                  <figcaption><span class="media-type">PHOTO</span> FruityVens in practice</figcaption>
+                </figure>
+                <figure class="media-item">
+                  <div class="media-placeholder">
+                    <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="2"/><path d="M10 5v22M22 5v22M4 12h6m-6 8h6m12-8h6m-6 8h6"/></svg>
+                    <strong>Project video goes here</strong><span>A walkthrough from detection to sale.</span>
+                  </div>
+                  <figcaption><span class="media-type">VIDEO</span> System walkthrough</figcaption>
+                </figure>
+              </div>
             </div></details>
             <div class="project-bottom"><p class="project-stack">ESP32 · C++ · Rust · Gemini · Flutter · Firebase</p><div class="project-links"><a href="https://github.com/alhamadaniamir/My-thesis-Project-correlation-with-FruityVens-App">Hardware &amp; API <span aria-hidden="true">↗</span></a><a href="https://github.com/alhamadaniamir/FruityVens">Companion app <span aria-hidden="true">↗</span></a></div></div>
           </article>
 
-          <article class="project">
+          <article class="project" id="robotic-arm">
             <div class="project-topline"><span class="project-category">ROBOTICS · MOTION CONTROL</span><span class="project-number" aria-hidden="true">02</span></div>
             <h3>Robotic arm</h3>
             <p class="project-subtitle">Learning movement, one joint at a time.</p>
             <p>Arduino firmware that sequences six servos and a stepper motor to move an arm’s base, shoulder, elbow, wrist, and gripper. An exercise in translating motion into deliberate, adjustable steps.</p>
-            <details class="project-details"><summary>A closer look <span aria-hidden="true">+</span></summary><div class="details-content">
+            <details class="project-details"><summary>Project details &amp; media <span aria-hidden="true">+</span></summary><div class="details-content">
               <p>I implemented mirrored base-servo movement, configurable joint travel ranges, gradual servo positioning, and acceleration-controlled stepper travel. The arm follows a programmed sequence, then returns to its starting positions.</p>
               <p>Working with the mechanisms is part of my broader interest in robot dynamics, motion planning, and control systems.</p>
+              <div class="project-media" role="group" aria-label="Robotic arm photos and video">
+                <figure class="media-item">
+                  <div class="media-placeholder">
+                    <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="2"/><circle cx="12" cy="12" r="2"/><path d="m5 23 7-7 5 5 4-4 6 6"/></svg>
+                    <strong>Project photo goes here</strong><span>The assembled arm and its mechanisms.</span>
+                  </div>
+                  <figcaption><span class="media-type">PHOTO</span> Hardware prototype</figcaption>
+                </figure>
+                <figure class="media-item">
+                  <div class="media-placeholder">
+                    <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="2"/><path d="M10 5v22M22 5v22M4 12h6m-6 8h6m12-8h6m-6 8h6"/></svg>
+                    <strong>Project video goes here</strong><span>The joints and gripper moving in sequence.</span>
+                  </div>
+                  <figcaption><span class="media-type">VIDEO</span> Motion demonstration</figcaption>
+                </figure>
+              </div>
             </div></details>
             <div class="project-bottom"><p class="project-stack">Arduino · C++ · Servo · AccelStepper</p><span class="project-note">Hardware prototype</span></div>
           </article>
 
-          <article class="project">
+          <article class="project" id="ballclub">
             <div class="project-topline"><span class="project-category">FULL-STACK DEVELOPMENT</span><span class="project-number" aria-hidden="true">03</span></div>
             <h3>Ballclub</h3>
             <p class="project-subtitle">Less coordination. More time on the court.</p>
             <p>A basketball session management platform that brings signups, player queues, approvals, and payment tracking into one workflow. Built with Vue and FastAPI, with attendance history, revenue dashboards, and CSV exports.</p>
-            <details class="project-details"><summary>A closer look <span aria-hidden="true">+</span></summary><div class="details-content">
+            <details class="project-details"><summary>Project details &amp; media <span aria-hidden="true">+</span></summary><div class="details-content">
               <p>Shareable join links and configurable capacity limits support the session workflow. Owner access uses JWT authentication, bcrypt password hashing, and request rate limits.</p>
               <p>The backend includes 56 automated API tests covering authentication and club operations, including approvals, payments, and capacity limits.</p>
+              <div class="project-media" role="group" aria-label="Ballclub photos and video">
+                <figure class="media-item">
+                  <div class="media-placeholder">
+                    <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="2"/><circle cx="12" cy="12" r="2"/><path d="m5 23 7-7 5 5 4-4 6 6"/></svg>
+                    <strong>Project image goes here</strong><span>Session screens, player queues, or dashboards.</span>
+                  </div>
+                  <figcaption><span class="media-type">IMAGE</span> A look inside Ballclub</figcaption>
+                </figure>
+                <figure class="media-item">
+                  <div class="media-placeholder">
+                    <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="2"/><path d="M10 5v22M22 5v22M4 12h6m-6 8h6m12-8h6m-6 8h6"/></svg>
+                    <strong>Project video goes here</strong><span>A tour of a basketball session workflow.</span>
+                  </div>
+                  <figcaption><span class="media-type">VIDEO</span> Platform walkthrough</figcaption>
+                </figure>
+              </div>
             </div></details>
             <div class="project-bottom"><p class="project-stack">Vue 3 · FastAPI · MongoDB · Tailwind CSS</p><div class="project-links"><a href="https://github.com/alhamadaniamir/ballclub-app/tree/frontend">Frontend <span aria-hidden="true">↗</span></a><a href="https://github.com/alhamadaniamir/ballclub-app-front">Backend <span aria-hidden="true">↗</span></a></div></div>
           </article>
@@ -145,6 +302,7 @@
 
         <section class="section background-section" id="background" aria-labelledby="background-title">
           <div class="section-heading"><div><p class="section-eyebrow">THE FOUNDATION</p><h2 id="background-title">Learning, in progress.</h2></div><span class="section-index" aria-hidden="true">03</span></div>
+          <a class="text-link background-jump" href="#certifications">Certifications <span aria-hidden="true">↓</span></a>
           <div class="education-list">
             <article class="education-item"><p class="education-date">2024 — 2027 <span>EXPECTED</span></p><div><h3>PHINMA Cagayan de Oro College</h3><p>BS Computer Engineering</p><p class="education-detail">Embedded systems, microprocessors, networks and security, feedback and control, and digital signal processing.</p></div></article>
             <article class="education-item"><p class="education-date">2022 — 2024</p><div><h3>University of Science and Technology of Southern Philippines</h3><p>Computer Engineering studies</p><p class="education-detail">Algorithms, object-oriented programming, electrical circuits, operating systems, and numerical methods.</p></div></article>
@@ -156,6 +314,46 @@
             <div><h3>Embedded &amp; robotics</h3><p>ESP32, ESP32-S3, ESP32-CAM, Raspberry Pi, Arduino Nano and Uno, Blynk, Drake, kinematics, motion planning, dynamics, control systems.</p></div>
             <div><h3>AI, security &amp; tools</h3><p>Gemini API, computer vision, TensorFlow, PyTorch, scikit-learn, SIEM, Wireshark, JWT authentication, tcpdump, Firebase Realtime Database, Vercel, Git, Arch Linux.</p></div>
           </div></details>
+        </section>
+
+        <section class="section certifications-section" id="certifications" aria-labelledby="certifications-title">
+          <div class="section-heading"><div><p class="section-eyebrow">CONTINUING TO LEARN</p><h2 id="certifications-title">Certifications.</h2></div><span class="section-index" aria-hidden="true">04</span></div>
+          <div class="certificate-list">
+            <!-- Replace this placeholder with a real credential. See CONTENT.md for the complete template. -->
+            <article class="certificate-card certificate-placeholder">
+              <div class="certificate-preview media-placeholder">
+                <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M23 27H6V4h20v14M11 10h10m-10 5h7"/><circle cx="23" cy="23" r="4"/><path d="m21 27-1 4 3-2 3 2-1-4"/></svg>
+                <strong>Certificate image goes here</strong>
+              </div>
+              <div class="certificate-info">
+                <p class="certificate-status">PLACEHOLDER</p>
+                <h3>Cybersecurity</h3>
+                <p class="certificate-description">Certificate title, issuing organization, date, and verification link to be added.</p>
+              </div>
+            </article>
+            <article class="certificate-card certificate-placeholder">
+              <div class="certificate-preview media-placeholder">
+                <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M23 27H6V4h20v14M11 10h10m-10 5h7"/><circle cx="23" cy="23" r="4"/><path d="m21 27-1 4 3-2 3 2-1-4"/></svg>
+                <strong>Certificate image goes here</strong>
+              </div>
+              <div class="certificate-info">
+                <p class="certificate-status">PLACEHOLDER</p>
+                <h3>Data Analytics</h3>
+                <p class="certificate-description">Certificate title, issuing organization, date, and verification link to be added.</p>
+              </div>
+            </article>
+            <article class="certificate-card certificate-placeholder">
+              <div class="certificate-preview media-placeholder">
+                <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M23 27H6V4h20v14M11 10h10m-10 5h7"/><circle cx="23" cy="23" r="4"/><path d="m21 27-1 4 3-2 3 2-1-4"/></svg>
+                <strong>Certificate image goes here</strong>
+              </div>
+              <div class="certificate-info">
+                <p class="certificate-status">PLACEHOLDER</p>
+                <h3>Artificial Intelligence</h3>
+                <p class="certificate-description">Certificate title, issuing organization, date, and verification link to be added.</p>
+              </div>
+            </article>
+          </div>
         </section>
 
         <section class="section contact-section" id="contact" aria-labelledby="contact-title">

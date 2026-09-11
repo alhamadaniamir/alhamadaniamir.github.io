@@ -1,0 +1,138 @@
+# Adding project media and certifications
+
+The portfolio is edited in `index.html`. Project photos and videos appear inside
+the expandable **Project details & media** area. They work without JavaScript.
+The current boxes are intentional placeholders; they do not request missing
+files or pretend to be playable videos.
+
+## Loading screen
+
+The loading screen appears only when the initial page load takes more than
+350 milliseconds. It clears when the stylesheet and page have loaded. Visitors
+can select **Continue to portfolio** or press Escape to dismiss it; an
+eight-second fallback also releases the page if a file stalls. Reduced-motion
+preferences disable the moving indicator, and the page still works without
+JavaScript.
+
+Its styles and script stay near the top of `index.html` so the screen can appear
+while `style.css` is still loading. Keep the stylesheet's `id="site-styles"`
+and the accompanying `noscript` fallback when editing this area. This screen
+covers initial loading; future photos and videos load within their project
+areas using the settings below.
+
+## Project photos
+
+1. Create `assets/projects/` and put your image there. Use a short filename without
+   spaces, for example `fruityvens-scale.webp`.
+2. Find the project in `index.html`: `id="fruityvens"`, `id="robotic-arm"`, or
+   `id="ballclub"`.
+3. Inside its `.project-media` area, replace the entire photo
+   `<figure class="media-item">…</figure>` with this example. Update the filename,
+   image description, caption, and dimensions to match your actual image.
+
+```html
+<figure class="media-item">
+  <img
+    class="project-image"
+    src="assets/projects/fruityvens-scale.webp"
+    alt="Describe what your photo actually shows"
+    width="1600"
+    height="1000"
+    loading="lazy"
+    decoding="async">
+  <figcaption>
+    <span class="media-type">PHOTO</span>
+    Your caption about the build or result
+  </figcaption>
+</figure>
+```
+
+The image fits inside its frame without cropping. Duplicate a complete figure
+to add more images. For a screenshot or diagram that needs the full row, use
+`class="media-item media-item--wide"` on its figure.
+
+## Project videos
+
+Put your video in `assets/projects/`, then replace the video placeholder figure
+with the following. Change both file paths and the caption to match your video.
+
+```html
+<figure class="media-item media-item--wide">
+  <video class="project-video" controls playsinline preload="none">
+    <source src="assets/projects/fruityvens-demo.mp4" type="video/mp4">
+    Your browser does not support this video.
+    <a href="assets/projects/fruityvens-demo.mp4">Open the video file</a>.
+  </video>
+  <figcaption>
+    <span class="media-type">VIDEO</span>
+    Your caption explaining what the demonstration shows
+  </figcaption>
+</figure>
+```
+
+`controls` lets visitors choose when to play. `preload="none"` avoids downloading
+the video itself during the initial page load. Keep videos short and compressed
+so they remain practical on mobile connections.
+
+To display a still image before playback, add
+`poster="assets/projects/fruityvens-demo-poster.webp"` to `<video>` **after adding
+that image file**. For spoken content, provide captions by adding this after
+`<source>` once you have created the matching WebVTT file:
+
+```html
+<track kind="captions" src="assets/projects/fruityvens-demo-en.vtt"
+       srclang="en" label="English" default>
+```
+
+A short explanation of silent demonstrations can go in the caption. A longer
+text explanation or transcript can follow the figure, so visitors can understand
+the result without watching the video.
+
+## Certifications
+
+The **Certifications** section follows Background and has a jump link from it.
+It currently contains clearly marked placeholders for **Cybersecurity**,
+**Data Analytics**, and **Artificial Intelligence**. These are categories,
+not claims about specific credentials.
+
+1. Create `assets/certifications/` and add the certificate image and, optionally,
+   a PDF. Use only the version you want to publish.
+2. Find `id="certifications"` in `index.html`.
+3. Replace one entire `<article class="certificate-card certificate-placeholder">`
+   with the template below. Replace every uppercase placeholder with the actual
+   information. The example filenames must match the files you add.
+
+```html
+<article class="certificate-card">
+  <a class="certificate-preview"
+     href="assets/certifications/your-certificate.pdf"
+     target="_blank" rel="noopener noreferrer"
+     aria-label="Open EXACT CERTIFICATE TITLE in a new tab">
+    <img src="assets/certifications/your-certificate.webp"
+         alt="EXACT CERTIFICATE TITLE issued to Amir Al Hamadani by ISSUER"
+         width="1200" height="900" loading="lazy" decoding="async">
+  </a>
+  <div class="certificate-info">
+    <p class="certificate-status">CYBERSECURITY</p>
+    <h3>EXACT CERTIFICATE TITLE</h3>
+    <p class="certificate-issuer">ISSUING ORGANIZATION</p>
+    <p class="certificate-date">Issued MONTH YEAR</p>
+    <p class="certificate-description">A brief description of what you learned.</p>
+    <a class="certificate-link" href="REPLACE_WITH_VERIFICATION_URL"
+       target="_blank" rel="noopener noreferrer">
+      Verify credential <span aria-hidden="true">↗</span>
+    </a>
+  </div>
+</article>
+```
+
+Use **DATA ANALYTICS** or **ARTIFICIAL INTELLIGENCE** for the other categories.
+Duplicate a complete article to add more credentials. If there is no verification
+URL, omit the `certificate-link` element. If there is no PDF, link the preview to
+the certificate image instead. Set image width and height to the actual file
+dimensions; the layout displays the full image without cropping.
+
+After editing, preview the page locally and open each project disclosure. Check
+that your photos display, videos play with sound/captions as appropriate, and
+certificate links reach the intended documents. Commit and push when ready to
+publish; these local changes do not update the live site automatically.
