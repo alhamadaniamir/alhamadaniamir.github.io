@@ -40,6 +40,60 @@
     menu.addEventListener('toggle', returnFocusIfHidden);
   });
 
+  document.querySelectorAll('.project-details').forEach((details, index) => {
+    const summary = details.querySelector('summary');
+    const content = details.querySelector('.details-content');
+    if (!summary || !content) return;
+
+    const project = details.closest('.project');
+    const title = project?.querySelector('h2, h3')?.textContent.trim() || 'project';
+    if (!content.id) content.id = `project-content-${project?.id || index + 1}`;
+
+    const bar = document.createElement('div');
+    bar.className = 'project-collapse-bar';
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'project-collapse-button';
+    button.setAttribute('aria-label', `Collapse ${title}`);
+    button.setAttribute('aria-controls', content.id);
+    button.append('Collapse project ');
+    const arrow = document.createElement('span');
+    arrow.setAttribute('aria-hidden', 'true');
+    arrow.textContent = '↑';
+    button.append(arrow);
+    bar.append(button);
+    content.append(bar);
+
+    function pauseMedia() {
+      details.querySelectorAll('video').forEach((video) => video.pause());
+    }
+
+    button.addEventListener('click', () => {
+      pauseMedia();
+      summary.focus({ preventScroll: true });
+      details.open = false;
+
+      // Measure after the gallery has collapsed, including any browser scroll anchoring.
+      window.requestAnimationFrame(() => {
+        const headerHeight = document.querySelector('.site-header')?.getBoundingClientRect().height || 0;
+        const topInset = headerHeight + 20;
+        const position = summary.getBoundingClientRect();
+        if (position.top >= topInset && position.bottom <= window.innerHeight - 20) return;
+        window.scrollTo({
+          top: Math.max(0, window.scrollY + position.top - topInset),
+          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+        });
+      });
+    });
+
+    // Also pause media when a project is closed through its native summary.
+    details.addEventListener('toggle', () => {
+      if (details.open) return;
+      pauseMedia();
+      if (content.contains(document.activeElement)) summary.focus({ preventScroll: true });
+    });
+  });
+
   // Archive navigation points back to index.html and does not participate in scrollspy.
   const links = [...document.querySelectorAll('.main-nav a[href^="#"]')];
   const sections = links

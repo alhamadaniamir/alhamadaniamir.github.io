@@ -13,22 +13,34 @@
     <meta property="og:url" content="https://alhamadaniamir.github.io/certifications.html">
     <link rel="canonical" href="https://alhamadaniamir.github.io/certifications.html">
     <link rel="icon" href="assets/favicon.svg?v=iron-mask" type="image/svg+xml">
+    <!-- Read the saved theme before the first paint, including the loading screen. -->
+    <script>
+      (() => {
+        let theme = 'light';
+        try { if (localStorage.getItem('portfolio-theme') === 'dark') theme = 'dark'; } catch {}
+        document.documentElement.dataset.theme = theme;
+        document.querySelector('meta[name="color-scheme"]').content = theme;
+        document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#151d19' : '#f9f8f4';
+      })();
+    </script>
     <!-- Keep the loader styles inline so they can render while the main stylesheet loads. -->
     <style>
-      html.page-preparing { background: #f9f8f4; }
+      :root { color-scheme: light; --paper: #f9f8f4; --ink: #242c29; --muted: #626d65; --accent: #285b4e; --rule: #dddfd6; --soft-green: #e6ebe2; }
+      :root[data-theme="dark"] { color-scheme: dark; --paper: #151d19; --ink: #e6ece5; --muted: #afbdb1; --accent: #9ecdb2; --rule: #34463a; --soft-green: #23382c; }
+      html.page-preparing { background: var(--paper); }
       html.page-preparing body { visibility: hidden; }
       html.page-loading { overflow: hidden; }
-      .page-loader { position: fixed; inset: 0; z-index: 100; visibility: visible; display: grid; place-items: center; padding: 28px; background: #f9f8f4; color: #242c29; text-align: center; }
+      .page-loader { position: fixed; inset: 0; z-index: 100; visibility: visible; display: grid; place-items: center; padding: 28px; background: var(--paper); color: var(--ink); text-align: center; }
       .page-loader-content { width: min(100%, 340px); }
       .page-loader-mark { margin: 0 0 38px; font: 400 32px/1 Georgia, serif; letter-spacing: -1px; }
       .page-loader-mark img { display: block; margin: 0 auto 15px; }
-      .page-loader-track { height: 2px; overflow: hidden; background: #dddfd6; }
-      .page-loader-track::after { content: ""; display: block; width: 40%; height: 100%; background: #285b4e; animation: loading-sweep 1.4s ease-in-out infinite; }
+      .page-loader-track { height: 2px; overflow: hidden; background: var(--rule); }
+      .page-loader-track::after { content: ""; display: block; width: 40%; height: 100%; background: var(--accent); animation: loading-sweep 1.4s ease-in-out infinite; }
       .page-loader h2 { margin: 26px 0 12px; font: 400 27px/1.2 Georgia, serif; letter-spacing: -.5px; }
-      .page-loader p { margin: 0; font: 14px/1.7 "Segoe UI", Arial, sans-serif; color: #626d65; }
-      .page-loader button { margin-top: 26px; padding: 10px 16px; border: 1px solid #285b4e; border-radius: 0; background: transparent; color: #285b4e; font: 600 12px/1.5 "Segoe UI", Arial, sans-serif; cursor: pointer; }
-      .page-loader button:hover { background: #e6ebe2; }
-      .page-loader button:focus-visible { outline: 2px solid #285b4e; outline-offset: 4px; }
+      .page-loader p { margin: 0; font: 14px/1.7 "Segoe UI", Arial, sans-serif; color: var(--muted); }
+      .page-loader button { margin-top: 26px; padding: 10px 16px; border: 1px solid var(--accent); border-radius: 0; background: transparent; color: var(--accent); font: 600 12px/1.5 "Segoe UI", Arial, sans-serif; cursor: pointer; }
+      .page-loader button:hover { background: var(--soft-green); }
+      .page-loader button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
       @keyframes loading-sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(350%); } }
       @media (prefers-reduced-motion: reduce) { .page-loader-track::after { animation: none; width: 100%; } }
       @media print { html.page-preparing body { visibility: visible; } .page-loader { display: none !important; } }
@@ -123,6 +135,7 @@
     </script>
     <link id="site-styles" rel="stylesheet" href="style.css" media="print">
     <noscript><link rel="stylesheet" href="style.css"></noscript>
+    <script src="theme.js" defer></script>
     <script src="script.js" defer></script>
   </head>
   <body>
@@ -147,6 +160,9 @@
             <a href="index.html#background">Education &amp; toolkit <span aria-hidden="true">↗</span></a>
             <a href="index.html#contact">Get in touch <span aria-hidden="true">↗</span></a>
             <a class="menu-resume" href="assets/Amir-Al-Hamadani-Resume.pdf" target="_blank" rel="noopener noreferrer">Open résumé <span class="file-type">PDF ↗</span></a>
+            <button class="theme-toggle theme-toggle--menu" type="button" role="switch" aria-checked="false" data-theme-toggle hidden>
+              <span>Dark theme</span><span class="theme-switch" aria-hidden="true"></span>
+            </button>
           </nav>
         </details>
       </div>
