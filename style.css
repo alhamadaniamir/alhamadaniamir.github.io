@@ -70,6 +70,7 @@ h1 { margin-top: 24px; font-family: var(--serif); font-size: clamp(38px, 4vw, 52
 h1 em { color: var(--accent); font-weight: 400; }
 .intro-lead { margin-top: 27px; font-size: 19px; line-height: 1.6; letter-spacing: -.25px; max-width: 580px; }
 .prose { margin-top: 23px; }
+.prose strong { color: var(--accent); font-weight: 600; }
 .prose p, .approach-section > p:not(.section-eyebrow) { color: var(--muted); font-size: 15px; line-height: 1.85; }
 .prose p + p { margin-top: 18px; }
 .text-link { display: inline-flex; align-items: center; gap: 20px; margin-top: 25px; color: var(--accent); font-size: 13px; font-weight: 600; }
@@ -122,7 +123,11 @@ summary::-webkit-details-marker { display: none; }
 .media-item figcaption { margin-top: 10px; font-size: 11px; line-height: 1.7; color: var(--muted); }
 .media-type { display: block; margin-bottom: 2px; color: var(--accent); font-family: var(--mono); font-size: 8px; letter-spacing: 1px; }
 .project-image, .project-video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: contain; background: var(--surface); border: 1px solid var(--rule); }
-.project-video { background: #18251f; }
+.project-video { aspect-ratio: auto; max-height: 640px; background: #18251f; }
+.media-image-link { position: relative; display: block; background: var(--surface); }
+.media-image-link .project-image { aspect-ratio: 4 / 3; }
+.media-image-link:hover .project-image { border-color: var(--accent); }
+.media-open { position: absolute; right: 9px; bottom: 9px; padding: 4px 8px; border: 1px solid var(--rule); background: var(--paper); color: var(--accent); font-size: 9px; line-height: 1.5; box-shadow: 0 2px 5px #173f3010; }
 .media-transcript { display: inline-block; margin-top: 5px; color: var(--accent); font-size: 11px; text-decoration: underline; }
 .media-item--wide { grid-column: 1 / -1; }
 .project-bottom { display: flex; flex-wrap: wrap; gap: 12px 20px; justify-content: space-between; align-items: center; margin-top: 24px; }
@@ -138,7 +143,6 @@ summary::-webkit-details-marker { display: none; }
 .approach-section > p:not(.section-eyebrow) { color: #4c5f53; font-size: 14px; }
 .approach-section > p + p { margin-top: 14px; }
 .background-section { padding-top: 61px; }
-.background-jump { margin-top: 18px; font-size: 12px; }
 .education-list { margin-top: 33px; }
 .education-item { display: grid; grid-template-columns: 122px minmax(0, 1fr); gap: 24px; padding: 22px 0; }
 .education-item + .education-item { border-top: 1px solid var(--rule); }

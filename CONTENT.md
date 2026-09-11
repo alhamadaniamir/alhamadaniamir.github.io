@@ -6,8 +6,10 @@ The home page is `index.html`. The complete collections are `projects.html` and
 
 Project photos and videos appear inside
 the expandable **Project details & media** area. They work without JavaScript.
-The current boxes are intentional placeholders; they do not request missing
-files or pretend to be playable videos.
+The four featured projects now include 13 photos/screenshots and five videos
+from `Documents/ProjectDocumentations`. Images open at full size in a new tab.
+Videos have native playback controls, poster previews, and no autoplay.
+The Barbershop and portfolio entries retain placeholders for future media.
 
 ## Loading screen
 
@@ -24,6 +26,23 @@ and the accompanying `noscript` fallback when editing this area. This screen
 covers initial loading; future photos and videos load within their project
 areas using the settings below.
 
+## Included project documentation
+
+| Project folder | Photos / screenshots | Videos |
+| --- | ---: | ---: |
+| `assets/projects/vision-scale/` | 2 | 3 |
+| `assets/projects/fruityvens/` | 2 | 1 |
+| `assets/projects/robotic-arm/` | 2 | 1 |
+| `assets/projects/ballclub/` | 7 | 0 |
+
+Original files in `Documents/ProjectDocumentations` were preserved. Web videos
+use H.264/AAC MP4 with faststart and total about 26.7 MB. They are fetched when
+visitors choose to play; image previews use lazy loading.
+
+The ending home-page sections are **Certifications & Seminars → Education →
+Let’s Connect**. Education contains the academic history and technical toolkit.
+The complete certificate collection is linked from the certification section.
+
 ## Project photos
 
 1. Create `assets/projects/` and put your image there. Use a short filename without
@@ -32,7 +51,7 @@ areas using the settings below.
    `index.html`; update both copies. The research scale is `id="vision-scale"`,
    and the separate companion app is `id="fruityvens"`. Other featured IDs are
    `robotic-arm` and `ballclub`.
-3. Inside its `.project-media` area, replace the entire photo
+3. Inside its `.project-media` area, duplicate or replace an entire photo
    `<figure class="media-item">…</figure>` with this example. Update the filename,
    image description, caption, and dimensions to match your actual image.
 
@@ -53,13 +72,15 @@ areas using the settings below.
 </figure>
 ```
 
-The image fits inside its frame without cropping. Duplicate a complete figure
-to add more images. For a screenshot or diagram that needs the full row, use
+The image fits inside its frame without cropping. For the full-size link used by
+the current galleries, wrap the image in
+`<a class="media-image-link" href="THE_SAME_IMAGE_PATH" target="_blank" rel="noopener noreferrer">`.
+Duplicate a complete figure to add more images. For a screenshot or diagram that needs the full row, use
 `class="media-item media-item--wide"` on its figure.
 
 ## Project videos
 
-Put your video in `assets/projects/`, then replace the video placeholder figure
+Put your video in the appropriate `assets/projects/PROJECT/` folder, then duplicate or replace a video figure
 with the following. Change both file paths and the caption to match your video.
 
 ```html

@@ -133,7 +133,8 @@
         <nav class="main-nav" aria-label="Main navigation">
           <a href="#about" class="nav-link" aria-current="location">About</a>
           <a href="#work" class="nav-link">Work</a>
-          <a href="#background" class="nav-link">Background</a>
+          <a href="#certifications" class="nav-link">Certifications</a>
+          <a href="#background" class="nav-link">Education</a>
           <a href="#contact" class="nav-link">Contact</a>
         </nav>
         <details class="site-menu">
@@ -170,34 +171,22 @@
         <section class="about-section section" id="about" aria-labelledby="about-title">
           <div class="section-eyebrow"><span class="status-dot" aria-hidden="true"></span> A LITTLE ABOUT ME</div>
           <h1 id="about-title">Understanding how.<br><em>Building what’s next.</em></h1>
-          <p class="intro-lead">Hi, I’m Amir an ambitious Computer Engineering Student, driven by curiosity about how things work and how they can work better.</p>
+          <p class="intro-lead">Hi, I’m Amir, a Computer Engineering student turning curiosity into working systems.</p>
           <div class="prose">
-            <p>I’m fascinated by how electronics, software, machines, and control systems work together. As a Computer Engineering student, I’m learning to connect those disciplines through embedded systems, robotics, and applications that solve practical problems and make everyday work easier.</p>
-            <p>Reverse engineering is a particular interest of mine: tracing an existing system back to its design decisions, understanding its hardware and behavior, and learning from the details. I’m drawn to how that kind of analysis can inform better designs, interoperability, and improvements in commercial and industrial systems.</p>
-            <p>I like to study a problem in depth, test my assumptions, and refine what I build. My ambition is to grow into an engineer who can carry an idea from a careful investigation to a reliable, useful solution.</p>
+            <p>I’m fascinated by where <strong>hardware</strong> meets <strong>software</strong>: how <strong>embedded systems</strong> sense, <strong>robotics</strong> turns code into motion, and <strong>cybersecurity</strong> protects the connections.</p>
+            <p><strong>Reverse engineering</strong> draws me into the decisions behind a design. I want to understand the whole system, test what I learn, and grow into an engineer who builds things that matter.</p>
           </div>
           <a class="text-link" href="#work">Explore my work <span aria-hidden="true">↓</span></a>
         </section>
 
         <section class="section interests-section" aria-labelledby="interests-title">
-          <div class="section-heading"><div><p class="section-eyebrow">WHAT I WANT TO UNDERSTAND</p><h2 id="interests-title">From the circuit to the system.</h2></div></div>
+          <div class="section-heading"><div><p class="section-eyebrow">WHAT I’M INTERESTED IN</p><h2 id="interests-title">Circuits, code, and what connects them.</h2></div></div>
           <div class="interest-list">
-            <article class="interest">
-              <span class="interest-number" aria-hidden="true">a.</span>
-              <div><h3>Electronics that sense and respond</h3><p>Connecting sensors, embedded software, and devices so a physical measurement can lead to a useful action.</p></div>
-            </article>
-            <article class="interest">
-              <span class="interest-number" aria-hidden="true">b.</span>
-              <div><h3>Machines that move with purpose</h3><p>Exploring how mechanisms, motion planning, and feedback shape the way a robot moves—and how software becomes physical behavior.</p></div>
-            </article>
-            <article class="interest">
-              <span class="interest-number" aria-hidden="true">c.</span>
-              <div><h3>Software that makes a system useful</h3><p>Building interfaces, data workflows, and applied AI that turn a working prototype into something a person can understand and use.</p></div>
-            </article>
-            <article class="interest">
-              <span class="interest-number" aria-hidden="true">d.</span>
-              <div><h3>Understanding through reverse engineering</h3><p>Studying interfaces, components, and behavior to uncover how a system was built, why it works, and where its design could improve.</p></div>
-            </article>
+            <article class="interest"><span class="interest-number" aria-hidden="true">a.</span><div><h3>Hardware &amp; embedded systems</h3><p>Where a circuit starts responding: sensors, firmware, and devices that turn the physical world into useful information.</p></div></article>
+            <article class="interest"><span class="interest-number" aria-hidden="true">b.</span><div><h3>Software &amp; applied AI</h3><p>Turning an idea into a tool people can use, from a clear interface to the logic and data behind it.</p></div></article>
+            <article class="interest"><span class="interest-number" aria-hidden="true">c.</span><div><h3>Robotics &amp; control</h3><p>The moment code becomes motion. I’m interested in how mechanisms, feedback, and planning make machines move with purpose.</p></div></article>
+            <article class="interest"><span class="interest-number" aria-hidden="true">d.</span><div><h3>Cybersecurity</h3><p>Looking for the assumptions a system depends on, how they can fail, and what it takes to protect them.</p></div></article>
+            <article class="interest"><span class="interest-number" aria-hidden="true">e.</span><div><h3>Reverse engineering</h3><p>Working backward from behavior to design, uncovering the decisions inside existing hardware and software, and learning what could work better.</p></div></article>
           </div>
         </section>
 
@@ -207,33 +196,133 @@
   <div class="project-topline"><span class="project-category">EMBEDDED SYSTEMS · COMPUTER VISION</span><span class="project-number" aria-hidden="true">01</span></div>
   <h3 class="project-title-long">Computer Vision-Based Fruit Detection Automated IoT Weighing Scale with AI-Driven Sales Forecasting and Data Analytics</h3><p class="project-subtitle">Turning a physical measurement into a connected sales workflow.</p>
   <p>A connected fruit scale built around an ESP32 controller, a load cell, and an ESP32-CAM. The scale coordinates image identification through a Rust and Gemini API, computes the price from measured weight, and records confirmed sales in Firebase.</p><p class="project-connection">The hardware side of a connected research system. <a href="#fruityvens">FruityVens</a> imports its sale records, sends updated prices back, and provides the sales analytics and forecasting interface.</p>
-  <details class="project-details"><summary>Project details &amp; media <span aria-hidden="true">+</span></summary><div class="details-content"><h4>Measurement &amp; identification</h4><p>The scale controls when the camera captures an image. A Rust API returns a normalized fruit label, including named mango varieties, and the scale displays fruit, weight, and price on its LCD.</p><h4>Device communication</h4><p>Five-point load-cell calibration and filtered measurements support the weighing workflow. ESP-NOW carries commands, detection results, sale acknowledgements, and price updates between boards.</p><h4>Connected sales</h4><p>Sales can upload directly or through a dedicated ESP32 Firebase worker. Cloud price updates flow back to the scale, connecting its physical workflow to FruityVens.</p><h4>API authentication</h4><p>Bearer-token authentication protects the fruit-identification API. The camera sends its request to the Rust backend, which keeps Gemini credentials on the server.</p><div class="project-media" role="group" aria-label="IoT weighing scale photos and video">
- <figure class="media-item"><div class="media-placeholder"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="2"/><circle cx="12" cy="12" r="2"/><path d="m5 23 7-7 5 5 4-4 6 6"/></svg><strong>Project image goes here</strong><span>The camera, calibrated weighing platform, and ESP32 boards.</span></div><figcaption><span class="media-type">PHOTO / SCREENSHOT</span>IoT weighing scale in practice</figcaption></figure>
- <figure class="media-item"><div class="media-placeholder"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="2"/><path d="M10 5v22M22 5v22M4 12h6m-6 8h6m12-8h6m-6 8h6"/></svg><strong>Project video goes here</strong><span>Fruit detection, weighing, pricing, and a confirmed sale.</span></div><figcaption><span class="media-type">VIDEO</span>A demonstration of the project</figcaption></figure></div></div></details>
+  <details class="project-details"><summary>Project details &amp; media <span aria-hidden="true">+</span></summary><div class="details-content"><h4>Measurement &amp; identification</h4><p>The scale controls when the camera captures an image. A Rust API returns a normalized fruit label, including named mango varieties, and the scale displays fruit, weight, and price on its LCD.</p><h4>Device communication</h4><p>Five-point load-cell calibration and filtered measurements support the weighing workflow. ESP-NOW carries commands, detection results, sale acknowledgements, and price updates between boards.</p><h4>Connected sales</h4><p>Sales can upload directly or through a dedicated ESP32 Firebase worker. Cloud price updates flow back to the scale, connecting its physical workflow to FruityVens.</p><h4>API authentication</h4><p>Bearer-token authentication protects the fruit-identification API. The camera sends its request to the Rust backend, which keeps Gemini credentials on the server.</p><div class="project-media" role="group" aria-label="IoT weighing scale project documentation"><figure class="media-item">
+  <a class="media-image-link" href="assets/projects/vision-scale/scale-prototype.jpeg" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image in a new tab: Fruit-weighing scale prototype with an overhead camera, front display, and sample fruit on a laboratory table.">
+    <img class="project-image" src="assets/projects/vision-scale/scale-prototype.jpeg" alt="Fruit-weighing scale prototype with an overhead camera, front display, and sample fruit on a laboratory table." width="3024" height="4032" loading="lazy" decoding="async">
+    <span class="media-open" aria-hidden="true">View full size ↗</span>
+  </a>
+  <figcaption><span class="media-type">PROJECT PHOTO</span>The assembled scale and overhead camera, ready for fruit-detection testing.</figcaption>
+ </figure><figure class="media-item">
+  <a class="media-image-link" href="assets/projects/vision-scale/apple-detection-test.jpeg" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image in a new tab: An apple on the prototype scale while the team works with laptops beside the device.">
+    <img class="project-image" src="assets/projects/vision-scale/apple-detection-test.jpeg" alt="An apple on the prototype scale while the team works with laptops beside the device." width="3024" height="4032" loading="lazy" decoding="async">
+    <span class="media-open" aria-hidden="true">View full size ↗</span>
+  </a>
+  <figcaption><span class="media-type">PROJECT PHOTO</span>Testing the scale with an apple during a laboratory development session.</figcaption>
+ </figure><figure class="media-item media-item--wide">
+  <video class="project-video" controls playsinline preload="none" poster="assets/projects/vision-scale/fruit-weighing-demo-poster.jpg" width="720" height="1280" aria-label="Fruit weighing and on-device sale confirmation.">
+    <source src="assets/projects/vision-scale/fruit-weighing-demo.mp4" type="video/mp4">
+    Your browser does not support this video. <a href="assets/projects/vision-scale/fruit-weighing-demo.mp4">Open the video file</a>.
+  </video>
+  <figcaption><span class="media-type">PROJECT VIDEO · 0:22</span>Fruit weighing and on-device sale confirmation.</figcaption>
+ </figure><figure class="media-item media-item--wide">
+  <video class="project-video" controls playsinline preload="none" poster="assets/projects/vision-scale/connected-sales-demo-poster.jpg" width="720" height="1280" aria-label="Scale readings and the connected sales dashboard.">
+    <source src="assets/projects/vision-scale/connected-sales-demo.mp4" type="video/mp4">
+    Your browser does not support this video. <a href="assets/projects/vision-scale/connected-sales-demo.mp4">Open the video file</a>.
+  </video>
+  <figcaption><span class="media-type">PROJECT VIDEO · 0:17</span>Scale readings and the connected sales dashboard.</figcaption>
+ </figure><figure class="media-item media-item--wide">
+  <video class="project-video" controls playsinline preload="none" poster="assets/projects/vision-scale/scale-cad-model-poster.jpg" width="576" height="1024" aria-label="CAD model of the scale enclosure and camera mount.">
+    <source src="assets/projects/vision-scale/scale-cad-model.mp4" type="video/mp4">
+    Your browser does not support this video. <a href="assets/projects/vision-scale/scale-cad-model.mp4">Open the video file</a>.
+  </video>
+  <figcaption><span class="media-type">PROJECT VIDEO · 0:05</span>CAD model of the scale enclosure and camera mount.</figcaption>
+ </figure></div></div></details>
   <div class="project-bottom"><p class="project-stack">ESP32 · ESP32-CAM · C++ · NAU7802 · ESP-NOW · Rust · Gemini · Firebase</p><div class="project-links"><a href="https://github.com/alhamadaniamir/My-thesis-Project-correlation-with-FruityVens-App">Hardware &amp; API <span aria-hidden="true">↗</span></a></div></div>
  </article><article class="project" id="fruityvens">
   <div class="project-topline"><span class="project-category">MOBILE DEVELOPMENT · IOT · DATA ANALYTICS</span><span class="project-number" aria-hidden="true">02</span></div>
   <h3>FruityVens</h3><p class="project-subtitle">The companion app that makes scale data useful to a vendor.</p>
   <p>A Flutter companion app for managing fruit inventory, prices, and sales. It brings the weighing system&#x27;s records into a mobile workflow with local SQLite storage, Firebase synchronization, sales analytics, and report exports.</p><p class="project-connection">The software companion to the <a href="#vision-scale">computer-vision weighing scale</a>. Automated measurements come from the hardware; inventory, reporting, and forecasting live in the app and its Python service. The app also supports manual and offline workflows.</p>
-  <details class="project-details"><summary>Project details &amp; media <span aria-hidden="true">+</span></summary><div class="details-content"><h4>Scale synchronization</h4><p>Imports sale logs from the connected scale through Firebase, normalizes weights and prices, and derives stable identifiers to prevent duplicate imports. Price changes can be published back to the scale.</p><h4>Inventory &amp; reporting</h4><p>Supports inventory management, transaction history, revenue summaries, and PDF reports, with local storage for offline workflows.</p><h4>Sales forecasting</h4><p>Includes a Python forecasting service that uses transaction history to estimate seven-day demand with gradient boosting, with a sales-velocity fallback when there is too little training data.</p><h4>Sign-in &amp; approval workflows</h4><p>Firebase email/password and Google sign-in handle account access. Biometric or PIN unlock controls local app access. Separate owner and worker workflows let workers request sale changes for an owner to review and approve.</p><div class="project-media" role="group" aria-label="FruityVens photos and video">
- <figure class="media-item"><div class="media-placeholder"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="2"/><circle cx="12" cy="12" r="2"/><path d="m5 23 7-7 5 5 4-4 6 6"/></svg><strong>Project image goes here</strong><span>Inventory, sales history, or the forecasting dashboard.</span></div><figcaption><span class="media-type">PHOTO / SCREENSHOT</span>FruityVens in practice</figcaption></figure>
- <figure class="media-item"><div class="media-placeholder"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="2"/><path d="M10 5v22M22 5v22M4 12h6m-6 8h6m12-8h6m-6 8h6"/></svg><strong>Project video goes here</strong><span>A scale sale appearing in the app and an owner approval workflow.</span></div><figcaption><span class="media-type">VIDEO</span>A demonstration of the project</figcaption></figure></div></div></details>
+  <details class="project-details"><summary>Project details &amp; media <span aria-hidden="true">+</span></summary><div class="details-content"><h4>Scale synchronization</h4><p>Imports sale logs from the connected scale through Firebase, normalizes weights and prices, and derives stable identifiers to prevent duplicate imports. Price changes can be published back to the scale.</p><h4>Inventory &amp; reporting</h4><p>Supports inventory management, transaction history, revenue summaries, and PDF reports, with local storage for offline workflows.</p><h4>Sales forecasting</h4><p>Includes a Python forecasting service that uses transaction history to estimate seven-day demand with gradient boosting, with a sales-velocity fallback when there is too little training data.</p><h4>Sign-in &amp; approval workflows</h4><p>Firebase email/password and Google sign-in handle account access. Biometric or PIN unlock controls local app access. Separate owner and worker workflows let workers request sale changes for an owner to review and approve.</p><div class="project-media" role="group" aria-label="FruityVens companion app project documentation"><figure class="media-item">
+  <a class="media-image-link" href="assets/projects/fruityvens/mobile-dashboard-test.jpeg" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image in a new tab: FruityVens running on a phone with its sales dashboard visible beside a laptop displaying device data.">
+    <img class="project-image" src="assets/projects/fruityvens/mobile-dashboard-test.jpeg" alt="FruityVens running on a phone with its sales dashboard visible beside a laptop displaying device data." width="1536" height="2048" loading="lazy" decoding="async">
+    <span class="media-open" aria-hidden="true">View full size ↗</span>
+  </a>
+  <figcaption><span class="media-type">PROJECT PHOTO</span>Checking the FruityVens sales dashboard alongside the scale’s device data.</figcaption>
+ </figure><figure class="media-item">
+  <a class="media-image-link" href="assets/projects/fruityvens/development-workspace.jpeg" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image in a new tab: FruityVens running on a phone between a monitor showing source code and a laptop showing terminal output.">
+    <img class="project-image" src="assets/projects/fruityvens/development-workspace.jpeg" alt="FruityVens running on a phone between a monitor showing source code and a laptop showing terminal output." width="1920" height="1080" loading="lazy" decoding="async">
+    <span class="media-open" aria-hidden="true">View full size ↗</span>
+  </a>
+  <figcaption><span class="media-type">PROJECT PHOTO</span>The companion app running on a physical phone during development.</figcaption>
+ </figure><figure class="media-item media-item--wide">
+  <video class="project-video" controls playsinline preload="none" poster="assets/projects/fruityvens/companion-app-demo-poster.jpg" width="720" height="1280" aria-label="FruityVens analytics, recent sales, and history.">
+    <source src="assets/projects/fruityvens/companion-app-demo.mp4" type="video/mp4">
+    Your browser does not support this video. <a href="assets/projects/fruityvens/companion-app-demo.mp4">Open the video file</a>.
+  </video>
+  <figcaption><span class="media-type">PROJECT VIDEO · 0:26</span>FruityVens analytics, recent sales, and history.</figcaption>
+ </figure></div></div></details>
   <div class="project-bottom"><p class="project-stack">Flutter · Dart · SQLite · Firebase · Python · FastAPI · scikit-learn</p><div class="project-links"><a href="https://github.com/alhamadaniamir/FruityVens">Companion app repository <span aria-hidden="true">↗</span></a></div></div>
  </article><article class="project" id="robotic-arm">
   <div class="project-topline"><span class="project-category">ROBOTICS · MOTION CONTROL</span><span class="project-number" aria-hidden="true">03</span></div>
   <h3>Robotic Arm Motion Control System</h3><p class="project-subtitle">Learning how coordinated motion becomes repeatable behavior.</p>
   <p>Arduino firmware for sequencing a robotic arm with six servos and a stepper motor. The project explores joint movement, mirrored base motion, and the timing needed to coordinate physical actuators.</p>
-  <details class="project-details"><summary>Project details &amp; media <span aria-hidden="true">+</span></summary><div class="details-content"><h4>Coordinated movement</h4><p>Controls the base, shoulder, elbow, wrist, and gripper through a repeatable movement sequence.</p><h4>Joint positioning</h4><p>Uses configurable joint travel ranges and gradual servo positioning, including a paired base-servo arrangement.</p><h4>Stepper control</h4><p>Configures the stepper&#x27;s maximum speed, acceleration, and target position for controlled movement and return.</p><div class="project-media" role="group" aria-label="Robotic arm photos and video">
- <figure class="media-item"><div class="media-placeholder"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="2"/><circle cx="12" cy="12" r="2"/><path d="m5 23 7-7 5 5 4-4 6 6"/></svg><strong>Project image goes here</strong><span>A photo, screenshot, or diagram of the project.</span></div><figcaption><span class="media-type">PHOTO / SCREENSHOT</span>Robotic arm in practice</figcaption></figure>
- <figure class="media-item"><div class="media-placeholder"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="2"/><path d="M10 5v22M22 5v22M4 12h6m-6 8h6m12-8h6m-6 8h6"/></svg><strong>Project video goes here</strong><span>A walkthrough of the project in use.</span></div><figcaption><span class="media-type">VIDEO</span>A demonstration of the project</figcaption></figure></div></div></details>
+  <details class="project-details"><summary>Project details &amp; media <span aria-hidden="true">+</span></summary><div class="details-content"><h4>Coordinated movement</h4><p>Controls the base, shoulder, elbow, wrist, and gripper through a repeatable movement sequence.</p><h4>Joint positioning</h4><p>Uses configurable joint travel ranges and gradual servo positioning, including a paired base-servo arrangement.</p><h4>Stepper control</h4><p>Configures the stepper&#x27;s maximum speed, acceleration, and target position for controlled movement and return.</p><div class="project-media" role="group" aria-label="Robotic arm project documentation"><figure class="media-item">
+  <a class="media-image-link" href="assets/projects/robotic-arm/raised-arm.jpeg" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image in a new tab: Gray robotic arm on a workbench with the gripper raised and servo wiring visible.">
+    <img class="project-image" src="assets/projects/robotic-arm/raised-arm.jpeg" alt="Gray robotic arm on a workbench with the gripper raised and servo wiring visible." width="1536" height="2048" loading="lazy" decoding="async">
+    <span class="media-open" aria-hidden="true">View full size ↗</span>
+  </a>
+  <figcaption><span class="media-type">PROJECT PHOTO</span>The assembled arm in a raised position, with its joints and servo wiring visible.</figcaption>
+ </figure><figure class="media-item">
+  <a class="media-image-link" href="assets/projects/robotic-arm/extended-arm.jpeg" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image in a new tab: Gray robotic arm extending its open gripper across a workbench beside control electronics.">
+    <img class="project-image" src="assets/projects/robotic-arm/extended-arm.jpeg" alt="Gray robotic arm extending its open gripper across a workbench beside control electronics." width="2048" height="1536" loading="lazy" decoding="async">
+    <span class="media-open" aria-hidden="true">View full size ↗</span>
+  </a>
+  <figcaption><span class="media-type">PROJECT PHOTO</span>The arm extended across the workbench with its gripper open.</figcaption>
+ </figure><figure class="media-item media-item--wide">
+  <video class="project-video" controls playsinline preload="none" poster="assets/projects/robotic-arm/robotic-arm-demo-poster.jpg" width="1280" height="720" aria-label="Robotic arm motion test on the workbench.">
+    <source src="assets/projects/robotic-arm/robotic-arm-demo.mp4" type="video/mp4">
+    Your browser does not support this video. <a href="assets/projects/robotic-arm/robotic-arm-demo.mp4">Open the video file</a>.
+  </video>
+  <figcaption><span class="media-type">PROJECT VIDEO · 0:17</span>Robotic arm motion test on the workbench.</figcaption>
+ </figure></div></div></details>
   <div class="project-bottom"><p class="project-stack">Arduino · C++ · Servo · AccelStepper</p><div class="project-links"></div></div>
  </article><article class="project" id="ballclub">
   <div class="project-topline"><span class="project-category">FULL-STACK DEVELOPMENT · OPERATIONS</span><span class="project-number" aria-hidden="true">04</span></div>
   <h3>Ballclub</h3><p class="project-subtitle">Making basketball sessions easier to organize.</p>
   <p>A basketball session management platform that brings player registration, join requests, queues, and payment tracking into one workflow. Owners can organize sessions while players request a place through a shared link.</p>
-  <details class="project-details"><summary>Project details &amp; media <span aria-hidden="true">+</span></summary><div class="details-content"><h4>Session management</h4><p>Manages session queues, owner approval of join requests, player fees, and payment status.</p><h4>Records &amp; reporting</h4><p>Keeps member attendance and payment histories, with dashboard totals and CSV downloads for bookkeeping.</p><h4>Application architecture</h4><p>Separates the Vue interface from a Python FastAPI backend and MongoDB persistence.</p><h4>Authentication &amp; verification</h4><p>The backend uses JWT authentication, bcrypt password hashing, and request rate limits. The project includes 56 automated API tests covering authentication and club workflows.</p><div class="project-media" role="group" aria-label="Ballclub photos and video">
- <figure class="media-item"><div class="media-placeholder"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="2"/><circle cx="12" cy="12" r="2"/><path d="m5 23 7-7 5 5 4-4 6 6"/></svg><strong>Project image goes here</strong><span>A photo, screenshot, or diagram of the project.</span></div><figcaption><span class="media-type">PHOTO / SCREENSHOT</span>Ballclub in practice</figcaption></figure>
- <figure class="media-item"><div class="media-placeholder"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="2"/><path d="M10 5v22M22 5v22M4 12h6m-6 8h6m12-8h6m-6 8h6"/></svg><strong>Project video goes here</strong><span>A walkthrough of the project in use.</span></div><figcaption><span class="media-type">VIDEO</span>A demonstration of the project</figcaption></figure></div></div></details>
+  <details class="project-details"><summary>Project details &amp; media <span aria-hidden="true">+</span></summary><div class="details-content"><h4>Session management</h4><p>Manages session queues, owner approval of join requests, player fees, and payment status.</p><h4>Records &amp; reporting</h4><p>Keeps member attendance and payment histories, with dashboard totals and CSV downloads for bookkeeping.</p><h4>Application architecture</h4><p>Separates the Vue interface from a Python FastAPI backend and MongoDB persistence.</p><h4>Authentication &amp; verification</h4><p>The backend uses JWT authentication, bcrypt password hashing, and request rate limits. The project includes 56 automated API tests covering authentication and club workflows.</p><div class="project-media" role="group" aria-label="Ballclub project documentation"><figure class="media-item">
+  <a class="media-image-link" href="assets/projects/ballclub/dashboard.png" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image in a new tab: Ballclub dashboard with session totals, a status chart, an active session, and recent sessions.">
+    <img class="project-image" src="assets/projects/ballclub/dashboard.png" alt="Ballclub dashboard with session totals, a status chart, an active session, and recent sessions." width="1307" height="724" loading="lazy" decoding="async">
+    <span class="media-open" aria-hidden="true">View full size ↗</span>
+  </a>
+  <figcaption><span class="media-type">SCREENSHOT</span>Dashboard overview of sessions, membership, and revenue.</figcaption>
+ </figure><figure class="media-item">
+  <a class="media-image-link" href="assets/projects/ballclub/session-management.png" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image in a new tab: Ballclub session page showing fee, capacity, a shareable join link, and the player queue.">
+    <img class="project-image" src="assets/projects/ballclub/session-management.png" alt="Ballclub session page showing fee, capacity, a shareable join link, and the player queue." width="1323" height="724" loading="lazy" decoding="async">
+    <span class="media-open" aria-hidden="true">View full size ↗</span>
+  </a>
+  <figcaption><span class="media-type">SCREENSHOT</span>Session controls bring the join link, capacity, and player queue into one view.</figcaption>
+ </figure><figure class="media-item">
+  <a class="media-image-link" href="assets/projects/ballclub/session-history.png" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image in a new tab: Ballclub session history with date and status filters and cards for open and closed sessions.">
+    <img class="project-image" src="assets/projects/ballclub/session-history.png" alt="Ballclub session history with date and status filters and cards for open and closed sessions." width="1328" height="727" loading="lazy" decoding="async">
+    <span class="media-open" aria-hidden="true">View full size ↗</span>
+  </a>
+  <figcaption><span class="media-type">SCREENSHOT</span>Session history with date and status filters.</figcaption>
+ </figure><figure class="media-item">
+  <a class="media-image-link" href="assets/projects/ballclub/members.png" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image in a new tab: Ballclub member directory with a search field, member cards, CSV export, and an add-member button.">
+    <img class="project-image" src="assets/projects/ballclub/members.png" alt="Ballclub member directory with a search field, member cards, CSV export, and an add-member button." width="1319" height="725" loading="lazy" decoding="async">
+    <span class="media-open" aria-hidden="true">View full size ↗</span>
+  </a>
+  <figcaption><span class="media-type">SCREENSHOT</span>Member management with search and CSV export.</figcaption>
+ </figure><figure class="media-item">
+  <a class="media-image-link" href="assets/projects/ballclub/owner-accounts.png" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image in a new tab: Ballclub owner-account page with username search and controls to add or remove an owner.">
+    <img class="project-image" src="assets/projects/ballclub/owner-accounts.png" alt="Ballclub owner-account page with username search and controls to add or remove an owner." width="1323" height="717" loading="lazy" decoding="async">
+    <span class="media-open" aria-hidden="true">View full size ↗</span>
+  </a>
+  <figcaption><span class="media-type">SCREENSHOT</span>A dedicated view for managing owner accounts.</figcaption>
+ </figure><figure class="media-item">
+  <a class="media-image-link" href="assets/projects/ballclub/account-profile.png" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image in a new tab: Ballclub profile page with account details, masked password fields, and an edit button.">
+    <img class="project-image" src="assets/projects/ballclub/account-profile.png" alt="Ballclub profile page with account details, masked password fields, and an edit button." width="1317" height="723" loading="lazy" decoding="async">
+    <span class="media-open" aria-hidden="true">View full size ↗</span>
+  </a>
+  <figcaption><span class="media-type">SCREENSHOT</span>Account settings keep profile and password updates together.</figcaption>
+ </figure><figure class="media-item">
+  <a class="media-image-link" href="assets/projects/ballclub/owner-sign-in.png" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image in a new tab: Ballclub owner sign-in screen with username and password fields and a log-in button.">
+    <img class="project-image" src="assets/projects/ballclub/owner-sign-in.png" alt="Ballclub owner sign-in screen with username and password fields and a log-in button." width="1322" height="721" loading="lazy" decoding="async">
+    <span class="media-open" aria-hidden="true">View full size ↗</span>
+  </a>
+  <figcaption><span class="media-type">SCREENSHOT</span>The owner sign-in screen.</figcaption>
+ </figure></div></div></details>
   <div class="project-bottom"><p class="project-stack">Vue 3 · FastAPI · MongoDB · Tailwind CSS · Chart.js</p><div class="project-links"><a href="https://github.com/alhamadaniamir/ballclub-app-front">Backend repository <span aria-hidden="true">↗</span></a></div></div>
  </article>
           <a class="collection-link" href="projects.html"><span>Explore all projects &amp; experiments</span><span aria-hidden="true">↗</span></a>
@@ -241,26 +330,12 @@
 
         <section class="section approach-section" aria-labelledby="approach-title">
           <p class="section-eyebrow">HOW I APPROACH THE WORK</p>
-          <h2 id="approach-title">Curiosity, followed by care.</h2>
-          <p>I’m motivated by problems that take more than a quick fix. I want to understand the cause, make the design choices clear, and test what happens when things don’t go as expected. Learning a new tool matters to me because of what it helps me understand and build.</p>
-          <p>My goal is to keep developing the judgment to take on more demanding engineering problems—and to make each solution reliable, understandable, and easier to maintain.</p>
+          <h2 id="approach-title">Curiosity is an engineering skill.</h2>
+          <p>Every design choice starts with a question. I follow those questions into schematics, source code, and experiments, then test what I think I know.</p>
+          <p>That’s how curiosity becomes engineering judgment: understanding the reason behind a design and finding a better way to build it.</p>
         </section>
 
-        <section class="section background-section" id="background" aria-labelledby="background-title">
-          <div class="section-heading"><div><p class="section-eyebrow">THE FOUNDATION</p><h2 id="background-title">Learning, in progress.</h2></div></div>
-          <a class="text-link background-jump" href="#certifications">Certifications &amp; seminars <span aria-hidden="true">↓</span></a>
-          <div class="education-list">
-            <article class="education-item"><p class="education-date">2024 — 2027 <span>EXPECTED</span></p><div><h3>PHINMA Cagayan de Oro College</h3><p>BS Computer Engineering</p><p class="education-detail">Embedded systems, microprocessors, networks and security, feedback and control, and digital signal processing.</p></div></article>
-            <article class="education-item"><p class="education-date">2022 — 2024</p><div><h3>University of Science and Technology of Southern Philippines</h3><p>Computer Engineering studies</p><p class="education-detail">Algorithms, object-oriented programming, electrical circuits, operating systems, and numerical methods.</p></div></article>
-            <article class="education-item"><p class="education-date">2018 — 2020</p><div><h3>Capitol University</h3><p>Senior High School · STEM–IT</p></div></article>
-          </div>
-          <details class="toolkit"><summary><span>My technical toolkit</span><span class="toolkit-hint">Languages, platforms &amp; tools <span aria-hidden="true">+</span></span></summary><div class="toolkit-content">
-            <div><h3>Languages</h3><p>C/C++, Python, JavaScript, Rust, MATLAB, MicroPython, Java, Dart, PHP, Bash, Verilog.</p></div>
-            <div><h3>Applications &amp; data</h3><p>Vue, React, Node.js, Flask, FastAPI, Django, React Native, Flutter, Tailwind CSS, MongoDB, MySQL, SQLite.</p></div>
-            <div><h3>Embedded &amp; robotics</h3><p>ESP32, ESP32-S3, ESP32-CAM, Raspberry Pi, Arduino Nano and Uno, Blynk, Drake, kinematics, motion planning, dynamics, control systems.</p></div>
-            <div><h3>AI, security &amp; tools</h3><p>Gemini API, computer vision, TensorFlow, PyTorch, scikit-learn, SIEM, Wireshark, JWT authentication, tcpdump, Firebase Realtime Database, Vercel, Git, Arch Linux.</p></div>
-          </div></details>
-        </section>
+
 
         <section class="section certifications-section" id="certifications" aria-labelledby="certifications-title">
           <div class="section-heading"><div><p class="section-eyebrow">LEARNING BEYOND THE CLASSROOM</p><h2 id="certifications-title">Certifications &amp; seminars.</h2></div></div>
@@ -303,6 +378,21 @@
       </div>
     </article></div>
           <a class="collection-link" href="certifications.html"><span>View all certifications &amp; seminars</span><span aria-hidden="true">↗</span></a>
+        </section>
+
+        <section class="section background-section" id="background" aria-labelledby="background-title">
+          <div class="section-heading"><div><p class="section-eyebrow">THE FOUNDATION</p><h2 id="background-title">Education.</h2></div></div>
+          <div class="education-list">
+            <article class="education-item"><p class="education-date">2024 — 2027 <span>EXPECTED</span></p><div><h3>PHINMA Cagayan de Oro College</h3><p>BS Computer Engineering</p><p class="education-detail">Embedded systems, microprocessors, networks and security, feedback and control, and digital signal processing.</p></div></article>
+            <article class="education-item"><p class="education-date">2022 — 2024</p><div><h3>University of Science and Technology of Southern Philippines</h3><p>Computer Engineering studies</p><p class="education-detail">Algorithms, object-oriented programming, electrical circuits, operating systems, and numerical methods.</p></div></article>
+            <article class="education-item"><p class="education-date">2018 — 2020</p><div><h3>Capitol University</h3><p>Senior High School · STEM–IT</p></div></article>
+          </div>
+          <details class="toolkit"><summary><span>My technical toolkit</span><span class="toolkit-hint">Languages, platforms &amp; tools <span aria-hidden="true">+</span></span></summary><div class="toolkit-content">
+            <div><h3>Languages</h3><p>C/C++, Python, JavaScript, Rust, MATLAB, MicroPython, Java, Dart, PHP, Bash, Verilog.</p></div>
+            <div><h3>Applications &amp; data</h3><p>Vue, React, Node.js, Flask, FastAPI, Django, React Native, Flutter, Tailwind CSS, MongoDB, MySQL, SQLite.</p></div>
+            <div><h3>Embedded &amp; robotics</h3><p>ESP32, ESP32-S3, ESP32-CAM, Raspberry Pi, Arduino Nano and Uno, Blynk, Drake, kinematics, motion planning, dynamics, control systems.</p></div>
+            <div><h3>AI, security &amp; tools</h3><p>Gemini API, computer vision, TensorFlow, PyTorch, scikit-learn, SIEM, Wireshark, JWT authentication, tcpdump, Firebase Realtime Database, Vercel, Git, Arch Linux.</p></div>
+          </div></details>
         </section>
 
         <section class="section contact-section" id="contact" aria-labelledby="contact-title">
