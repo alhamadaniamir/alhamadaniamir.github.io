@@ -2,7 +2,8 @@
 
 The home page is `index.html`. The complete collections are `projects.html` and
 `certifications.html`. All pages are plain HTML, sharing `style.css` and
-`script.js`; no build step is needed. The top-right Menu links them together.
+`script.js`, plus `theme.js` for appearance preferences; no build step is needed.
+The top-right Menu links them together.
 
 Project photos and videos appear inside
 the expandable **Project details & media** area. They work without JavaScript.
@@ -10,6 +11,23 @@ The four featured projects now include 13 photos/screenshots and five videos
 from `Documents/ProjectDocumentations`. Images open at full size in a new tab.
 Videos have native playback controls, poster previews, and no autoplay.
 The Barbershop and portfolio entries retain placeholders for future media.
+
+With JavaScript enabled, a **Collapse project** button stays at the bottom-right
+of the reading area while a project is expanded. It pauses videos and returns
+you to the project summary with a brief transition. Reduced-motion preferences
+disable the animation. The original summary remains usable without JavaScript.
+
+## Light and dark themes
+
+The **Dark theme** switch sits in the bottom-left corner on all three pages.
+Light is the default. A visitor's choice is saved in their browser and shared
+across the portfolio pages; switching still works if browser storage is blocked.
+The loading screen follows the saved choice, while printed pages use light colors.
+
+`theme.js` handles the switch. A small inline script in each HTML head reads the
+saved choice before the page appears. Theme colors are in `style.css`; keep the
+matching critical loading-screen colors in each HTML head consistent when changing
+the palette. The site uses light colors and hides the switch without JavaScript.
 
 ## Loading screen
 

@@ -68,27 +68,90 @@
       details.querySelectorAll('video').forEach((video) => video.pause());
     }
 
-    button.addEventListener('click', () => {
-      pauseMedia();
+    let closing = false;
+    let closeAnimation = null;
+    let returnAnimation = null;
+    let closeRequest = 0;
+    let contentWasInert = content.inert;
+
+    function cancelClose() {
+      closeRequest += 1;
+      closeAnimation?.cancel();
+      closeAnimation = null;
+      if (closing) content.inert = contentWasInert;
+      closing = false;
+      button.disabled = false;
+    }
+
+    function finishClose(request, reducedMotion) {
+      if (!closing || request !== closeRequest || !details.open) return;
+
+      // Keep a visible summary in place. From deep in a gallery, return to it directly
+      // instead of smoothly scrolling through several screens of unrelated content.
+      const headerHeight = document.querySelector('.site-header')?.getBoundingClientRect().height || 0;
+      const topInset = headerHeight + 20;
+      const position = summary.getBoundingClientRect();
+      const summaryVisible = position.top >= topInset && position.bottom <= window.innerHeight - 20;
+      const targetScroll = summaryVisible ? window.scrollY : Math.max(0, window.scrollY + position.top - topInset);
+
+      cancelClose();
       summary.focus({ preventScroll: true });
       details.open = false;
+      // This synchronous scroll flushes the collapsed layout before the next paint,
+      // preventing a frame at the browser's temporary scroll-anchor position.
+      window.scrollTo({ top: targetScroll, behavior: 'instant' });
 
-      // Measure after the gallery has collapsed, including any browser scroll anchoring.
-      window.requestAnimationFrame(() => {
-        const headerHeight = document.querySelector('.site-header')?.getBoundingClientRect().height || 0;
-        const topInset = headerHeight + 20;
-        const position = summary.getBoundingClientRect();
-        if (position.top >= topInset && position.bottom <= window.innerHeight - 20) return;
-        window.scrollTo({
-          top: Math.max(0, window.scrollY + position.top - topInset),
-          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
-        });
-      });
+      if (!summaryVisible && !reducedMotion && typeof summary.animate === 'function') {
+        returnAnimation?.cancel();
+        returnAnimation = summary.animate(
+          [{ opacity: 0.45 }, { opacity: 1 }],
+          { duration: 160, easing: 'ease-out' },
+        );
+      }
+    }
+
+    function closeProject() {
+      if (!details.open || closing) return;
+      pauseMedia();
+      returnAnimation?.cancel();
+      summary.focus({ preventScroll: true });
+      closing = true;
+      const request = ++closeRequest;
+      contentWasInert = content.inert;
+      content.inert = true;
+      button.disabled = true;
+
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reducedMotion || typeof content.animate !== 'function') {
+        finishClose(request, reducedMotion);
+        return;
+      }
+
+      // Fade only; animating the height of a long gallery would pull the page around.
+      closeAnimation = content.animate(
+        [{ opacity: getComputedStyle(content).opacity }, { opacity: 0 }],
+        { duration: 120, easing: 'ease-in', fill: 'forwards' },
+      );
+      closeAnimation.finished.then(
+        () => finishClose(request, reducedMotion),
+        () => {}, // A second summary activation or external close cancels the fade.
+      );
+    }
+
+    button.addEventListener('click', closeProject);
+    summary.addEventListener('click', (event) => {
+      if (event.defaultPrevented || event.button !== 0) return;
+      returnAnimation?.cancel();
+      if (!details.open) return;
+      event.preventDefault();
+      if (closing) cancelClose();
+      else closeProject();
     });
 
-    // Also pause media when a project is closed through its native summary.
+    // Programmatic closures still clean up media, pending animation, and hidden focus.
     details.addEventListener('toggle', () => {
       if (details.open) return;
+      cancelClose();
       pauseMedia();
       if (content.contains(document.activeElement)) summary.focus({ preventScroll: true });
     });

@@ -12,7 +12,7 @@
     <meta property="og:description" content="Amir Al Hamadani’s projects in embedded systems, computer vision, robotics, and software.">
     <meta property="og:url" content="https://alhamadaniamir.github.io/projects.html">
     <link rel="canonical" href="https://alhamadaniamir.github.io/projects.html">
-    <link rel="icon" href="assets/favicon.svg?v=iron-mask" type="image/svg+xml">
+    <link rel="icon" href="assets/favicon.svg?v=simple-mask" type="image/svg+xml">
     <!-- Read the saved theme before the first paint, including the loading screen. -->
     <script>
       (() => {
@@ -93,7 +93,7 @@
           loader.setAttribute('aria-modal', 'true');
           loader.setAttribute('aria-labelledby', 'page-loader-title');
           loader.setAttribute('aria-describedby', 'page-loader-description');
-          loader.innerHTML = '<div class="page-loader-content"><div class="page-loader-mark" aria-hidden="true"><img src="assets/favicon.svg?v=iron-mask" width="46" height="46" alt="">Portfolio</div><div class="page-loader-track" aria-hidden="true"></div><h2 id="page-loader-title">Loading portfolio</h2><p id="page-loader-description">Getting things ready. You can continue while the rest loads.</p><button type="button">Continue to portfolio <span aria-hidden="true">↗</span></button></div>';
+          loader.innerHTML = '<div class="page-loader-content"><div class="page-loader-mark" aria-hidden="true"><img src="assets/favicon.svg?v=simple-mask" width="46" height="46" alt="">Portfolio</div><div class="page-loader-track" aria-hidden="true"></div><h2 id="page-loader-title">Loading portfolio</h2><p id="page-loader-description">Getting things ready. You can continue while the rest loads.</p><button type="button">Continue to portfolio <span aria-hidden="true">↗</span></button></div>';
           [...document.body.children].forEach(makeInert);
           observer = new MutationObserver((records) => {
             records.forEach((record) => record.addedNodes.forEach((node) => {
@@ -142,7 +142,7 @@
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="header-inner">
-        <a class="wordmark" href="index.html" aria-label="Portfolio home"><img class="site-logo" src="assets/favicon.svg?v=iron-mask" width="34" height="40" alt=""><span>Portfolio</span></a>
+        <a class="wordmark" href="index.html" aria-label="Portfolio home"><img class="site-logo" src="assets/favicon.svg?v=simple-mask" width="34" height="40" alt=""><span>Portfolio</span></a>
         <nav class="main-nav" aria-label="Main navigation">
           <a href="index.html#about" class="nav-link">About</a>
           <a href="index.html#work" class="nav-link">Work</a>
@@ -160,9 +160,6 @@
             <a href="index.html#background">Education &amp; toolkit <span aria-hidden="true">↗</span></a>
             <a href="index.html#contact">Get in touch <span aria-hidden="true">↗</span></a>
             <a class="menu-resume" href="assets/Amir-Al-Hamadani-Resume.pdf" target="_blank" rel="noopener noreferrer">Open résumé <span class="file-type">PDF ↗</span></a>
-            <button class="theme-toggle theme-toggle--menu" type="button" role="switch" aria-checked="false" data-theme-toggle hidden>
-              <span>Dark theme</span><span class="theme-switch" aria-hidden="true"></span>
-            </button>
           </nav>
         </details>
       </div>
@@ -171,10 +168,10 @@
     <main id="main" class="archive-main">
       <a class="archive-back" href="index.html"><span aria-hidden="true">←</span> Back to portfolio</a>
       <section class="archive-intro" aria-labelledby="archive-title">
-        <p class="section-eyebrow">PROJECTS &amp; EXPERIMENTS</p>
+        <p class="section-eyebrow">IDEAS, PUT INTO ACTION</p>
         <h1 id="archive-title">Built to learn.<br><em>Built to be useful.</em></h1>
-        <p class="intro-lead">A closer look at my work across embedded systems, robotics, and software. Each project starts with something I want to understand or improve.</p>
-        <nav class="archive-jumps" aria-label="Browse projects"><a href="#vision-scale">IoT weighing scale</a><a href="#fruityvens">FruityVens</a><a href="#robotic-arm">Robotic arm</a><a href="#ballclub">Ballclub</a><a href="#barbershop">Barbershop prototype</a><a href="#portfolio">This portfolio</a></nav>
+        <p class="intro-lead">Completed projects across embedded systems, robotics, and software. A closer look at the problems I addressed, the systems I built, and how they work.</p>
+        <nav class="archive-jumps" aria-label="Browse projects"><a href="#vision-scale">IoT weighing scale</a><a href="#fruityvens">FruityVens</a><a href="#robotic-arm">Robotic arm</a><a href="#ballclub">Ballclub</a><a href="#barbershop">Barbershop website</a><a href="#portfolio">This portfolio</a></nav>
       </section>
       <section class="archive-projects" aria-label="Project collection"><article class="project" id="vision-scale">
   <div class="project-topline"><span class="project-category">EMBEDDED SYSTEMS · COMPUTER VISION</span><span class="project-number" aria-hidden="true">01</span></div>
@@ -215,8 +212,8 @@
  </article><article class="project" id="fruityvens">
   <div class="project-topline"><span class="project-category">MOBILE DEVELOPMENT · IOT · DATA ANALYTICS</span><span class="project-number" aria-hidden="true">02</span></div>
   <h3>FruityVens</h3><p class="project-subtitle">The companion app that makes scale data useful to a vendor.</p>
-  <p>A Flutter companion app for managing fruit inventory, prices, and sales. It brings the weighing system&#x27;s records into a mobile workflow with local SQLite storage, Firebase synchronization, sales analytics, and report exports.</p><p class="project-connection">The software companion to the <a href="#vision-scale">computer-vision weighing scale</a>. Automated measurements come from the hardware; inventory, reporting, and forecasting live in the app and its Python service. The app also supports manual and offline workflows.</p>
-  <details class="project-details"><summary>Project details &amp; media <span aria-hidden="true">+</span></summary><div class="details-content"><h4>Scale synchronization</h4><p>Imports sale logs from the connected scale through Firebase, normalizes weights and prices, and derives stable identifiers to prevent duplicate imports. Price changes can be published back to the scale.</p><h4>Inventory &amp; reporting</h4><p>Supports inventory management, transaction history, revenue summaries, and PDF reports, with local storage for offline workflows.</p><h4>Sales forecasting</h4><p>Includes a Python forecasting service that uses transaction history to estimate seven-day demand with gradient boosting, with a sales-velocity fallback when there is too little training data.</p><h4>Sign-in &amp; approval workflows</h4><p>Firebase email/password and Google sign-in handle account access. Biometric or PIN unlock controls local app access. Separate owner and worker workflows let workers request sale changes for an owner to review and approve.</p><div class="project-media" role="group" aria-label="FruityVens companion app project documentation"><figure class="media-item">
+  <p>A Flutter companion app for fruit inventory, sales analytics, and AI-driven sales forecasting. Its Python service uses gradient boosting regression to estimate seven-day demand from sales history, while SQLite and Firebase keep the vendor’s records available offline and synchronized with the scale.</p><p class="project-connection">The software companion to the <a href="#vision-scale">computer-vision weighing scale</a>. Automated measurements come from the hardware; inventory, reporting, and forecasting live in the app and its Python service. The app also supports manual and offline workflows.</p>
+  <details class="project-details"><summary>Project details &amp; media <span aria-hidden="true">+</span></summary><div class="details-content"><h4>Scale synchronization</h4><p>Imports sale logs from the connected scale through Firebase, normalizes weights and prices, and derives stable identifiers to prevent duplicate imports. Price changes can be published back to the scale.</p><h4>Inventory &amp; reporting</h4><p>Supports inventory management, transaction history, revenue summaries, and PDF reports, with local storage for offline workflows.</p><h4>AI-driven sales forecasting</h4><p>A Python service uses scikit-learn’s GradientBoostingRegressor to forecast seven-day fruit demand from transaction history. When there is too little training data, it falls back to estimates based on recent sales rates.</p><h4>Sign-in &amp; approval workflows</h4><p>Firebase email/password and Google sign-in handle account access. Biometric or PIN unlock controls local app access. Separate owner and worker workflows let workers request sale changes for an owner to review and approve.</p><div class="project-media" role="group" aria-label="FruityVens companion app project documentation"><figure class="media-item">
   <a class="media-image-link" href="assets/projects/fruityvens/mobile-dashboard-test.jpeg" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image in a new tab: FruityVens running on a phone with its sales dashboard visible beside a laptop displaying device data.">
     <img class="project-image" src="assets/projects/fruityvens/mobile-dashboard-test.jpeg" alt="FruityVens running on a phone with its sales dashboard visible beside a laptop displaying device data." width="1536" height="2048" loading="lazy" decoding="async">
     <span class="media-open" aria-hidden="true">View full size ↗</span>
@@ -239,7 +236,7 @@
  </article><article class="project" id="robotic-arm">
   <div class="project-topline"><span class="project-category">ROBOTICS · MOTION CONTROL</span><span class="project-number" aria-hidden="true">03</span></div>
   <h3>Robotic Arm Motion Control System</h3><p class="project-subtitle">Learning how coordinated motion becomes repeatable behavior.</p>
-  <p>Arduino firmware for sequencing a robotic arm with six servos and a stepper motor. The project explores joint movement, mirrored base motion, and the timing needed to coordinate physical actuators.</p>
+  <p>Arduino firmware for sequencing a robotic arm with six servos and a stepper motor. It coordinates joint movement, mirrored base motion, and actuator timing through repeatable movement sequences.</p>
   <details class="project-details"><summary>Project details &amp; media <span aria-hidden="true">+</span></summary><div class="details-content"><h4>Coordinated movement</h4><p>Controls the base, shoulder, elbow, wrist, and gripper through a repeatable movement sequence.</p><h4>Joint positioning</h4><p>Uses configurable joint travel ranges and gradual servo positioning, including a paired base-servo arrangement.</p><h4>Stepper control</h4><p>Configures the stepper&#x27;s maximum speed, acceleration, and target position for controlled movement and return.</p><div class="project-media" role="group" aria-label="Robotic arm project documentation"><figure class="media-item">
   <a class="media-image-link" href="assets/projects/robotic-arm/raised-arm.jpeg" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image in a new tab: Gray robotic arm on a workbench with the gripper raised and servo wiring visible.">
     <img class="project-image" src="assets/projects/robotic-arm/raised-arm.jpeg" alt="Gray robotic arm on a workbench with the gripper raised and servo wiring visible." width="1536" height="2048" loading="lazy" decoding="async">
@@ -310,10 +307,10 @@
   <div class="project-bottom"><p class="project-stack">Vue 3 · FastAPI · MongoDB · Tailwind CSS · Chart.js</p><div class="project-links"><a href="https://github.com/alhamadaniamir/ballclub-app-front">Backend repository <span aria-hidden="true">↗</span></a></div></div>
  </article><article class="project" id="barbershop">
   <div class="project-topline"><span class="project-category">WEB DEVELOPMENT · SERVICE WORKFLOWS</span><span class="project-number" aria-hidden="true">05</span></div>
-  <h3>Barbershop Website Prototype</h3><p class="project-subtitle">Exploring a simpler way to present a local service.</p>
-  <p>A Flask website prototype for a barbershop, with service and barber profiles, appointment storage, customer reviews, and a gallery data model.</p>
-  <details class="project-details"><summary>Project details &amp; media <span aria-hidden="true">+</span></summary><div class="details-content"><h4>Service presentation</h4><p>Organizes services, barber profiles, and review summaries in a server-rendered website.</p><h4>Data modeling</h4><p>Defines SQLite storage for appointments, reviews, and gallery entries.</p><div class="project-media" role="group" aria-label="Barbershop prototype photos and video">
- <figure class="media-item"><div class="media-placeholder"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="2"/><circle cx="12" cy="12" r="2"/><path d="m5 23 7-7 5 5 4-4 6 6"/></svg><strong>Project image goes here</strong><span>A photo, screenshot, or diagram of the project.</span></div><figcaption><span class="media-type">PHOTO / SCREENSHOT</span>Barbershop prototype in practice</figcaption></figure>
+  <h3>Barbershop Website</h3><p class="project-subtitle">A simpler way to present a local service.</p>
+  <p>A Flask website for a barbershop, with service and barber profiles, appointment storage, customer reviews, and a gallery data model.</p>
+  <details class="project-details"><summary>Project details &amp; media <span aria-hidden="true">+</span></summary><div class="details-content"><h4>Service presentation</h4><p>Organizes services, barber profiles, and review summaries in a server-rendered website.</p><h4>Data modeling</h4><p>Defines SQLite storage for appointments, reviews, and gallery entries.</p><div class="project-media" role="group" aria-label="Barbershop website photos and video">
+ <figure class="media-item"><div class="media-placeholder"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="2"/><circle cx="12" cy="12" r="2"/><path d="m5 23 7-7 5 5 4-4 6 6"/></svg><strong>Project image goes here</strong><span>A photo, screenshot, or diagram of the project.</span></div><figcaption><span class="media-type">PHOTO / SCREENSHOT</span>Barbershop website in practice</figcaption></figure>
  <figure class="media-item"><div class="media-placeholder"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="2"/><path d="M10 5v22M22 5v22M4 12h6m-6 8h6m12-8h6m-6 8h6"/></svg><strong>Project video goes here</strong><span>A walkthrough of the project in use.</span></div><figcaption><span class="media-type">VIDEO</span>A demonstration of the project</figcaption></figure></div></div></details>
   <div class="project-bottom"><p class="project-stack">Python · Flask · SQLite · HTML · CSS</p><div class="project-links"></div></div>
  </article><article class="project" id="portfolio">
@@ -325,8 +322,11 @@
  <figure class="media-item"><div class="media-placeholder"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="2"/><path d="M10 5v22M22 5v22M4 12h6m-6 8h6m12-8h6m-6 8h6"/></svg><strong>Project video goes here</strong><span>A walkthrough of the project in use.</span></div><figcaption><span class="media-type">VIDEO</span>A demonstration of the project</figcaption></figure></div></div></details>
   <div class="project-bottom"><p class="project-stack">HTML · CSS · JavaScript · GitHub Pages</p><div class="project-links"><a href="https://github.com/alhamadaniamir/alhamadaniamir.github.io">Source code <span aria-hidden="true">↗</span></a></div></div>
  </article></section>
-      <div class="archive-cta"><p>I keep learning through smaller experiments, too. My GitHub is where I share source code and continue developing these ideas.</p><a class="text-link" href="https://github.com/alhamadaniamir?tab=repositories">Browse my GitHub repositories <span aria-hidden="true">↗</span></a></div>
+      <div class="archive-cta"><p>Explore the source code behind these completed projects on my GitHub, along with other work across software, hardware, and automation.</p><a class="text-link" href="https://github.com/alhamadaniamir?tab=repositories">Browse my GitHub repositories <span aria-hidden="true">↗</span></a></div>
     </main>
     <footer class="site-footer"><div><p>© <span id="year">2026</span> Amir Hussein R. Al Hamadani</p><a href="index.html#about">Back to portfolio <span aria-hidden="true">↑</span></a></div><p class="footer-note">Built with curiosity. Refined with care.</p></footer>
+    <button class="theme-toggle theme-toggle--floating" type="button" role="switch" aria-checked="false" data-theme-toggle hidden>
+      <span>Dark theme</span><span class="theme-switch" aria-hidden="true"></span>
+    </button>
   </body>
 </html>

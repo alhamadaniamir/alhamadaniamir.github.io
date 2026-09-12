@@ -12,7 +12,7 @@
     <meta property="og:description" content="Connecting hardware and software. Understanding the details. Building things that help.">
     <meta property="og:url" content="https://alhamadaniamir.github.io/">
     <link rel="canonical" href="https://alhamadaniamir.github.io/">
-    <link rel="icon" href="assets/favicon.svg?v=iron-mask" type="image/svg+xml">
+    <link rel="icon" href="assets/favicon.svg?v=simple-mask" type="image/svg+xml">
     <!-- Read the saved theme before the first paint, including the loading screen. -->
     <script>
       (() => {
@@ -93,7 +93,7 @@
           loader.setAttribute('aria-modal', 'true');
           loader.setAttribute('aria-labelledby', 'page-loader-title');
           loader.setAttribute('aria-describedby', 'page-loader-description');
-          loader.innerHTML = '<div class="page-loader-content"><div class="page-loader-mark" aria-hidden="true"><img src="assets/favicon.svg?v=iron-mask" width="46" height="46" alt="">Portfolio</div><div class="page-loader-track" aria-hidden="true"></div><h2 id="page-loader-title">Loading portfolio</h2><p id="page-loader-description">Getting things ready. You can continue while the rest loads.</p><button type="button">Continue to portfolio <span aria-hidden="true">↗</span></button></div>';
+          loader.innerHTML = '<div class="page-loader-content"><div class="page-loader-mark" aria-hidden="true"><img src="assets/favicon.svg?v=simple-mask" width="46" height="46" alt="">Portfolio</div><div class="page-loader-track" aria-hidden="true"></div><h2 id="page-loader-title">Loading portfolio</h2><p id="page-loader-description">Getting things ready. You can continue while the rest loads.</p><button type="button">Continue to portfolio <span aria-hidden="true">↗</span></button></div>';
           [...document.body.children].forEach(makeInert);
           observer = new MutationObserver((records) => {
             records.forEach((record) => record.addedNodes.forEach((node) => {
@@ -142,7 +142,7 @@
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="header-inner">
-        <a class="wordmark" href="index.html" aria-label="Portfolio home"><img class="site-logo" src="assets/favicon.svg?v=iron-mask" width="34" height="40" alt=""><span>Portfolio</span></a>
+        <a class="wordmark" href="index.html" aria-label="Portfolio home"><img class="site-logo" src="assets/favicon.svg?v=simple-mask" width="34" height="40" alt=""><span>Portfolio</span></a>
         <nav class="main-nav" aria-label="Main navigation">
           <a href="#about" class="nav-link" aria-current="location">About</a>
           <a href="#work" class="nav-link">Work</a>
@@ -160,9 +160,6 @@
             <a href="index.html#background">Education &amp; toolkit <span aria-hidden="true">↗</span></a>
             <a href="index.html#contact">Get in touch <span aria-hidden="true">↗</span></a>
             <a class="menu-resume" href="assets/Amir-Al-Hamadani-Resume.pdf" target="_blank" rel="noopener noreferrer">Open Resume<span class="file-type">PDF ↗</span></a>
-            <button class="theme-toggle theme-toggle--menu" type="button" role="switch" aria-checked="false" data-theme-toggle hidden>
-              <span>Dark theme</span><span class="theme-switch" aria-hidden="true"></span>
-            </button>
           </nav>
         </details>
       </div>
@@ -180,10 +177,7 @@
           <a href="mailto:alhamadani.amirrara@gmail.com"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></svg>Email<span aria-hidden="true">↗</span></a>
           <a href="assets/Amir-Al-Hamadani-Resume.pdf" target="_blank" rel="noopener noreferrer" aria-label="Open Resume PDF in a new tab"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H5v18h14V8l-5-5Z"/><path d="M14 3v5h5M8 12h8m-8 4h6"/></svg>Resume<span class="file-type">PDF ↗</span></a>
         </div>
-        <p class="profile-note">Understand the system.<br>Improve how it works.</p>
-        <button class="theme-toggle" type="button" role="switch" aria-checked="false" data-theme-toggle hidden>
-          <span>Dark theme</span><span class="theme-switch" aria-hidden="true"></span>
-        </button>
+        <p class="profile-note">Question the design.<br>Prove the solution.</p>
       </aside>
 
       <main id="main">
@@ -211,7 +205,7 @@
         </section>
 
         <section class="section work-section" id="work" aria-labelledby="work-title">
-          <div class="section-heading"><div><p class="section-eyebrow">IDEAS, PUT INTO PRACTICE</p><h2 id="work-title">Selected work.</h2></div></div>
+          <div class="section-heading"><div><p class="section-eyebrow">IDEAS, PUT INTO ACTION</p><h2 id="work-title">Selected work.</h2></div></div>
           <p class="section-intro">Projects across hardware, software, and the connections between them.</p><article class="project" id="vision-scale">
   <div class="project-topline"><span class="project-category">EMBEDDED SYSTEMS · COMPUTER VISION</span><span class="project-number" aria-hidden="true">01</span></div>
   <h3 class="project-title-long">Computer Vision-Based Fruit Detection Automated IoT Weighing Scale with AI-Driven Sales Forecasting and Data Analytics</h3><p class="project-subtitle">Turning a physical measurement into a connected sales workflow.</p>
@@ -251,8 +245,8 @@
  </article><article class="project" id="fruityvens">
   <div class="project-topline"><span class="project-category">MOBILE DEVELOPMENT · IOT · DATA ANALYTICS</span><span class="project-number" aria-hidden="true">02</span></div>
   <h3>FruityVens</h3><p class="project-subtitle">The companion app that makes scale data useful to a vendor.</p>
-  <p>A Flutter companion app for managing fruit inventory, prices, and sales. It brings the weighing system&#x27;s records into a mobile workflow with local SQLite storage, Firebase synchronization, sales analytics, and report exports.</p><p class="project-connection">The software companion to the <a href="#vision-scale">computer-vision weighing scale</a>. Automated measurements come from the hardware; inventory, reporting, and forecasting live in the app and its Python service. The app also supports manual and offline workflows.</p>
-  <details class="project-details"><summary>Project details &amp; media <span aria-hidden="true">+</span></summary><div class="details-content"><h4>Scale synchronization</h4><p>Imports sale logs from the connected scale through Firebase, normalizes weights and prices, and derives stable identifiers to prevent duplicate imports. Price changes can be published back to the scale.</p><h4>Inventory &amp; reporting</h4><p>Supports inventory management, transaction history, revenue summaries, and PDF reports, with local storage for offline workflows.</p><h4>Sales forecasting</h4><p>Includes a Python forecasting service that uses transaction history to estimate seven-day demand with gradient boosting, with a sales-velocity fallback when there is too little training data.</p><h4>Sign-in &amp; approval workflows</h4><p>Firebase email/password and Google sign-in handle account access. Biometric or PIN unlock controls local app access. Separate owner and worker workflows let workers request sale changes for an owner to review and approve.</p><div class="project-media" role="group" aria-label="FruityVens companion app project documentation"><figure class="media-item">
+  <p>A Flutter companion app for fruit inventory, sales analytics, and AI-driven sales forecasting. Its Python service uses gradient boosting regression to estimate seven-day demand from sales history, while SQLite and Firebase keep the vendor’s records available offline and synchronized with the scale.</p><p class="project-connection">The software companion to the <a href="#vision-scale">computer-vision weighing scale</a>. Automated measurements come from the hardware; inventory, reporting, and forecasting live in the app and its Python service. The app also supports manual and offline workflows.</p>
+  <details class="project-details"><summary>Project details &amp; media <span aria-hidden="true">+</span></summary><div class="details-content"><h4>Scale synchronization</h4><p>Imports sale logs from the connected scale through Firebase, normalizes weights and prices, and derives stable identifiers to prevent duplicate imports. Price changes can be published back to the scale.</p><h4>Inventory &amp; reporting</h4><p>Supports inventory management, transaction history, revenue summaries, and PDF reports, with local storage for offline workflows.</p><h4>AI-driven sales forecasting</h4><p>A Python service uses scikit-learn’s GradientBoostingRegressor to forecast seven-day fruit demand from transaction history. When there is too little training data, it falls back to estimates based on recent sales rates.</p><h4>Sign-in &amp; approval workflows</h4><p>Firebase email/password and Google sign-in handle account access. Biometric or PIN unlock controls local app access. Separate owner and worker workflows let workers request sale changes for an owner to review and approve.</p><div class="project-media" role="group" aria-label="FruityVens companion app project documentation"><figure class="media-item">
   <a class="media-image-link" href="assets/projects/fruityvens/mobile-dashboard-test.jpeg" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image in a new tab: FruityVens running on a phone with its sales dashboard visible beside a laptop displaying device data.">
     <img class="project-image" src="assets/projects/fruityvens/mobile-dashboard-test.jpeg" alt="FruityVens running on a phone with its sales dashboard visible beside a laptop displaying device data." width="1536" height="2048" loading="lazy" decoding="async">
     <span class="media-open" aria-hidden="true">View full size ↗</span>
@@ -275,7 +269,7 @@
  </article><article class="project" id="robotic-arm">
   <div class="project-topline"><span class="project-category">ROBOTICS · MOTION CONTROL</span><span class="project-number" aria-hidden="true">03</span></div>
   <h3>Robotic Arm Motion Control System</h3><p class="project-subtitle">Learning how coordinated motion becomes repeatable behavior.</p>
-  <p>Arduino firmware for sequencing a robotic arm with six servos and a stepper motor. The project explores joint movement, mirrored base motion, and the timing needed to coordinate physical actuators.</p>
+  <p>Arduino firmware for sequencing a robotic arm with six servos and a stepper motor. It coordinates joint movement, mirrored base motion, and actuator timing through repeatable movement sequences.</p>
   <details class="project-details"><summary>Project details &amp; media <span aria-hidden="true">+</span></summary><div class="details-content"><h4>Coordinated movement</h4><p>Controls the base, shoulder, elbow, wrist, and gripper through a repeatable movement sequence.</p><h4>Joint positioning</h4><p>Uses configurable joint travel ranges and gradual servo positioning, including a paired base-servo arrangement.</p><h4>Stepper control</h4><p>Configures the stepper&#x27;s maximum speed, acceleration, and target position for controlled movement and return.</p><div class="project-media" role="group" aria-label="Robotic arm project documentation"><figure class="media-item">
   <a class="media-image-link" href="assets/projects/robotic-arm/raised-arm.jpeg" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image in a new tab: Gray robotic arm on a workbench with the gripper raised and servo wiring visible.">
     <img class="project-image" src="assets/projects/robotic-arm/raised-arm.jpeg" alt="Gray robotic arm on a workbench with the gripper raised and servo wiring visible." width="1536" height="2048" loading="lazy" decoding="async">
@@ -345,7 +339,7 @@
  </figure></div></div></details>
   <div class="project-bottom"><p class="project-stack">Vue 3 · FastAPI · MongoDB · Tailwind CSS · Chart.js</p><div class="project-links"><a href="https://github.com/alhamadaniamir/ballclub-app-front">Backend repository <span aria-hidden="true">↗</span></a></div></div>
  </article>
-          <a class="collection-link" href="projects.html"><span>Explore all projects &amp; experiments</span><span aria-hidden="true">↗</span></a>
+          <a class="collection-link" href="projects.html"><span>Explore all projects</span><span aria-hidden="true">↗</span></a>
         </section>
 
         <section class="section approach-section" aria-labelledby="approach-title">
@@ -425,5 +419,8 @@
       </main>
     </div>
     <footer class="site-footer"><div><p>© <span id="year">2026</span> Amir Hussein R. Al Hamadani</p><a href="#about">Back to top <span aria-hidden="true">↑</span></a></div><p class="footer-note">Built with curiosity. Refined with care.</p></footer>
+    <button class="theme-toggle theme-toggle--floating" type="button" role="switch" aria-checked="false" data-theme-toggle hidden>
+      <span>Dark theme</span><span class="theme-switch" aria-hidden="true"></span>
+    </button>
   </body>
 </html>
