@@ -145,13 +145,11 @@ h2 { font-family: var(--serif); font-size: 32px; font-weight: 400; line-height: 
 .project-details { margin-top: 19px; }
 summary { list-style: none; }
 summary::-webkit-details-marker { display: none; }
-.project-details summary { display: flex; align-items: center; gap: 14px; width: 100%; padding: 15px 18px; border: 2px solid var(--accent); border-radius: 3px; background: var(--accent); color: var(--paper); box-shadow: 0 5px 16px var(--shadow); font-size: 14px; font-weight: 700; letter-spacing: .15px; transition: background-color .18s ease, color .18s ease, box-shadow .18s ease, transform .18s ease; }
-.project-details summary > span { display: inline-block; font-size: 17px; font-weight: 400; line-height: 1; transition: transform .18s ease; }
-.project-details summary > span:last-child { margin-left: auto; }
-.project-details[open] summary > span { transform: rotate(45deg); }
-.project-details summary:hover { background: var(--accent-dark); box-shadow: 0 7px 20px var(--shadow); transform: translateY(-1px); }
-.project-details summary::before { content: "OPEN"; padding-right: 14px; border-right: 1px solid currentColor; font-family: var(--mono); font-size: 8px; letter-spacing: 1.2px; opacity: .78; }
-.project-details[open] summary::before { content: "CLOSE"; }
+.project-details > summary { display: flex; align-items: center; gap: 10px; width: fit-content; max-width: 100%; min-height: 44px; padding: 9px 12px; border: 1px solid var(--border-accent); border-radius: 6px; background: transparent; color: var(--accent); font-size: 12px; font-weight: 600; line-height: 1.5; transition: background-color .18s ease, border-color .18s ease; }
+.project-details > summary::before { content: ""; flex: 0 0 15px; width: 15px; height: 15px; background: currentColor; -webkit-mask: url("assets/media-icon.svg") center / contain no-repeat; mask: url("assets/media-icon.svg") center / contain no-repeat; }
+.project-details > summary > span { display: grid; place-items: center; flex: 0 0 20px; width: 20px; height: 20px; margin-left: 2px; border-radius: 50%; background: var(--soft-green); font-size: 16px; font-weight: 400; line-height: 1; transition: transform .18s ease, background-color .18s ease; }
+.project-details[open] > summary, .project-details > summary:hover { background: var(--soft-green); border-color: var(--accent); }
+.project-details[open] > summary > span { background: var(--paper); transform: rotate(45deg); }
 .details-content { padding: 17px 0 0 16px; margin-top: 9px; border-left: 2px solid var(--border-accent); font-size: 13px; color: var(--muted); line-height: 1.85; }
 .details-content p + p { margin-top: 12px; }
 .project-media { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 16px; margin-top: 25px; }
