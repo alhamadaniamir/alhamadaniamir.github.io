@@ -8,9 +8,9 @@ The main navigation and top-right Menu open the dedicated pages. Research appear
 directly below About me in the Menu and has an in-progress note with no entries yet.
 The Portfolio wordmark returns to the home page.
 
-The home-page About section includes a brief personal paragraph. The full About
-page covers sports and fitness, time outdoors, music and family, reading, and
-Islam. Edit both when changing the personal introduction. Technical skills remain
+The home-page About section introduces the engineering work. Personal interests
+appear only on `about.html`: sports and fitness, time outdoors, music and family,
+reading, and Islam. Edit that page when changing those details. Technical skills remain
 fully visible after the home-page introduction, grouped with spacing rather than
 horizontal dividers.
 
