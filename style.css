@@ -82,7 +82,7 @@ button:not(:disabled), summary { cursor: pointer; }
 
 /* The theme switch stays available on every page, away from the reading column. */
 .theme-toggle { display: inline-flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--border-accent); border-radius: 24px; color: var(--ink); background: var(--paper); font-size: 12px; font-weight: 600; line-height: 1.5; box-shadow: 0 4px 16px var(--shadow); }
-.theme-toggle--floating { position: fixed; z-index: 8; left: max(20px, env(safe-area-inset-left)); bottom: max(20px, env(safe-area-inset-bottom)); }
+.theme-toggle--menu { width: 100%; margin-top: 10px; border-radius: 3px; box-shadow: none; }
 .theme-toggle:hover { background: var(--soft-green); }
 .theme-switch { display: block; position: relative; flex: 0 0 30px; width: 30px; height: 18px; border: 1px solid var(--muted); border-radius: 12px; background: var(--surface); transition: background-color .22s ease, border-color .22s ease; }
 .theme-switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 10px; height: 10px; border-radius: 50%; background: var(--muted); transition: transform .22s ease, background-color .22s ease; }
@@ -146,9 +146,11 @@ h2 { font-family: var(--serif); font-size: 32px; font-weight: 400; line-height: 
 summary { list-style: none; }
 summary::-webkit-details-marker { display: none; }
 .project-details summary { display: flex; align-items: center; gap: 13px; width: fit-content; font-size: 12px; color: var(--accent); font-weight: 600; }
+.project-details summary { min-width: min(100%, 300px); justify-content: space-between; padding: 12px 15px; border: 2px solid var(--accent); border-radius: 3px; background: var(--soft-green); box-shadow: inset 0 0 0 1px var(--paper); font-size: 13px; letter-spacing: .15px; transition: background-color .18s ease, box-shadow .18s ease, transform .18s ease; }
 .project-details summary > span { display: inline-block; font-size: 17px; font-weight: 400; line-height: 1; transition: transform .18s ease; }
 .project-details[open] summary > span { transform: rotate(45deg); }
-.project-details summary:hover { text-decoration: underline; text-underline-offset: 4px; }
+.project-details summary:hover { text-decoration: underline; text-underline-offset: 4px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--accent); transform: translateY(-1px); }
+.project-details summary::before { content: "VIEW"; font-family: var(--mono); font-size: 8px; letter-spacing: 1px; color: var(--muted); }
 .details-content { padding: 17px 0 0 16px; margin-top: 9px; border-left: 2px solid var(--border-accent); font-size: 13px; color: var(--muted); line-height: 1.85; }
 .details-content p + p { margin-top: 12px; }
 .project-media { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 16px; margin-top: 25px; }
@@ -196,6 +198,7 @@ summary::-webkit-details-marker { display: none; }
 .toolkit-content { border-top: 1px solid var(--rule); padding: 22px 18px; display: grid; gap: 24px; grid-template-columns: 1fr 1fr; }
 .toolkit-content h3 { font-size: 12px; color: var(--accent); margin-bottom: 6px; }
 .toolkit-content p { font-size: 12px; color: var(--muted); line-height: 1.85; }
+.toolkit-section .toolkit-content { margin-top: 29px; border: 1px solid var(--rule); }
 
 .certificate-list { display: grid; gap: 22px; margin-top: 30px; }
 .certificate-card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 26px; align-items: center; padding: 22px; border: 1px solid var(--rule); }
@@ -415,7 +418,6 @@ a.certificate-preview:hover img { border-color: var(--accent); }
   .archive-intro h1 { font-size: 37px; }
   .archive-certificates .certificate-card { padding: 17px; }
   .course-domains { padding: 16px 13px; }
-  .theme-toggle--floating { left: max(12px, env(safe-area-inset-left)); bottom: max(12px, env(safe-area-inset-bottom)); gap: 9px; padding: 10px 12px; font-size: 11px; }
   .project-collapse-bar { bottom: max(12px, env(safe-area-inset-bottom)); }
   .project-collapse-button { gap: 9px; padding: 10px 12px; font-size: 11px; }
 }
