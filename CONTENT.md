@@ -1,9 +1,18 @@
 # Adding project media and certifications
 
-The home page is `index.html`. The complete collections are `projects.html` and
-`certifications.html`. All pages are plain HTML, sharing `style.css` and
+The home page is `index.html`. Dedicated pages provide the full sections:
+`about.html`, `research.html`, `projects.html`, `certifications.html`,
+`education.html`, and `contact.html`. All pages are plain HTML, sharing `style.css` and
 `script.js`, plus `theme.js` for appearance preferences; no build step is needed.
-The top-right Menu links them together.
+The main navigation and top-right Menu open the dedicated pages. Research appears
+directly below About me in the Menu and has an in-progress note with no entries yet.
+The Portfolio wordmark returns to the home page.
+
+The home-page About section includes a brief personal paragraph. The full About
+page covers sports and fitness, time outdoors, music and family, reading, and
+Islam. Edit both when changing the personal introduction. Technical skills remain
+fully visible after the home-page introduction, grouped with spacing rather than
+horizontal dividers.
 
 Project photos and videos appear inside
 the expandable **Project details & media** area. They work without JavaScript.
@@ -19,7 +28,7 @@ disable the animation. The original summary remains usable without JavaScript.
 
 ## Light and dark themes
 
-The **Dark theme** switch sits in the bottom-left corner on all three pages.
+The **Dark theme** switch is inside the Menu panel on every page.
 Light is the default. A visitor's choice is saved in their browser and shared
 across the portfolio pages; switching still works if browser storage is blocked.
 The loading screen follows the saved choice, while printed pages use light colors.
@@ -58,7 +67,8 @@ use H.264/AAC MP4 with faststart and total about 26.7 MB. They are fetched when
 visitors choose to play; image previews use lazy loading.
 
 The ending home-page sections are **Certifications & Seminars → Education →
-Let’s Connect**. Education contains the academic history and technical toolkit.
+Let’s Connect**. Education contains the academic history; technical skills appear
+directly after About on the home page.
 The complete certificate collection is linked from the certification section.
 
 ## Project photos
@@ -190,7 +200,7 @@ publish; these local changes do not update the live site automatically.
   `.profile-photo`; its framing is set by `object-fit` and `object-position`.
 - The green mask is the SVG in `assets/favicon.svg`. It is used in the header,
   loading screen, and browser tab.
-- The header and menu appear in all three HTML files. Make matching edits in
+- The header and menu appear in all seven HTML files. Make matching edits in
   each file when adding a page. `script.js` handles closing the native menu.
 - Edit your Word résumé, export it to PDF, and replace
   `assets/Amir-Al-Hamadani-Resume.pdf`. Website text is edited separately.
@@ -200,5 +210,6 @@ publish; these local changes do not update the live site automatically.
 ## Preview and publish
 
 From the portfolio directory, run `python3 -m http.server 4173`, then open
-`http://localhost:4173`. Check the home page, both collection pages, Menu,
-certificates, and résumé before committing. Changes remain local until you push.
+`http://localhost:4173`. Check the home page and each detail page through the Menu,
+along with certificate and résumé links, before committing. Changes remain local
+until you push.

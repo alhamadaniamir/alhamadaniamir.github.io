@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <meta name="theme-color" content="#f9f8f4">
+    <title>Research — Amir Al Hamadani</title>
+    <meta name="description" content="Research by Amir Al Hamadani. Work is in progress; details will be added when ready to share.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Research — Amir Al Hamadani">
+    <meta property="og:description" content="Research by Amir Al Hamadani. Work is in progress; details will be added when ready to share.">
+    <meta property="og:url" content="https://alhamadaniamir.github.io/research.html">
+    <link rel="canonical" href="https://alhamadaniamir.github.io/research.html">
+    <link rel="icon" href="assets/favicon.svg?v=simple-mask" type="image/svg+xml">
+    <!-- Read the saved theme before the first paint, including the loading screen. -->
+    <script>
+      (() => {
+        let theme = 'light';
+        try { if (localStorage.getItem('portfolio-theme') === 'dark') theme = 'dark'; } catch {}
+        document.documentElement.dataset.theme = theme;
+        document.querySelector('meta[name="color-scheme"]').content = theme;
+        document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#151d19' : '#f9f8f4';
+      })();
+    </script>
+    <!-- Keep the loader styles inline so they can render while the main stylesheet loads. -->
+    <style>
+      :root { color-scheme: light; --paper: #f9f8f4; --ink: #242c29; --muted: #626d65; --accent: #285b4e; --rule: #dddfd6; --soft-green: #e6ebe2; }
+      :root[data-theme="dark"] { color-scheme: dark; --paper: #151d19; --ink: #e6ece5; --muted: #afbdb1; --accent: #9ecdb2; --rule: #34463a; --soft-green: #23382c; }
+      html.page-preparing { background: var(--paper); }
+      html.page-preparing body { visibility: hidden; }
+      html.page-loading { overflow: hidden; }
+      .page-loader { position: fixed; inset: 0; z-index: 100; visibility: visible; display: grid; place-items: center; padding: 28px; background: var(--paper); color: var(--ink); text-align: center; }
+      .page-loader-content { width: min(100%, 340px); }
+      .page-loader-mark { margin: 0 0 38px; font: 400 32px/1 Georgia, serif; letter-spacing: -1px; }
+      .page-loader-mark img { display: block; margin: 0 auto 15px; }
+      .page-loader-track { height: 2px; overflow: hidden; background: var(--rule); }
+      .page-loader-track::after { content: ""; display: block; width: 40%; height: 100%; background: var(--accent); animation: loading-sweep 1.4s ease-in-out infinite; }
+      .page-loader h2 { margin: 26px 0 12px; font: 400 27px/1.2 Georgia, serif; letter-spacing: -.5px; }
+      .page-loader p { margin: 0; font: 14px/1.7 "Segoe UI", Arial, sans-serif; color: var(--muted); }
+      .page-loader button { margin-top: 26px; padding: 10px 16px; border: 1px solid var(--accent); border-radius: 0; background: transparent; color: var(--accent); font: 600 12px/1.5 "Segoe UI", Arial, sans-serif; cursor: pointer; }
+      .page-loader button:hover { background: var(--soft-green); }
+      .page-loader button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+      @keyframes loading-sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(350%); } }
+      @media (prefers-reduced-motion: reduce) { .page-loader-track::after { animation: none; width: 100%; } }
+      @media print { html.page-preparing body { visibility: visible; } .page-loader { display: none !important; } }
+    </style>
+    <script>
+      (() => {
+        document.documentElement.classList.add('page-preparing');
+        let finished = false;
+        let stylesReady = false;
+        let pageReady = false;
+        let loader;
+        let previousFocus;
+        let observer;
+        let showTimer;
+        const inertElements = new Map();
+
+        function finishWhenReady() {
+          if (stylesReady && pageReady) restorePage();
+        }
+
+        function restorePage() {
+          if (finished) return;
+          finished = true;
+          window.clearTimeout(showTimer);
+          window.clearTimeout(fallbackTimer);
+          observer?.disconnect();
+          document.documentElement.classList.remove('page-loading', 'page-preparing');
+          inertElements.forEach((wasInert, element) => { element.inert = wasInert; });
+          if (loader?.contains(document.activeElement)) previousFocus?.focus({ preventScroll: true });
+          loader?.remove();
+        }
+
+        function makeInert(element) {
+          if (element === loader || inertElements.has(element)) return;
+          inertElements.set(element, element.inert);
+          element.inert = true;
+        }
+
+        function showLoader() {
+          if (finished) return;
+          if (!document.body) {
+            showTimer = window.setTimeout(showLoader, 50);
+            return;
+          }
+          previousFocus = document.activeElement;
+          loader = document.createElement('div');
+          loader.id = 'page-loader';
+          loader.className = 'page-loader';
+          loader.setAttribute('role', 'dialog');
+          loader.setAttribute('aria-modal', 'true');
+          loader.setAttribute('aria-labelledby', 'page-loader-title');
+          loader.setAttribute('aria-describedby', 'page-loader-description');
+          loader.innerHTML = '<div class="page-loader-content"><div class="page-loader-mark" aria-hidden="true"><img src="assets/favicon.svg?v=simple-mask" width="46" height="46" alt="">Portfolio</div><div class="page-loader-track" aria-hidden="true"></div><h2 id="page-loader-title">Loading portfolio</h2><p id="page-loader-description">Getting things ready. You can continue while the rest loads.</p><button type="button">Continue to portfolio <span aria-hidden="true">↗</span></button></div>';
+          [...document.body.children].forEach(makeInert);
+          observer = new MutationObserver((records) => {
+            records.forEach((record) => record.addedNodes.forEach((node) => {
+              if (node.nodeType === Node.ELEMENT_NODE) makeInert(node);
+            }));
+          });
+          observer.observe(document.body, { childList: true });
+          document.body.append(loader);
+          document.documentElement.classList.add('page-loading');
+          const continueButton = loader.querySelector('button');
+          continueButton.addEventListener('click', restorePage);
+          loader.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') restorePage();
+            if (event.key === 'Tab') { event.preventDefault(); continueButton.focus(); }
+          });
+          continueButton.focus({ preventScroll: true });
+        }
+
+        // Load the main CSS without delaying the first paint of the loading screen.
+        document.addEventListener('load', (event) => {
+          if (event.target.id === 'site-styles') {
+            event.target.media = 'all';
+            document.documentElement.classList.remove('page-preparing');
+            stylesReady = true;
+            finishWhenReady();
+          }
+        }, true);
+        document.addEventListener('error', (event) => {
+          if (event.target.id === 'site-styles') restorePage();
+        }, true);
+        window.addEventListener('load', () => {
+          pageReady = true;
+          finishWhenReady();
+        }, { once: true });
+        window.addEventListener('pageshow', (event) => { if (event.persisted) restorePage(); });
+        const fallbackTimer = window.setTimeout(restorePage, 8000);
+        showTimer = window.setTimeout(showLoader, 350);
+      })();
+    </script>
+    <link id="site-styles" rel="stylesheet" href="style.css" media="print">
+    <noscript><link rel="stylesheet" href="style.css"></noscript>
+    <script src="theme.js" defer></script>
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="wordmark" href="index.html" aria-label="Portfolio home"><img class="site-logo" src="assets/favicon.svg?v=simple-mask" width="34" height="40" alt=""><span>Portfolio</span></a>
+        <nav class="main-nav" aria-label="Main navigation">
+          <a href="about.html" class="nav-link">About</a>
+          <a href="projects.html" class="nav-link">Projects</a>
+          <a href="certifications.html" class="nav-link">Certifications</a>
+          <a href="education.html" class="nav-link">Education</a>
+          <a href="contact.html" class="nav-link">Contact</a>
+        </nav>
+        <details class="site-menu">
+          <summary aria-label="Navigation menu"><span>Menu</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></summary>
+          <nav class="menu-panel" aria-label="More pages">
+            <p class="menu-label">EXPLORE THE PORTFOLIO</p>
+            <a href="about.html">About me <span aria-hidden="true">↗</span></a>
+            <a href="research.html" aria-current="page">Research <span aria-hidden="true">↗</span></a>
+            <a href="projects.html">All projects <span aria-hidden="true">↗</span></a>
+            <a href="certifications.html">Certifications &amp; seminars <span aria-hidden="true">↗</span></a>
+            <a href="education.html">Education <span aria-hidden="true">↗</span></a>
+            <a href="contact.html">Get in touch <span aria-hidden="true">↗</span></a>
+            <a class="menu-resume" href="assets/Amir-Al-Hamadani-Resume.pdf" target="_blank" rel="noopener noreferrer">Open résumé <span class="file-type">PDF ↗</span></a>
+            <button class="theme-toggle theme-toggle--menu" type="button" role="switch" aria-checked="false" data-theme-toggle hidden><span>Dark theme</span><span class="theme-switch" aria-hidden="true"></span></button>
+          </nav>
+        </details>
+      </div>
+    </header>
+
+    <main id="main" class="archive-main research-page">
+      <a class="archive-back" href="index.html"><span aria-hidden="true">←</span> Back to portfolio</a>
+      <section class="archive-intro" aria-labelledby="research-title">
+        <h1 id="research-title">Research.</h1>
+        <p class="section-intro">In progress. Details will be added when the work is ready to share.</p>
+      </section>
+    </main>
+    <footer class="site-footer"><div><p>© <span id="year">2026</span> Amir Hussein R. Al Hamadani</p><a href="index.html#about">Back to portfolio <span aria-hidden="true">↑</span></a></div><p class="footer-note">Built with curiosity. Refined with care.</p></footer>
+  </body>
+</html>
