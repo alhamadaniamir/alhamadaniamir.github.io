@@ -63,7 +63,7 @@ button:not(:disabled), summary { cursor: pointer; }
 .arrow { margin-left: 12px; font-size: 16px; }
 
 .page-layout { display: grid; grid-template-columns: 236px minmax(0, 1fr); column-gap: 88px; max-width: 1232px; padding: 74px 48px 0; margin: 0 auto; }
-.profile { position: sticky; top: 132px; align-self: start; padding-bottom: 40px; }
+.profile { position: sticky; top: 132px; align-self: start; max-height: calc(100vh - 156px); overflow-y: auto; padding-bottom: 40px; scrollbar-width: thin; scrollbar-color: var(--border-accent) transparent; }
 .profile-mark { display: block; position: relative; width: 194px; height: 212px; overflow: hidden; background: var(--soft-green); border: 1px solid var(--rule); color: var(--accent); }
 .profile-art { width: 194px; height: 194px; transition: transform .45s ease; }
 .profile-mark:hover .profile-art { transform: rotate(3deg); }
@@ -343,7 +343,7 @@ a.certificate-preview:hover img { border-color: var(--accent); }
   .nav-link { font-size: 12px; }
   .header-resume { display: none; }
   .page-layout { display: block; padding: 32px 26px 0; max-width: 670px; }
-  .profile { position: static; display: grid; grid-template-columns: 88px minmax(0, 1fr); column-gap: 20px; padding-bottom: 28px; border-bottom: 1px solid var(--rule); margin-bottom: 36px; }
+  .profile { position: static; display: grid; grid-template-columns: 88px minmax(0, 1fr); column-gap: 20px; max-height: none; overflow: visible; padding-bottom: 28px; border-bottom: 1px solid var(--rule); margin-bottom: 36px; }
   .profile-mark { grid-column: 1; grid-row: 1 / 5; width: 88px; height: 96px; }
   .profile-art { width: 88px; height: 88px; }
   .profile-art-label { bottom: 5px; font-size: 4px; letter-spacing: .5px; }
@@ -444,7 +444,7 @@ a.certificate-preview:hover img { border-color: var(--accent); }
   body { background: white; color: black; font-size: 11pt; }
   .site-header, .profile-mark, .profile-links, .profile-note, .copy-email, .contact-actions, .skip-link, .intro-footnote, .site-footer, .text-link, .section-index { display: none !important; }
   .page-layout { display: block; padding: 0; max-width: none; }
-  .profile { position: static; padding: 0 0 20px; border-bottom: 1px solid #ccc; }
+  .profile { position: static; max-height: none; overflow: visible; padding: 0 0 20px; border-bottom: 1px solid #ccc; }
   .profile-name { margin: 0; }
   .profile-name br { display: none; }
   .profile-school { max-width: none; }
