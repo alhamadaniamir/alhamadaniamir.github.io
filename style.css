@@ -277,7 +277,7 @@ a.certificate-preview:hover img { border-color: var(--accent); }
 .personal-page .prose { max-width: 760px; }
 .personal-interests { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 42px; margin-top: 28px; }
 .personal-interest h3 { color: var(--accent); font-size: 15px; font-weight: 600; }
-.personal-interest p { margin-top: 8px; color: var(--muted); font-size: 14px; line-height: 1.85; }
+.personal-interest p { margin-top: 8px; color: var(--muted); font-size: 14px; line-height: 1.85; text-align: justify; }
 .page-links { display: flex; flex-wrap: wrap; column-gap: 32px; padding-top: 5px; }
 .research-page { min-height: calc(100svh - 260px); }
 .education-page .education-detail { font-size: 13px; }
