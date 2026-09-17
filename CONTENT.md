@@ -19,7 +19,9 @@ the expandable **Project details & media** area. They work without JavaScript.
 The four featured projects now include 13 photos/screenshots and five videos
 from `Documents/ProjectDocumentations`. Images open at full size in a new tab.
 Videos have native playback controls, poster previews, and no autoplay.
-The Barbershop and portfolio entries retain placeholders for future media.
+The Barbershop entry includes ten interface screenshots from
+`assets/projects/barbershop/`. The portfolio entry retains placeholders for
+future media.
 
 With JavaScript enabled, a **Collapse project** button stays at the bottom-right
 of the reading area while a project is expanded. It pauses videos and returns
