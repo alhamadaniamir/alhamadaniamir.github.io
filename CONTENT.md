@@ -49,8 +49,9 @@ the palette. The site uses light colors and hides the switch without JavaScript.
 
 ## Page, Menu, and scroll transitions
 
-Links between portfolio pages briefly fade the main content out before navigation,
-then fade the next page in once it is loaded. The header stays steady. The Menu
+Links between portfolio pages navigate immediately. The arriving main content
+gently fades from 72% to full opacity over 220 milliseconds as soon as it is ready,
+with no vertical movement. The header and homepage sidebar stay steady. The Menu
 opens with a small fade and downward movement, and its link arrows respond on hover
 or keyboard focus. Section bookmarks, external links, resume links, and new-tab
 actions retain their normal behavior. Reduced motion bypasses these effects.

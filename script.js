@@ -41,86 +41,51 @@
   });
 
   function initPageTransitions() {
-    const content = document.querySelector('.page-layout, .archive-main');
+    const content = document.querySelector('main');
     if (!content || typeof content.animate !== 'function') return;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reducedMotion.matches) return;
     const pages = new Set(['index.html', 'about.html', 'projects.html', 'certifications.html', 'research.html', 'education.html', 'contact.html']);
     const canonicalPath = (url) => url.pathname.endsWith('/') ? `${url.pathname}index.html` : url.pathname;
     const current = new URL(window.location.href);
     const currentPath = canonicalPath(current);
     const directory = currentPath.slice(0, currentPath.lastIndexOf('/') + 1);
-    let destination = null;
-    let exitAnimation = null;
+    const navigation = performance.getEntriesByType('navigation')[0];
+    if (navigation && navigation.type !== 'navigate') return;
+    let previous;
+    try { previous = new URL(document.referrer); } catch { return; }
+    const previousPath = canonicalPath(previous);
+    if (previous.origin !== current.origin || previous.protocol !== current.protocol ||
+        previousPath === currentPath || previousPath.slice(0, previousPath.lastIndexOf('/') + 1) !== directory ||
+        !pages.has(previousPath.slice(previousPath.lastIndexOf('/') + 1))) return;
+
+    let entered = false;
     let entranceAnimation = null;
+    const readinessObserver = new MutationObserver(enterPage);
 
-    function isPortfolioPage(url) {
-      const path = canonicalPath(url);
-      return url.origin === current.origin && url.protocol === current.protocol &&
-        path.slice(0, path.lastIndexOf('/') + 1) === directory &&
-        pages.has(path.slice(path.lastIndexOf('/') + 1));
-    }
-
-    function resetPage() {
-      destination = null;
-      exitAnimation?.cancel();
-      exitAnimation = null;
+    function stopEntrance() {
+      entered = true;
+      readinessObserver.disconnect();
       entranceAnimation?.cancel();
       entranceAnimation = null;
     }
-
-    function finishNavigation() {
-      const href = destination;
-      resetPage();
-      if (href) window.location.assign(href);
-    }
-
-    document.addEventListener('click', (event) => {
-      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      const link = event.target.closest('a[href]');
-      if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
-      let url;
-      try { url = new URL(link.href); } catch { return; }
-
-      // Hashes, home aliases, email, and external destinations retain native behavior.
-      if (!isPortfolioPage(url) || canonicalPath(url) === currentPath || reducedMotion.matches) {
-        resetPage();
-        return;
-      }
-      event.preventDefault();
-      destination = url.href;
-      entranceAnimation?.cancel();
-      entranceAnimation = null;
-      // A second link chooses the destination without restarting the brief fade.
-      if (exitAnimation) return;
-      try {
-        const animation = content.animate(
-          [{ opacity: getComputedStyle(content).opacity }, { opacity: 0 }],
-          { duration: 140, easing: 'ease-in', fill: 'forwards' },
-        );
-        animation.id = 'page-exit';
-        exitAnimation = animation;
-        animation.finished.then(
-          () => { if (exitAnimation === animation) finishNavigation(); },
-          () => { if (exitAnimation === animation) finishNavigation(); },
-        );
-      } catch {
-        finishNavigation();
-      }
-    });
 
     function enterPage() {
-      if (reducedMotion.matches || document.hidden ||
-          document.documentElement.matches('.page-preparing, .page-loading') ||
-          content.contains(document.activeElement)) return;
-      const navigation = performance.getEntriesByType('navigation')[0];
-      if (navigation && navigation.type !== 'navigate') return;
-      let previous;
-      try { previous = new URL(document.referrer); } catch { return; }
-      if (!isPortfolioPage(previous) || canonicalPath(previous) === currentPath) return;
+      if (entered) return;
+      if (reducedMotion.matches || document.hidden || content.contains(document.activeElement)) {
+        stopEntrance();
+        return;
+      }
+      if (document.readyState === 'loading' ||
+          document.querySelector('#site-styles')?.media !== 'all' ||
+          document.documentElement.matches('.page-preparing, .page-loading')) return;
+
+      entered = true;
+      readinessObserver.disconnect();
       try {
         const animation = content.animate(
-          [{ opacity: 0, transform: 'translateY(4px)' }, { opacity: 1, transform: 'translateY(0)' }],
-          { duration: 300, easing: 'cubic-bezier(.2, .65, .3, 1)' },
+          [{ opacity: 0.72 }, { opacity: 1 }],
+          { duration: 220, easing: 'cubic-bezier(.2, .65, .3, 1)' },
         );
         animation.id = 'page-enter';
         entranceAnimation = animation;
@@ -129,21 +94,24 @@
       } catch { /* Navigation stays readable if animation is unavailable. */ }
     }
 
-    // The loader restores content on load; pageshow follows with styles ready.
+    // Links navigate immediately. Start the small arrival fade as soon as content
+    // is readable, rather than waiting for images to finish loading and fading again.
+    readinessObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    document.addEventListener('DOMContentLoaded', enterPage, { once: true });
+    document.addEventListener('error', (event) => {
+      if (event.target.id === 'site-styles') stopEntrance();
+    }, true);
     window.addEventListener('pageshow', (event) => {
-      if (event.persisted) resetPage();
+      if (event.persisted || document.querySelector('#site-styles')?.media !== 'all') stopEntrance();
       else enterPage();
     });
-    window.addEventListener('pagehide', resetPage);
+    window.addEventListener('pagehide', stopEntrance);
+    window.addEventListener('beforeprint', stopEntrance);
     reducedMotion.addEventListener('change', (event) => {
-      if (!event.matches) return;
-      if (destination) finishNavigation();
-      else resetPage();
+      if (event.matches) stopEntrance();
     });
-    content.addEventListener('focusin', () => {
-      entranceAnimation?.cancel();
-      entranceAnimation = null;
-    });
+    content.addEventListener('focusin', stopEntrance);
+    enterPage();
   }
   initPageTransitions();
 
