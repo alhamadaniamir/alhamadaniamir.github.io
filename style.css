@@ -90,7 +90,8 @@ button:not(:disabled), summary { cursor: pointer; }
 .theme-toggle[aria-checked="true"] .theme-switch { background: var(--accent); border-color: var(--accent); }
 .theme-toggle[aria-checked="true"] .theme-switch::after { background: var(--paper); transform: translateX(12px); }
 
-html.theme-changing, html.theme-changing * { transition: background-color .24s ease, color .24s ease, border-color .24s ease, box-shadow .24s ease; }
+html.theme-changing, html.theme-changing *, html.theme-changing *::before, html.theme-changing *::after { transition: background-color .25s ease, color .25s ease, border-color .25s ease, box-shadow .25s ease; }
+html.theme-changing .theme-switch::after, html.theme-changing .nav-link::after { transition: transform .22s ease, background-color .25s ease; }
 
 @keyframes detail-reveal { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 .project-details[open] > .details-content, .site-menu[open] > .menu-panel { animation: detail-reveal .22s ease-out; }

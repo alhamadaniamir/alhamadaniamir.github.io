@@ -37,11 +37,25 @@ The **Dark theme** switch is inside the Menu panel on every page.
 Light is the default. A visitor's choice is saved in their browser and shared
 across the portfolio pages; switching still works if browser storage is blocked.
 The loading screen follows the saved choice, while printed pages use light colors.
+Switching themes blends background, text, and border colors over 250 milliseconds.
+Visitors who prefer reduced motion get an immediate change.
 
 `theme.js` handles the switch. A small inline script in each HTML head reads the
 saved choice before the page appears. Theme colors are in `style.css`; keep the
 matching critical loading-screen colors in each HTML head consistent when changing
 the palette. The site uses light colors and hides the switch without JavaScript.
+
+## Scroll transitions
+
+The homepage introduces offscreen sections with a small fade and upward movement.
+Project headings and descriptions reveal together; individual media rows enter as
+visitors reach them. Interest items have a short stagger, while certificates simply
+fade in. Each group animates once per page visit, and the initial viewport stays
+immediately readable. Timing ranges from 320 to 420 milliseconds.
+
+`script.js` uses the browser's intersection observer and animation APIs. Content
+stays visible without JavaScript or animation support. Reduced-motion preferences,
+keyboard focus, and printing bypass the effects so content stays accessible.
 
 ## Loading screen
 
