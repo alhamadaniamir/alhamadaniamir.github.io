@@ -45,6 +45,14 @@
     const content = details.querySelector('.details-content');
     if (!summary || !content) return;
 
+    // Featured projects keep their supporting explanation visible on the homepage.
+    // The archive pages retain the expandable disclosure for focused browsing.
+    if (document.body.classList.contains('home-page')) {
+      details.open = true;
+      details.classList.add('project-details--always-visible');
+      return;
+    }
+
     const project = details.closest('.project');
     const title = project?.querySelector('h2, h3')?.textContent.trim() || 'project';
     if (!content.id) content.id = `project-content-${project?.id || index + 1}`;
@@ -156,6 +164,32 @@
       if (content.contains(document.activeElement)) summary.focus({ preventScroll: true });
     });
   });
+
+  // Let homepage visitors see project videos in context without an extra click.
+  // Muted autoplay is allowed by browsers; controls remain available for sound.
+  if (document.body.classList.contains('home-page')) {
+    const projectVideos = [...document.querySelectorAll('.project-video')];
+    projectVideos.forEach((video) => {
+      video.muted = true;
+      video.setAttribute('muted', '');
+      video.autoplay = true;
+    });
+
+    const playWhenVisible = (video) => {
+      if (video.paused) video.play().catch(() => {});
+    };
+    if ('IntersectionObserver' in window) {
+      const videoObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.3) playWhenVisible(entry.target);
+          else entry.target.pause();
+        });
+      }, { threshold: [0, 0.3] });
+      projectVideos.forEach((video) => videoObserver.observe(video));
+    } else {
+      projectVideos.forEach(playWhenVisible);
+    }
+  }
 
   // Archive navigation points back to index.html and does not participate in scrollspy.
   const links = [...document.querySelectorAll('.main-nav a[href^="#"]')];

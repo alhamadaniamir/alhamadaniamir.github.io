@@ -14,11 +14,14 @@ reading, and Islam. Edit that page when changing those details. Technical skills
 fully visible after the home-page introduction, grouped with spacing rather than
 horizontal dividers.
 
-Project photos and videos appear inside
-the expandable **Project details & media** area. They work without JavaScript.
+Featured project explanations, photos, and videos appear directly below each
+project on the homepage. The full archive keeps the expandable **Project details
+& media** area for focused browsing, and it works without JavaScript.
+Homepage videos autoplay muted while they are visible and pause when scrolled away;
+controls remain available for sound and manual playback.
 The four featured projects now include 13 photos/screenshots and five videos
 from `Documents/ProjectDocumentations`. Images open at full size in a new tab.
-Videos have native playback controls, poster previews, and no autoplay.
+Archive videos have native playback controls and poster previews; they remain click-to-play.
 The Barbershop entry includes ten interface screenshots from
 `assets/projects/barbershop/`. The portfolio entry retains placeholders for
 future media.
