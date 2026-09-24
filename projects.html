@@ -23,26 +23,28 @@
         document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#151d19' : '#f9f8f4';
       })();
     </script>
-    <!-- Keep the loader styles inline so they can render while the main stylesheet loads. -->
+    <!-- Critical loading styles stay inline so a slow stylesheet cannot hide the indicator. -->
     <style>
       :root { color-scheme: light; --paper: #f9f8f4; --ink: #242c29; --muted: #626d65; --accent: #285b4e; --rule: #dddfd6; --soft-green: #e6ebe2; }
       :root[data-theme="dark"] { color-scheme: dark; --paper: #151d19; --ink: #e6ece5; --muted: #afbdb1; --accent: #9ecdb2; --rule: #34463a; --soft-green: #23382c; }
       html.page-preparing { background: var(--paper); }
       html.page-preparing body { visibility: hidden; }
       html.page-loading { overflow: hidden; }
-      .page-loader { position: fixed; inset: 0; z-index: 100; visibility: visible; display: grid; place-items: center; padding: 28px; background: var(--paper); color: var(--ink); text-align: center; }
-      .page-loader-content { width: min(100%, 340px); }
-      .page-loader-mark { margin: 0 0 38px; font: 400 32px/1 Georgia, serif; letter-spacing: -1px; }
-      .page-loader-mark img { display: block; margin: 0 auto 15px; }
-      .page-loader-track { height: 2px; overflow: hidden; background: var(--rule); }
-      .page-loader-track::after { content: ""; display: block; width: 40%; height: 100%; background: var(--accent); animation: loading-sweep 1.4s ease-in-out infinite; }
-      .page-loader h2 { margin: 26px 0 12px; font: 400 27px/1.2 Georgia, serif; letter-spacing: -.5px; }
-      .page-loader p { margin: 0; font: 14px/1.7 "Segoe UI", Arial, sans-serif; color: var(--muted); }
-      .page-loader button { margin-top: 26px; padding: 10px 16px; border: 1px solid var(--accent); border-radius: 0; background: transparent; color: var(--accent); font: 600 12px/1.5 "Segoe UI", Arial, sans-serif; cursor: pointer; }
-      .page-loader button:hover { background: var(--soft-green); }
+      .page-loader { position: fixed; inset: 0; z-index: 100; visibility: visible; display: grid; place-items: center; padding: 32px; background: var(--paper); color: var(--ink); opacity: 1; transition: opacity .16s ease-out; }
+      .page-loader--leaving { opacity: 0; pointer-events: none; }
+      .page-loader:focus { outline: none; }
+      .page-loader-content { width: min(224px, 100%); }
+      .page-loader-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; font: 400 28px/1.2 Georgia, serif; letter-spacing: -.7px; }
+      .page-loader-brand img { display: block; flex: 0 0 25px; }
+      .page-loader-track { height: 1px; overflow: hidden; background: var(--rule); }
+      .page-loader-track::after { content: ""; display: block; width: 36%; height: 100%; background: var(--accent); animation: loading-sweep 1.6s ease-in-out infinite; }
+      .page-loader-meta { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 8px; }
+      .page-loader-label { margin: 0; color: var(--muted); font: 11px/1.6 "Segoe UI", Arial, sans-serif; letter-spacing: .2px; }
+      .page-loader button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 0 8px 8px; border: 0; background: transparent; color: var(--accent); font: 11px/1.6 "Segoe UI", Arial, sans-serif; cursor: pointer; }
+      .page-loader button:hover { text-decoration: underline; text-underline-offset: 4px; }
       .page-loader button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
-      @keyframes loading-sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(350%); } }
-      @media (prefers-reduced-motion: reduce) { .page-loader-track::after { animation: none; width: 100%; } }
+      @keyframes loading-sweep { 0% { transform: translateX(-110%); } 100% { transform: translateX(390%); } }
+      @media (prefers-reduced-motion: reduce) { .page-loader { transition: none; } .page-loader-track::after { animation: none; width: 36%; } }
       @media print { html.page-preparing body { visibility: visible; } .page-loader { display: none !important; } }
     </style>
     <script>
@@ -50,7 +52,7 @@
         document.documentElement.classList.add('page-preparing');
         let finished = false;
         let stylesReady = false;
-        let pageReady = false;
+        let contentReady = false;
         let loader;
         let previousFocus;
         let observer;
@@ -58,7 +60,7 @@
         const inertElements = new Map();
 
         function finishWhenReady() {
-          if (stylesReady && pageReady) restorePage();
+          if (stylesReady && contentReady) restorePage();
         }
 
         function restorePage() {
@@ -70,7 +72,16 @@
           document.documentElement.classList.remove('page-loading', 'page-preparing');
           inertElements.forEach((wasInert, element) => { element.inert = wasInert; });
           if (loader?.contains(document.activeElement)) previousFocus?.focus({ preventScroll: true });
-          loader?.remove();
+          if (loader) {
+            loader.inert = true;
+            loader.removeAttribute('aria-modal');
+            loader.setAttribute('aria-hidden', 'true');
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) loader.remove();
+            else {
+              loader.classList.add('page-loader--leaving');
+              window.setTimeout(() => loader.remove(), 180);
+            }
+          }
         }
 
         function makeInert(element) {
@@ -91,9 +102,9 @@
           loader.className = 'page-loader';
           loader.setAttribute('role', 'dialog');
           loader.setAttribute('aria-modal', 'true');
-          loader.setAttribute('aria-labelledby', 'page-loader-title');
-          loader.setAttribute('aria-describedby', 'page-loader-description');
-          loader.innerHTML = '<div class="page-loader-content"><div class="page-loader-mark" aria-hidden="true"><img src="assets/favicon.svg?v=simple-mask" width="46" height="46" alt="">Portfolio</div><div class="page-loader-track" aria-hidden="true"></div><h2 id="page-loader-title">Loading portfolio</h2><p id="page-loader-description">Getting things ready. You can continue while the rest loads.</p><button type="button">Continue to portfolio <span aria-hidden="true">↗</span></button></div>';
+          loader.setAttribute('aria-label', 'Loading portfolio');
+          loader.tabIndex = -1;
+          loader.innerHTML = '<div class="page-loader-content"><div class="page-loader-brand" aria-hidden="true"><img src="assets/favicon.svg?v=simple-mask" width="25" height="30" alt="">Portfolio</div><div class="page-loader-track" aria-hidden="true"></div><div class="page-loader-meta"><p class="page-loader-label" role="status">Loading…</p><button type="button" aria-label="Continue to portfolio">Continue <span aria-hidden="true">→</span></button></div></div>';
           [...document.body.children].forEach(makeInert);
           observer = new MutationObserver((records) => {
             records.forEach((record) => record.addedNodes.forEach((node) => {
@@ -106,13 +117,13 @@
           const continueButton = loader.querySelector('button');
           continueButton.addEventListener('click', restorePage);
           loader.addEventListener('keydown', (event) => {
+            if (finished) return;
             if (event.key === 'Escape') restorePage();
             if (event.key === 'Tab') { event.preventDefault(); continueButton.focus(); }
           });
-          continueButton.focus({ preventScroll: true });
+          loader.focus({ preventScroll: true });
         }
 
-        // Load the main CSS without delaying the first paint of the loading screen.
         document.addEventListener('load', (event) => {
           if (event.target.id === 'site-styles') {
             event.target.media = 'all';
@@ -124,15 +135,23 @@
         document.addEventListener('error', (event) => {
           if (event.target.id === 'site-styles') restorePage();
         }, true);
-        window.addEventListener('load', () => {
-          pageReady = true;
+        // Photos and videos can finish in the background once the page can be read.
+        document.addEventListener('DOMContentLoaded', () => {
+          contentReady = true;
           finishWhenReady();
         }, { once: true });
-        window.addEventListener('pageshow', (event) => { if (event.persisted) restorePage(); });
+        window.addEventListener('pagehide', () => loader?.remove());
+        window.addEventListener('pageshow', (event) => {
+          if (event.persisted) {
+            restorePage();
+            loader?.remove();
+          }
+        });
         const fallbackTimer = window.setTimeout(restorePage, 8000);
-        showTimer = window.setTimeout(showLoader, 350);
+        showTimer = window.setTimeout(showLoader, 600);
       })();
     </script>
+    <link rel="preload" href="style.css" as="style" fetchpriority="high">
     <link id="site-styles" rel="stylesheet" href="style.css" media="print">
     <noscript><link rel="stylesheet" href="style.css"></noscript>
     <script src="theme.js" defer></script>

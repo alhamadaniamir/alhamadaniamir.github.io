@@ -68,12 +68,13 @@ keyboard focus, and printing bypass the effects so content stays accessible.
 
 ## Loading screen
 
-The loading screen appears only when the initial page load takes more than
-350 milliseconds. It clears when the stylesheet and page have loaded. Visitors
-can select **Continue to portfolio** or press Escape to dismiss it; an
-eight-second fallback also releases the page if a file stalls. Reduced-motion
-preferences disable the moving indicator, and the page still works without
-JavaScript.
+The loading indicator appears only if the page layout is not ready after
+600 milliseconds. It uses a compact Portfolio wordmark, a thin green line, and
+a small loading label. It fades away as soon as the stylesheet and document are
+ready; photos and videos can finish loading while visitors read the page.
+Visitors can select **Continue** or press Escape to dismiss it. An eight-second
+fallback releases the page if a file stalls. Reduced-motion preferences disable
+the moving line and exit fade; the page also works without JavaScript.
 
 Its styles and script stay near the top of each HTML page so the screen can appear
 while `style.css` is still loading. Keep the stylesheet's `id="site-styles"`
