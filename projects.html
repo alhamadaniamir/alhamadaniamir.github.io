@@ -34,8 +34,7 @@
       .page-loader--leaving { opacity: 0; pointer-events: none; }
       .page-loader:focus { outline: none; }
       .page-loader-content { width: min(224px, 100%); }
-      .page-loader-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; font: 400 28px/1.2 Georgia, serif; letter-spacing: -.7px; }
-      .page-loader-brand img { display: block; flex: 0 0 25px; }
+      .page-loader-brand { margin-bottom: 24px; font: 400 28px/1.2 Georgia, serif; letter-spacing: -.7px; text-align: center; }
       .page-loader-track { height: 1px; overflow: hidden; background: var(--rule); }
       .page-loader-track::after { content: ""; display: block; width: 36%; height: 100%; background: var(--accent); animation: loading-sweep 1.6s ease-in-out infinite; }
       .page-loader-meta { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 8px; }
@@ -104,7 +103,7 @@
           loader.setAttribute('aria-modal', 'true');
           loader.setAttribute('aria-label', 'Loading portfolio');
           loader.tabIndex = -1;
-          loader.innerHTML = '<div class="page-loader-content"><div class="page-loader-brand" aria-hidden="true"><img src="assets/favicon.svg?v=simple-mask" width="25" height="30" alt="">Portfolio</div><div class="page-loader-track" aria-hidden="true"></div><div class="page-loader-meta"><p class="page-loader-label" role="status">Loading…</p><button type="button" aria-label="Continue to portfolio">Continue <span aria-hidden="true">→</span></button></div></div>';
+          loader.innerHTML = '<div class="page-loader-content"><div class="page-loader-brand" aria-hidden="true">Portfolio</div><div class="page-loader-track" aria-hidden="true"></div><div class="page-loader-meta"><p class="page-loader-label" role="status">Loading…</p><button type="button" aria-label="Continue to portfolio">Continue <span aria-hidden="true">→</span></button></div></div>';
           [...document.body.children].forEach(makeInert);
           observer = new MutationObserver((records) => {
             records.forEach((record) => record.addedNodes.forEach((node) => {
