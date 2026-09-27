@@ -87,7 +87,7 @@
       try {
         const animation = content.animate(
           [{ opacity: 0.78, transform: 'translateY(6px)' }, { opacity: 1, transform: 'translateY(0)' }],
-          { duration: 300, easing: 'cubic-bezier(.22, .68, .2, 1)' },
+          { duration: 380, easing: 'cubic-bezier(.22, 1, .36, 1)' },
         );
         animation.id = 'page-enter';
         entranceAnimation = animation;
@@ -281,7 +281,7 @@
       const items = [...elements];
       // Keep the initial viewport and restored scroll position immediately readable.
       if (!items.length || items[0].getBoundingClientRect().top < window.innerHeight) return;
-      groups.set(items[0], { items, distance: 10, duration: 440, ...options });
+      groups.set(items[0], { items, distance: 8, duration: 660, ...options });
     }
 
     document.querySelectorAll('.home-page main > .section').forEach((section) => {
@@ -296,8 +296,8 @@
     document.querySelectorAll('.home-page .project').forEach((project) => {
       register(project.querySelectorAll(':scope > .project-topline, :scope > h3, :scope > p'));
     });
-    document.querySelectorAll('.home-page .media-item').forEach((item) => register([item], { distance: 8, duration: 420 }));
-    document.querySelectorAll('.home-page .certificate-card').forEach((item) => register([item], { distance: 8 }));
+    document.querySelectorAll('.home-page .media-item').forEach((item) => register([item], { distance: 6, duration: 620 }));
+    document.querySelectorAll('.home-page .certificate-card').forEach((item) => register([item], { distance: 6, duration: 640 }));
 
     const observer = new IntersectionObserver((entries) => {
       const sectionStaggers = new Map();
@@ -314,11 +314,11 @@
         sectionStaggers.set(section, stagger + 1);
         group.items.forEach((item, index) => {
           // Give headings a small lead over copy and cards, without a long cascade.
-          const delay = Math.min(stagger + index, 3) * 60;
+          const delay = Math.min(stagger + index, 3) * 75;
           // Animate on entry only: content is never hidden awaiting JavaScript.
           const animation = item.animate(
             [{ opacity: 0, transform: `translateY(${group.distance}px)` }, { opacity: 1, transform: 'translateY(0)' }],
-            { duration: group.duration, delay, easing: 'cubic-bezier(.22, .68, .2, 1)', fill: 'backwards' },
+            { duration: group.duration, delay, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'backwards' },
           );
           animation.id = 'scroll-reveal';
           activeAnimations.add(animation);
@@ -390,6 +390,18 @@
   let framePending = false;
   let anchorLock = null;
   let unlockTimer;
+
+  // Bookmarks wrap onto a second row on narrow or zoomed-in screens.
+  // Use the actual header height so section links still land below it.
+  function measureHeader() {
+    if (!header) return;
+    document.documentElement.style.setProperty('--header-height', `${Math.ceil(header.getBoundingClientRect().height)}px`);
+    scheduleNavigation();
+  }
+  if (header && 'ResizeObserver' in window) new ResizeObserver(measureHeader).observe(header);
+  else window.addEventListener('resize', measureHeader, { passive: true });
+  window.addEventListener('load', measureHeader);
+  measureHeader();
 
   function setActive(id) {
     links.forEach((link) => {

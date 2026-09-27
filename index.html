@@ -42,14 +42,14 @@
       .page-loader button:hover { text-decoration: underline; text-underline-offset: 4px; }
       .page-loader button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
       /* The welcome shares the site's typography and palette, including before CSS arrives. */
-      .portfolio-welcome { padding: 32px 24px; text-align: center; transition: transform .65s cubic-bezier(.76, 0, .24, 1); }
+      .portfolio-welcome { padding: 32px 24px; text-align: center; transition: transform .8s cubic-bezier(.76, 0, .24, 1); }
       .portfolio-welcome .welcome-content { width: min(640px, 100%); }
       .welcome-heading { margin: 0; font: 400 clamp(38px, 6vw, 64px)/1.15 Georgia, serif; letter-spacing: -1.6px; }
       .welcome-line { display: block; overflow: hidden; padding-bottom: .12em; }
-      .welcome-line > span { display: block; animation: welcome-rise .6s cubic-bezier(.22, .68, .2, 1) both; }
+      .welcome-line > span { display: block; animation: welcome-rise .8s cubic-bezier(.22, 1, .36, 1) both; }
       .welcome-line + .welcome-line { margin-top: -.1em; color: var(--accent); font-style: italic; }
-      .welcome-line + .welcome-line > span { animation-delay: .14s; }
-      .welcome-name { margin: 25px 0 0; color: var(--muted); font: 11px/1.6 "Segoe UI", Arial, sans-serif; letter-spacing: 2.2px; text-transform: uppercase; animation: welcome-settle .5s .32s both; }
+      .welcome-line + .welcome-line > span { animation-delay: .18s; }
+      .welcome-name { margin: 25px 0 0; color: var(--muted); font: 11px/1.6 "Segoe UI", Arial, sans-serif; letter-spacing: 2.2px; text-transform: uppercase; animation: welcome-settle .65s .4s cubic-bezier(.22, 1, .36, 1) both; }
       .welcome-loading { margin: 20px 0 0; color: var(--muted); font: 11px/1.6 "Segoe UI", Arial, sans-serif; }
       .portfolio-welcome .welcome-skip { position: absolute; bottom: max(26px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); padding: 10px 14px; }
       .portfolio-welcome.page-loader--leaving { opacity: 1; transform: translateY(-100%); }
@@ -92,7 +92,7 @@
           if (!loader) showLoader();
           window.clearTimeout(welcomeTimer);
           // The brief greeting runs while the document prepares; media never delays it.
-          welcomeTimer = window.setTimeout(() => restorePage(true), Math.max(0, 2350 - (performance.now() - welcomeStarted)));
+          welcomeTimer = window.setTimeout(() => restorePage(true), Math.max(0, 2200 - (performance.now() - welcomeStarted)));
         }
 
         function revealIntroduction() {
@@ -100,8 +100,8 @@
           const elements = document.querySelectorAll('.profile, .about-section > .section-eyebrow, .about-section > h1, .about-section > .intro-lead, .about-section > .prose, .about-section > .intro-actions');
           [...elements].filter(element => element.getBoundingClientRect().top < window.innerHeight).forEach((element, index) => {
             const animation = element.animate(
-              [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'translateY(0)' }],
-              { duration: 500, delay: 170 + index * 45, easing: 'cubic-bezier(.22, .68, .2, 1)', fill: 'backwards' },
+              [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'translateY(0)' }],
+              { duration: 820, delay: 240 + index * 80, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'backwards' },
             );
             animation.id = 'welcome-enter';
             entranceAnimations.add(animation);
@@ -132,7 +132,7 @@
             else {
               if (welcome) revealIntroduction();
               loader.classList.add('page-loader--leaving');
-              window.setTimeout(() => loader.remove(), welcome ? 680 : 180);
+              window.setTimeout(() => loader.remove(), welcome ? 830 : 180);
             }
           }
         }

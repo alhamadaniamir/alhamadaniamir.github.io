@@ -4,7 +4,8 @@ The home page is `index.html`. Dedicated pages provide the full sections:
 `about.html`, `research.html`, `projects.html`, `certifications.html`,
 `education.html`, and `contact.html`. All pages are plain HTML, sharing `style.css` and
 `script.js`, plus `theme.js` for appearance preferences; no build step is needed.
-The main navigation and top-right Menu open the dedicated pages. Research appears
+The main navigation links to homepage sections; the top-right Menu opens the
+dedicated pages. Research appears
 directly below About me in the Menu and has an in-progress note with no entries yet.
 The Portfolio wordmark returns to the home page.
 
@@ -40,11 +41,17 @@ scrolling or dragging, and **Fit image** returns to the complete image. A focuse
 zoomed image uses arrow keys to pan. **Close**, Escape, or selecting the dimmed
 background returns to the original thumbnail without losing the reading position.
 
-The viewer follows the light/dark theme, supports keyboard navigation, and respects
+The viewer uses a quiet dark backdrop, an unframed image, small icon controls, and
+a short caption in either site theme. It supports keyboard navigation and respects
 reduced motion. Background videos pause while it is open. **Open original** opens
 the source image, while **Open PDF** retains access to original certificates.
 The separate certificate and verification links keep their existing destinations.
 Without JavaScript, thumbnails still open their original files in a new tab.
+
+Phone previews use two compact columns for both photos and videos. Full images fit
+inside the viewer without cropping; zoomed images retain their proportions and
+adjust to browser zoom or window resizing. Scrollbar tracks are hidden while
+wheel, touch, and keyboard scrolling remain available.
 
 `media-viewer.js` enhances existing image links on the homepage, projects, and
 certifications pages. New images using the same markup join their gallery
@@ -74,8 +81,10 @@ the palette. The site uses light colors and hides the switch without JavaScript.
 
 The first direct homepage visit in a browser tab opens with **Welcome to my
 portfolio.** and Amir's name, using the existing serif type and saved theme.
-The text enters in two lines, then the screen lifts away to introduce the profile
-and homepage copy. The greeting lasts about three seconds including the exit;
+The text enters in two lines, then the screen lifts away over 800 milliseconds.
+The profile and homepage copy softly rise six pixels over 820 milliseconds with
+80-millisecond steps, beginning under the departing welcome so the reveal flows
+into the page. The greeting lasts about three seconds including the exit;
 **Skip intro** or Escape opens the page immediately.
 
 The greeting is remembered with the session key `portfolio-welcome-seen` and
@@ -86,7 +95,7 @@ critical styles and logic live in `index.html` alongside the loading screen so
 they can appear even when the external stylesheet is slow.
 
 Links between portfolio pages navigate immediately. The arriving main content
-gently fades from 78% to full opacity with a six-pixel rise over 300 milliseconds
+gently fades from 78% to full opacity with a six-pixel rise over 380 milliseconds
 as soon as it is ready. The header and homepage sidebar stay steady. The Menu
 opens with a small fade and downward movement, and its link arrows respond on hover
 or keyboard focus. Section bookmarks, external links, resume links, and new-tab
@@ -94,8 +103,8 @@ actions retain their normal behavior. Reduced motion bypasses these effects.
 
 The homepage introduces offscreen sections with a small fade and upward movement.
 Headings lead their supporting copy, followed by cards and project media as visitors
-reach them. Small eight-to-ten-pixel movements take 420–440 milliseconds, with
-60-millisecond steps capped at a 180-millisecond delay. Each group animates once
+reach them. Small six-to-eight-pixel movements take 620–660 milliseconds, with
+75-millisecond steps capped at a 225-millisecond delay. Each group animates once
 per page visit, and the initial viewport stays immediately readable. Registration
 waits for the styled layout and welcome to finish, without waiting for photos or
 videos to download. The welcome replaces the normal page arrival effect when shown.
@@ -271,10 +280,12 @@ publish; these local changes do not update the live site automatically.
 
 - Replace `assets/profile.jpg` to update the portrait. The homepage profile uses
   `.profile-photo`; its framing is set by `object-fit` and `object-position`.
-- The green mask is the SVG in `assets/favicon.svg`. It is used in the header,
-  loading screen, and browser tab.
+- The green mask in `assets/favicon.svg` is the browser-tab icon. The header and
+  loading screen use the Portfolio wordmark without a logo.
 - The header and menu appear in all seven HTML files. Make matching edits in
   each file when adding a page. `script.js` handles closing the native menu.
+  Section bookmarks move to a second row on narrow or zoomed screens, and the
+  measured header height keeps section headings clear of the sticky navigation.
 - Edit your Word résumé, export it to PDF, and replace
   `assets/Amir-Al-Hamadani-Resume.pdf`. Website text is edited separately.
   If your browser still shows an older PDF, refresh its tab or open it with a

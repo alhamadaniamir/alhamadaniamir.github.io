@@ -8,7 +8,7 @@
 
   const root = document.documentElement;
   const groupSelector = '.project-media, .certificate-list, .archive-certificates';
-  let dialog, viewport, image, title, kicker, description, status, previous, next, zoom, original;
+  let dialog, viewport, image, title, description, status, previous, next, zoom, original;
   let gallery = [];
   let currentIndex = 0;
   let trigger = null;
@@ -20,6 +20,13 @@
   let drag = null;
   let dragged = false;
   let backdropPointer = false;
+  let zoomLayout = null;
+  let resizeFrame = 0;
+
+  function labelControl(control, label) {
+    control.setAttribute('aria-label', label);
+    control.title = label;
+  }
 
   function captionFor(link) {
     const caption = link.closest('figure')?.querySelector('figcaption')?.cloneNode(true);
@@ -53,13 +60,39 @@
 
   function resetZoom() {
     zoomed = false;
+    zoomLayout = null;
     drag = null;
     dialog.classList.remove('is-zoomed', 'is-dragging');
     zoom.setAttribute('aria-pressed', 'false');
-    zoom.textContent = 'Zoom in';
+    labelControl(zoom, 'Zoom in');
+    zoom.dataset.mode = 'zoom';
     image?.removeAttribute('style');
     viewport.scrollTo({ left: 0, top: 0, behavior: 'instant' });
     viewport.setAttribute('aria-label', 'Image preview');
+  }
+
+  function sizeZoomedImage(preservePosition = false) {
+    if (!imageReady || !zoomed || !viewport.clientWidth || !viewport.clientHeight) return;
+    // Keep the same part of an image in view when browser zoom or layout changes.
+    const focus = preservePosition && zoomLayout ? {
+      x: (viewport.scrollLeft + zoomLayout.viewportWidth / 2 - zoomLayout.left) / zoomLayout.width,
+      y: (viewport.scrollTop + zoomLayout.viewportHeight / 2 - zoomLayout.top) / zoomLayout.height,
+    } : { x: 0.5, y: 0.5 };
+    const fit = Math.min(viewport.clientWidth / image.naturalWidth, viewport.clientHeight / image.naturalHeight);
+    const width = image.naturalWidth * fit * 2;
+    const height = image.naturalHeight * fit * 2;
+    const left = Math.max(0, (viewport.clientWidth - width) / 2);
+    const top = Math.max(0, (viewport.clientHeight - height) / 2);
+    image.style.width = `${width}px`;
+    image.style.height = `${height}px`;
+    image.style.marginLeft = `${left}px`;
+    image.style.marginTop = `${top}px`;
+    zoomLayout = { width, height, left, top, viewportWidth: viewport.clientWidth, viewportHeight: viewport.clientHeight };
+    viewport.scrollTo({
+      left: Math.max(0, Math.min(width + left - viewport.clientWidth, focus.x * width + left - viewport.clientWidth / 2)),
+      top: Math.max(0, Math.min(height + top - viewport.clientHeight, focus.y * height + top - viewport.clientHeight / 2)),
+      behavior: 'instant',
+    });
   }
 
   function toggleZoom() {
@@ -69,20 +102,14 @@
       updateStatus();
       return;
     }
-    const fit = Math.min(viewport.clientWidth / image.naturalWidth, viewport.clientHeight / image.naturalHeight);
     zoomed = true;
     dialog.classList.add('is-zoomed');
-    image.style.width = `${image.naturalWidth * fit * 2}px`;
-    image.style.height = `${image.naturalHeight * fit * 2}px`;
     zoom.setAttribute('aria-pressed', 'true');
-    zoom.textContent = 'Fit image';
-    viewport.setAttribute('aria-label', 'Zoomed image. Scroll or drag to inspect.');
-    updateStatus('200% · Scroll or drag to inspect');
-    viewport.scrollTo({
-      left: Math.max(0, (viewport.scrollWidth - viewport.clientWidth) / 2),
-      top: Math.max(0, (viewport.scrollHeight - viewport.clientHeight) / 2),
-      behavior: 'instant',
-    });
+    labelControl(zoom, 'Fit image');
+    zoom.dataset.mode = 'fit';
+    viewport.setAttribute('aria-label', 'Image zoomed to 200%. Scroll or drag to inspect. Use Fit image to reset.');
+    sizeZoomedImage();
+    updateStatus();
   }
 
   function showImage(index) {
@@ -95,15 +122,15 @@
     zoom.disabled = true;
     previous.disabled = currentIndex === 0;
     next.disabled = currentIndex === gallery.length - 1;
-    // A disabled arrow must not leave keyboard focus on a control that cannot act.
-    if ((focusedControl === previous && previous.disabled) || (focusedControl === next && next.disabled)) {
+    // Keep focus in the viewer when a control becomes temporarily unavailable.
+    if (focusedControl === zoom || (focusedControl === previous && previous.disabled) || (focusedControl === next && next.disabled)) {
       viewport.focus({ preventScroll: true });
     }
     title.textContent = item.title;
-    kicker.textContent = item.certificate ? 'Certificate preview' : 'Project gallery';
     description.textContent = item.caption;
+    description.title = item.caption;
     original.href = item.original;
-    original.textContent = /\.pdf(?:[?#]|$)/i.test(item.original) ? 'Open PDF ↗' : 'Open original ↗';
+    labelControl(original, /\.pdf(?:[?#]|$)/i.test(item.original) ? 'Open PDF in a new tab' : 'Open original in a new tab');
     updateStatus('Loading image…');
     viewport.replaceChildren();
     viewport.setAttribute('aria-busy', 'true');
@@ -130,7 +157,7 @@
       if (!dialog.open || imageRequest !== request) return;
       const message = document.createElement('p');
       message.className = 'media-viewer-message';
-      message.textContent = 'This preview couldn’t load. You can still open the original file below.';
+      message.textContent = 'This preview couldn’t load. Use the open-original icon above to view the file.';
       viewport.replaceChildren(message);
       viewport.removeAttribute('aria-busy');
       dialog.classList.remove('is-loading');
@@ -142,6 +169,7 @@
   function releaseViewer(restoreFocus = true) {
     if (!trigger) return;
     request += 1;
+    cancelAnimationFrame(resizeFrame);
     resetZoom();
     viewport.replaceChildren();
     image = null;
@@ -173,27 +201,36 @@
     dialog = document.createElement('dialog');
     dialog.className = 'media-viewer';
     dialog.setAttribute('aria-labelledby', 'media-viewer-title');
+    dialog.setAttribute('aria-describedby', 'media-viewer-description');
     dialog.innerHTML = `
       <div class="media-viewer-shell">
         <header class="media-viewer-header">
-          <div><p class="media-viewer-kicker"></p><h2 id="media-viewer-title"></h2></div>
-          <button class="media-viewer-close" type="button" autofocus>Close <span aria-hidden="true">×</span></button>
+          <h2 id="media-viewer-title" class="visually-hidden"></h2>
+          <div class="media-viewer-tools">
+            <button class="media-viewer-zoom" type="button" aria-label="Zoom in" title="Zoom in" aria-pressed="false" data-mode="zoom">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5M7.5 10.5h6"/><path class="media-viewer-zoom-plus" d="M10.5 7.5v6"/></svg>
+            </button>
+            <a class="media-viewer-original" target="_blank" rel="noopener noreferrer" aria-label="Open original in a new tab" title="Open original in a new tab">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 4h6v6M20 4l-9 9M10 5H5a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1v-5"/></svg>
+            </a>
+            <button class="media-viewer-close" type="button" aria-label="Close image viewer" title="Close image viewer" autofocus>
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="m6 6 12 12M18 6 6 18"/></svg>
+            </button>
+          </div>
         </header>
         <div class="media-viewer-stage">
-          <button class="media-viewer-prev" type="button" aria-label="Previous image"><span aria-hidden="true">←</span></button>
+          <button class="media-viewer-prev" type="button" aria-label="Previous image" title="Previous image"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m14 6-6 6 6 6"/></svg></button>
           <div class="media-viewer-viewport" tabindex="0" role="group" aria-label="Image preview"></div>
-          <button class="media-viewer-next" type="button" aria-label="Next image"><span aria-hidden="true">→</span></button>
+          <button class="media-viewer-next" type="button" aria-label="Next image" title="Next image"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m10 6 6 6-6 6"/></svg></button>
         </div>
         <footer class="media-viewer-footer">
-          <div class="media-viewer-caption"><p class="media-viewer-description"></p><p class="media-viewer-status" role="status" aria-live="polite" aria-atomic="true"></p></div>
-          <div class="media-viewer-tools"><button class="media-viewer-zoom" type="button" aria-pressed="false">Zoom in</button><a class="media-viewer-original" target="_blank" rel="noopener noreferrer">Open original ↗</a></div>
+          <div class="media-viewer-caption"><p id="media-viewer-description" class="media-viewer-description"></p><p class="media-viewer-status" role="status" aria-live="polite" aria-atomic="true"></p></div>
         </footer>
       </div>`;
     document.body.append(dialog);
     const find = name => dialog.querySelector(`.media-viewer-${name}`);
     viewport = find('viewport');
     title = dialog.querySelector('#media-viewer-title');
-    kicker = find('kicker');
     description = find('description');
     status = find('status');
     previous = find('prev');
@@ -244,6 +281,7 @@
     viewport.addEventListener('pointerup', endDrag);
     viewport.addEventListener('pointercancel', endDrag);
     viewport.addEventListener('lostpointercapture', endDrag);
+    if ('ResizeObserver' in window) new ResizeObserver(scheduleResize).observe(viewport);
   }
 
   links.forEach(link => {
@@ -270,11 +308,16 @@
     });
   });
 
-  window.addEventListener('resize', () => {
+  function scheduleResize() {
     if (!dialog?.open) return;
-    if (zoomed) { resetZoom(); updateStatus(); }
-    updateCaptionFocus();
-  });
+    cancelAnimationFrame(resizeFrame);
+    resizeFrame = requestAnimationFrame(() => {
+      if (!dialog.open) return;
+      if (zoomed) sizeZoomedImage(true);
+      updateCaptionFocus();
+    });
+  }
+  window.addEventListener('resize', scheduleResize);
   window.addEventListener('pagehide', () => closeViewer(false));
   window.addEventListener('beforeprint', () => closeViewer(false));
 })();
