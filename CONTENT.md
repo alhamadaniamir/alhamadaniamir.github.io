@@ -49,18 +49,33 @@ the palette. The site uses light colors and hides the switch without JavaScript.
 
 ## Page, Menu, and scroll transitions
 
+The first direct homepage visit in a browser tab opens with **Welcome to my
+portfolio.** and Amir's name, using the existing serif type and saved theme.
+The text enters in two lines, then the screen lifts away to introduce the profile
+and homepage copy. The greeting lasts about two seconds including the exit;
+**Skip intro** or Escape opens the page immediately.
+
+The greeting is remembered with the session key `portfolio-welcome-seen` and
+does not repeat on refresh, internal navigation, history navigation, or section
+links. Reduced motion bypasses it. To preview it again, open the homepage directly
+in a fresh tab, or clear that session key before a new direct navigation. Its
+critical styles and logic live in `index.html` alongside the loading screen so
+they can appear even when the external stylesheet is slow.
+
 Links between portfolio pages navigate immediately. The arriving main content
-gently fades from 72% to full opacity over 220 milliseconds as soon as it is ready,
-with no vertical movement. The header and homepage sidebar stay steady. The Menu
+gently fades from 78% to full opacity with a six-pixel rise over 300 milliseconds
+as soon as it is ready. The header and homepage sidebar stay steady. The Menu
 opens with a small fade and downward movement, and its link arrows respond on hover
 or keyboard focus. Section bookmarks, external links, resume links, and new-tab
 actions retain their normal behavior. Reduced motion bypasses these effects.
 
 The homepage introduces offscreen sections with a small fade and upward movement.
-Project headings and descriptions reveal together; individual media rows enter as
-visitors reach them. Interest items have a short stagger, while certificates simply
-fade in. Each group animates once per page visit, and the initial viewport stays
-immediately readable. Timing ranges from 320 to 420 milliseconds.
+Headings lead their supporting copy, followed by cards and project media as visitors
+reach them. Small eight-to-ten-pixel movements take 420–440 milliseconds, with
+60-millisecond steps capped at a 180-millisecond delay. Each group animates once
+per page visit, and the initial viewport stays immediately readable. Registration
+waits for the styled layout and welcome to finish, without waiting for photos or
+videos to download. The welcome replaces the normal page arrival effect when shown.
 
 `script.js` uses the browser's intersection observer and animation APIs. Content
 stays visible without JavaScript or animation support. Reduced-motion preferences,
@@ -75,6 +90,12 @@ ready; photos and videos can finish loading while visitors read the page.
 Visitors can select **Continue** or press Escape to dismiss it. An eight-second
 fallback releases the page if a file stalls. Reduced-motion preferences disable
 the moving line and exit fade; the page also works without JavaScript.
+
+On a first homepage visit, the welcome occupies this same loading surface. If
+preparation takes longer, a small status message appears below the name; the page
+opens once its document and stylesheet are ready. A second loading screen is not
+shown after the greeting. Skip, Escape, and the same eight-second fallback still
+release the page, and media never extends the welcome.
 
 Its styles and script stay near the top of each HTML page so the screen can appear
 while `style.css` is still loading. Keep the stylesheet's `id="site-styles"`

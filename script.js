@@ -42,7 +42,8 @@
 
   function initPageTransitions() {
     const content = document.querySelector('main');
-    if (!content || typeof content.animate !== 'function') return;
+    if (!content || typeof content.animate !== 'function' ||
+        document.documentElement.matches('.welcome-active, .welcome-pending')) return;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (reducedMotion.matches) return;
     const pages = new Set(['index.html', 'about.html', 'projects.html', 'certifications.html', 'research.html', 'education.html', 'contact.html']);
@@ -72,7 +73,8 @@
 
     function enterPage() {
       if (entered) return;
-      if (reducedMotion.matches || document.hidden || content.contains(document.activeElement)) {
+      if (reducedMotion.matches || document.hidden || content.contains(document.activeElement) ||
+          document.documentElement.matches('.welcome-active, .welcome-pending')) {
         stopEntrance();
         return;
       }
@@ -84,8 +86,8 @@
       readinessObserver.disconnect();
       try {
         const animation = content.animate(
-          [{ opacity: 0.72 }, { opacity: 1 }],
-          { duration: 220, easing: 'cubic-bezier(.2, .65, .3, 1)' },
+          [{ opacity: 0.78, transform: 'translateY(6px)' }, { opacity: 1, transform: 'translateY(0)' }],
+          { duration: 300, easing: 'cubic-bezier(.22, .68, .2, 1)' },
         );
         animation.id = 'page-enter';
         entranceAnimation = animation;
@@ -94,7 +96,7 @@
       } catch { /* Navigation stays readable if animation is unavailable. */ }
     }
 
-    // Links navigate immediately. Start the small arrival fade as soon as content
+    // Links navigate immediately. Start the small arrival reveal as soon as content
     // is readable, rather than waiting for images to finish loading and fading again.
     readinessObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     document.addEventListener('DOMContentLoaded', enterPage, { once: true });
@@ -278,27 +280,27 @@
       const items = [...elements];
       // Keep the initial viewport and restored scroll position immediately readable.
       if (!items.length || items[0].getBoundingClientRect().top < window.innerHeight) return;
-      groups.set(items[0], { items, distance: 10, duration: 420, ...options });
+      groups.set(items[0], { items, distance: 10, duration: 440, ...options });
     }
 
     document.querySelectorAll('.home-page main > .section').forEach((section) => {
       if (section.matches('.about-section, .approach-section, .contact-section')) {
-        register([section]);
+        register(section.children);
       } else {
         register(section.querySelectorAll(':scope > .section-heading, :scope > .section-intro'));
       }
     });
-    document.querySelectorAll('.home-page .interest').forEach((item) => register([item], { stagger: true }));
+    document.querySelectorAll('.home-page .interest').forEach((item) => register([item]));
     document.querySelectorAll('.home-page .toolkit-group, .home-page .education-item').forEach((item) => register([item]));
     document.querySelectorAll('.home-page .project').forEach((project) => {
       register(project.querySelectorAll(':scope > .project-topline, :scope > h3, :scope > p'));
     });
-    document.querySelectorAll('.home-page .media-item').forEach((item) => register([item], { distance: 6, duration: 340 }));
-    document.querySelectorAll('.home-page .certificate-card').forEach((item) => register([item], { distance: 0, duration: 320 }));
+    document.querySelectorAll('.home-page .media-item').forEach((item) => register([item], { distance: 8, duration: 420 }));
+    document.querySelectorAll('.home-page .certificate-card').forEach((item) => register([item], { distance: 8 }));
 
     const observer = new IntersectionObserver((entries) => {
-      let stagger = 0;
-      entries.forEach((entry) => {
+      const sectionStaggers = new Map();
+      entries.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top).forEach((entry) => {
         if (!entry.isIntersecting) return;
         const group = groups.get(entry.target);
         observer.unobserve(entry.target);
@@ -306,12 +308,16 @@
         if (!group || reducedMotion.matches || document.hidden ||
             group.items.some((item) => item.contains(document.activeElement))) return;
 
-        const delay = group.stagger ? Math.min(stagger++, 2) * 55 : 0;
-        group.items.forEach((item) => {
+        const section = entry.target.closest('.section');
+        const stagger = sectionStaggers.get(section) || 0;
+        sectionStaggers.set(section, stagger + 1);
+        group.items.forEach((item, index) => {
+          // Give headings a small lead over copy and cards, without a long cascade.
+          const delay = Math.min(stagger + index, 3) * 60;
           // Animate on entry only: content is never hidden awaiting JavaScript.
           const animation = item.animate(
             [{ opacity: 0, transform: `translateY(${group.distance}px)` }, { opacity: 1, transform: 'translateY(0)' }],
-            { duration: group.duration, delay, easing: 'cubic-bezier(.2, .65, .3, 1)', fill: 'backwards' },
+            { duration: group.duration, delay, easing: 'cubic-bezier(.22, .68, .2, 1)', fill: 'backwards' },
           );
           animation.id = 'scroll-reveal';
           activeAnimations.add(animation);
@@ -343,9 +349,36 @@
       });
     });
   }
-  // Wait for the stylesheet and initial layout before identifying offscreen groups.
-  if (document.readyState === 'complete') initScrollReveals();
-  else window.addEventListener('load', initScrollReveals, { once: true });
+  function prepareScrollReveals() {
+    if (!document.body.classList.contains('home-page')) return;
+    const styles = document.querySelector('#site-styles');
+    const readinessObserver = new MutationObserver(startWhenReady);
+    let started = false;
+
+    function stopWaiting() {
+      started = true;
+      readinessObserver.disconnect();
+    }
+
+    function startWhenReady() {
+      if (started || document.readyState === 'loading' || (styles && styles.media !== 'all') ||
+          document.documentElement.matches('.page-preparing, .page-loading, .welcome-active, .welcome-pending')) return;
+      stopWaiting();
+      initScrollReveals();
+    }
+
+    // Measure the styled layout after the welcome, without waiting for media downloads.
+    readinessObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    if (styles) {
+      readinessObserver.observe(styles, { attributes: true, attributeFilter: ['media'] });
+      styles.addEventListener('error', stopWaiting, { once: true });
+    }
+    document.addEventListener('DOMContentLoaded', startWhenReady, { once: true });
+    window.addEventListener('pagehide', stopWaiting, { once: true });
+    window.addEventListener('beforeprint', stopWaiting, { once: true });
+    startWhenReady();
+  }
+  prepareScrollReveals();
 
   // Archive navigation points back to index.html and does not participate in scrollspy.
   const links = [...document.querySelectorAll('.main-nav a[href^="#"]')];

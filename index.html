@@ -28,7 +28,7 @@
       :root[data-theme="dark"] { color-scheme: dark; --paper: #151d19; --ink: #e6ece5; --muted: #afbdb1; --accent: #9ecdb2; --rule: #34463a; --soft-green: #23382c; }
       html.page-preparing { background: var(--paper); }
       html.page-preparing body { visibility: hidden; }
-      html.page-loading { overflow: hidden; }
+      html.page-loading, html.welcome-active { overflow: hidden; }
       .page-loader { position: fixed; inset: 0; z-index: 100; visibility: visible; display: grid; place-items: center; padding: 32px; background: var(--paper); color: var(--ink); opacity: 1; transition: opacity .16s ease-out; }
       .page-loader--leaving { opacity: 0; pointer-events: none; }
       .page-loader:focus { outline: none; }
@@ -41,13 +41,38 @@
       .page-loader button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 0 8px 8px; border: 0; background: transparent; color: var(--accent); font: 11px/1.6 "Segoe UI", Arial, sans-serif; cursor: pointer; }
       .page-loader button:hover { text-decoration: underline; text-underline-offset: 4px; }
       .page-loader button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+      /* The welcome shares the site's typography and palette, including before CSS arrives. */
+      .portfolio-welcome { padding: 32px 24px; text-align: center; transition: transform .65s cubic-bezier(.76, 0, .24, 1); }
+      .portfolio-welcome .welcome-content { width: min(640px, 100%); }
+      .welcome-heading { margin: 0; font: 400 clamp(38px, 6vw, 64px)/1.15 Georgia, serif; letter-spacing: -1.6px; }
+      .welcome-line { display: block; overflow: hidden; padding-bottom: .12em; }
+      .welcome-line > span { display: block; animation: welcome-rise .6s cubic-bezier(.22, .68, .2, 1) both; }
+      .welcome-line + .welcome-line { margin-top: -.1em; color: var(--accent); font-style: italic; }
+      .welcome-line + .welcome-line > span { animation-delay: .14s; }
+      .welcome-name { margin: 25px 0 0; color: var(--muted); font: 11px/1.6 "Segoe UI", Arial, sans-serif; letter-spacing: 2.2px; text-transform: uppercase; animation: welcome-settle .5s .32s both; }
+      .welcome-loading { margin: 20px 0 0; color: var(--muted); font: 11px/1.6 "Segoe UI", Arial, sans-serif; }
+      .portfolio-welcome .welcome-skip { position: absolute; bottom: max(26px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); padding: 10px 14px; }
+      .portfolio-welcome.page-loader--leaving { opacity: 1; transform: translateY(-100%); }
+      @keyframes welcome-rise { from { opacity: 0; transform: translateY(105%); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes welcome-settle { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
       @keyframes loading-sweep { 0% { transform: translateX(-110%); } 100% { transform: translateX(390%); } }
-      @media (prefers-reduced-motion: reduce) { .page-loader { transition: none; } .page-loader-track::after { animation: none; width: 36%; } }
+      @media (prefers-reduced-motion: reduce) { .page-loader { transition: none; } .page-loader-track::after { animation: none; width: 36%; } .welcome-line > span, .welcome-name { animation: none; } }
       @media print { html.page-preparing body { visibility: visible; } .page-loader { display: none !important; } }
     </style>
     <script>
       (() => {
-        document.documentElement.classList.add('page-preparing');
+        const root = document.documentElement;
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const welcomeKey = 'portfolio-welcome-seen';
+        let welcome = false;
+        try {
+          const navigation = performance.getEntriesByType('navigation')[0];
+          const fromPortfolio = document.referrer && new URL(document.referrer).origin === location.origin;
+          welcome = !reducedMotion.matches && !document.hidden && !location.hash && !fromPortfolio &&
+            (!navigation || navigation.type === 'navigate') && sessionStorage.getItem(welcomeKey) !== '1';
+        } catch { /* With storage unavailable, keep navigation immediate. */ }
+        root.classList.add('page-preparing');
+        if (welcome) root.classList.add('welcome-active');
         let finished = false;
         let stylesReady = false;
         let contentReady = false;
@@ -55,31 +80,74 @@
         let previousFocus;
         let observer;
         let showTimer;
+        let welcomeTimer;
+        let statusTimer;
+        let welcomeStarted = 0;
+        const entranceAnimations = new Set();
         const inertElements = new Map();
 
         function finishWhenReady() {
-          if (stylesReady && contentReady) restorePage();
+          if (finished || !stylesReady || !contentReady) return;
+          if (!welcome) { restorePage(); return; }
+          if (!loader) showLoader();
+          window.clearTimeout(welcomeTimer);
+          // The brief greeting runs while the document prepares; media never delays it.
+          welcomeTimer = window.setTimeout(() => restorePage(true), Math.max(0, 1400 - (performance.now() - welcomeStarted)));
         }
 
-        function restorePage() {
+        function revealIntroduction() {
+          if (reducedMotion.matches || typeof Element.prototype.animate !== 'function') return;
+          const elements = document.querySelectorAll('.profile, .about-section > .section-eyebrow, .about-section > h1, .about-section > .intro-lead, .about-section > .prose, .about-section > .intro-actions');
+          [...elements].filter(element => element.getBoundingClientRect().top < window.innerHeight).forEach((element, index) => {
+            const animation = element.animate(
+              [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'translateY(0)' }],
+              { duration: 500, delay: 170 + index * 45, easing: 'cubic-bezier(.22, .68, .2, 1)', fill: 'backwards' },
+            );
+            animation.id = 'welcome-enter';
+            entranceAnimations.add(animation);
+            const cleanup = () => entranceAnimations.delete(animation);
+            animation.finished.then(cleanup, cleanup);
+          });
+        }
+
+        function restorePage(revealWelcome = false) {
           if (finished) return;
           finished = true;
           window.clearTimeout(showTimer);
           window.clearTimeout(fallbackTimer);
+          window.clearTimeout(welcomeTimer);
+          window.clearTimeout(statusTimer);
           observer?.disconnect();
-          document.documentElement.classList.remove('page-loading', 'page-preparing');
+          root.classList.remove('page-loading', 'page-preparing', 'welcome-active');
           inertElements.forEach((wasInert, element) => { element.inert = wasInert; });
-          if (loader?.contains(document.activeElement)) previousFocus?.focus({ preventScroll: true });
+          if (loader?.contains(document.activeElement)) {
+            previousFocus?.focus({ preventScroll: true });
+            if (loader.contains(document.activeElement)) document.activeElement.blur();
+          }
           if (loader) {
             loader.inert = true;
             loader.removeAttribute('aria-modal');
             loader.setAttribute('aria-hidden', 'true');
-            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) loader.remove();
+            if (reducedMotion.matches || (welcome && !revealWelcome)) loader.remove();
             else {
+              if (welcome) revealIntroduction();
               loader.classList.add('page-loader--leaving');
-              window.setTimeout(() => loader.remove(), 180);
+              window.setTimeout(() => loader.remove(), welcome ? 680 : 180);
             }
           }
+        }
+
+        function dismiss() {
+          restorePage();
+          const main = document.querySelector('main');
+          if (main) { main.tabIndex = -1; main.focus({ preventScroll: true }); }
+        }
+
+        function stopMotion() {
+          restorePage();
+          loader?.remove();
+          entranceAnimations.forEach(animation => animation.cancel());
+          entranceAnimations.clear();
         }
 
         function makeInert(element) {
@@ -89,7 +157,7 @@
         }
 
         function showLoader() {
-          if (finished) return;
+          if (finished || loader) return;
           if (!document.body) {
             showTimer = window.setTimeout(showLoader, 50);
             return;
@@ -97,12 +165,21 @@
           previousFocus = document.activeElement;
           loader = document.createElement('div');
           loader.id = 'page-loader';
-          loader.className = 'page-loader';
+          loader.className = welcome ? 'page-loader portfolio-welcome' : 'page-loader';
           loader.setAttribute('role', 'dialog');
           loader.setAttribute('aria-modal', 'true');
-          loader.setAttribute('aria-label', 'Loading portfolio');
+          loader.setAttribute('aria-label', welcome ? 'Welcome to my portfolio' : 'Loading portfolio');
           loader.tabIndex = -1;
-          loader.innerHTML = '<div class="page-loader-content"><div class="page-loader-brand" aria-hidden="true">Portfolio</div><div class="page-loader-track" aria-hidden="true"></div><div class="page-loader-meta"><p class="page-loader-label" role="status">Loading…</p><button type="button" aria-label="Continue to portfolio">Continue <span aria-hidden="true">→</span></button></div></div>';
+          loader.innerHTML = welcome
+            ? '<div class="welcome-content"><p class="welcome-heading"><span class="welcome-line"><span>Welcome to</span></span><span class="welcome-line"><span>my portfolio.</span></span></p><p class="welcome-name">Amir Al Hamadani</p><p class="welcome-loading" role="status" hidden>Preparing portfolio…</p></div><button class="welcome-skip" type="button">Skip intro <span aria-hidden="true">→</span></button>'
+            : '<div class="page-loader-content"><div class="page-loader-brand" aria-hidden="true">Portfolio</div><div class="page-loader-track" aria-hidden="true"></div><div class="page-loader-meta"><p class="page-loader-label" role="status">Loading…</p><button type="button" aria-label="Continue to portfolio">Continue <span aria-hidden="true">→</span></button></div></div>';
+          if (welcome) {
+            welcomeStarted = performance.now();
+            try { sessionStorage.setItem(welcomeKey, '1'); } catch { /* The greeting can still finish. */ }
+            statusTimer = window.setTimeout(() => {
+              if (!finished && (!stylesReady || !contentReady)) loader.querySelector('.welcome-loading').hidden = false;
+            }, 1800);
+          }
           [...document.body.children].forEach(makeInert);
           observer = new MutationObserver((records) => {
             records.forEach((record) => record.addedNodes.forEach((node) => {
@@ -111,12 +188,13 @@
           });
           observer.observe(document.body, { childList: true });
           document.body.append(loader);
-          document.documentElement.classList.add('page-loading');
+          root.classList.add('page-loading');
+          if (stylesReady) root.classList.remove('page-preparing');
           const continueButton = loader.querySelector('button');
-          continueButton.addEventListener('click', restorePage);
+          continueButton.addEventListener('click', dismiss);
           loader.addEventListener('keydown', (event) => {
             if (finished) return;
-            if (event.key === 'Escape') restorePage();
+            if (event.key === 'Escape') { event.preventDefault(); dismiss(); }
             if (event.key === 'Tab') { event.preventDefault(); continueButton.focus(); }
           });
           loader.focus({ preventScroll: true });
@@ -125,7 +203,7 @@
         document.addEventListener('load', (event) => {
           if (event.target.id === 'site-styles') {
             event.target.media = 'all';
-            document.documentElement.classList.remove('page-preparing');
+            if (!welcome || loader) root.classList.remove('page-preparing');
             stylesReady = true;
             finishWhenReady();
           }
@@ -138,15 +216,18 @@
           contentReady = true;
           finishWhenReady();
         }, { once: true });
-        window.addEventListener('pagehide', () => loader?.remove());
-        window.addEventListener('pageshow', (event) => {
-          if (event.persisted) {
-            restorePage();
-            loader?.remove();
-          }
+        window.addEventListener('pagehide', stopMotion);
+        window.addEventListener('beforeprint', stopMotion);
+        reducedMotion.addEventListener('change', event => { if (event.matches) stopMotion(); });
+        document.addEventListener('visibilitychange', () => { if (document.hidden) stopMotion(); });
+        document.addEventListener('focusin', event => {
+          entranceAnimations.forEach(animation => { if (animation.effect.target.contains(event.target)) animation.cancel(); });
         });
-        const fallbackTimer = window.setTimeout(restorePage, 8000);
-        showTimer = window.setTimeout(showLoader, 600);
+        window.addEventListener('pageshow', (event) => {
+          if (event.persisted) stopMotion();
+        });
+        const fallbackTimer = window.setTimeout(() => restorePage(), 8000);
+        showTimer = window.setTimeout(showLoader, welcome ? 0 : 600);
       })();
     </script>
     <link rel="preload" href="style.css" as="style" fetchpriority="high">
