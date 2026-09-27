@@ -253,6 +253,7 @@
     });
 
     const playWhenVisible = (video) => {
+      if (document.hidden || document.querySelector('.media-viewer[open]')) return;
       if (video.paused) video.play().catch(() => {});
     };
     if ('IntersectionObserver' in window) {

@@ -92,7 +92,7 @@
           if (!loader) showLoader();
           window.clearTimeout(welcomeTimer);
           // The brief greeting runs while the document prepares; media never delays it.
-          welcomeTimer = window.setTimeout(() => restorePage(true), Math.max(0, 1400 - (performance.now() - welcomeStarted)));
+          welcomeTimer = window.setTimeout(() => restorePage(true), Math.max(0, 2350 - (performance.now() - welcomeStarted)));
         }
 
         function revealIntroduction() {
@@ -235,6 +235,7 @@
     <noscript><link rel="stylesheet" href="style.css"></noscript>
     <script src="theme.js" defer></script>
     <script src="script.js" defer></script>
+    <script src="media-viewer.js" defer></script>
   </head>
   <body class="home-page">
     <a class="skip-link" href="#main">Skip to content</a>
@@ -465,7 +466,7 @@
 
         <section class="section certifications-section" id="certifications" aria-labelledby="certifications-title">
           <div class="section-heading"><div><p class="section-eyebrow">LEARNING BEYOND THE CLASSROOM</p><h2 id="certifications-title">Certifications &amp; seminars.</h2></div></div>
-          <p class="section-intro">Selected learning in cybersecurity and industrial systems. Each certificate opens the original document.</p>
+          <p class="section-intro">Selected learning in cybersecurity and industrial systems. Explore the certificates and their original documents.</p>
           <div class="certificate-list"><article class="certificate-card" id="google-cybersecurity">
       <a class="certificate-preview" href="assets/certifications/google-cybersecurity.pdf" target="_blank" rel="noopener noreferrer" aria-label="Open Google Cybersecurity Professional Certificate certificate PDF in a new tab">
         <img src="assets/certifications/google-cybersecurity.jpg" alt="Google Cybersecurity Professional Certificate certificate issued to Amir Al Hamadani" width="900" height="675" loading="lazy" decoding="async">

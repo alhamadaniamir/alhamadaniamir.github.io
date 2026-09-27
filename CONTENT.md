@@ -20,7 +20,7 @@ project on the homepage. The full archive keeps the expandable **Project details
 Homepage videos autoplay muted while they are visible and pause when scrolled away;
 controls remain available for sound and manual playback.
 The four featured projects now include 13 photos/screenshots and five videos
-from `Documents/ProjectDocumentations`. Images open at full size in a new tab.
+from `Documents/ProjectDocumentations`. Project images open in a gallery viewer.
 Archive videos have native playback controls and poster previews; they remain click-to-play.
 The Barbershop entry includes ten interface screenshots from
 `assets/projects/barbershop/`. The portfolio entry retains placeholders for
@@ -30,6 +30,27 @@ With JavaScript enabled, a **Collapse project** button stays at the bottom-right
 of the reading area while a project is expanded. It pauses videos and returns
 you to the project summary with a brief transition. Reduced-motion preferences
 disable the animation. The original summary remains usable without JavaScript.
+
+## Project and certificate previews
+
+Select a project image or certificate thumbnail to open a viewer over the page.
+Project photos are grouped by project; certificates are grouped by their collection.
+Use the arrows or Left/Right keys to browse. **Zoom in** enlarges an image for
+scrolling or dragging, and **Fit image** returns to the complete image. A focused
+zoomed image uses arrow keys to pan. **Close**, Escape, or selecting the dimmed
+background returns to the original thumbnail without losing the reading position.
+
+The viewer follows the light/dark theme, supports keyboard navigation, and respects
+reduced motion. Background videos pause while it is open. **Open original** opens
+the source image, while **Open PDF** retains access to original certificates.
+The separate certificate and verification links keep their existing destinations.
+Without JavaScript, thumbnails still open their original files in a new tab.
+
+`media-viewer.js` enhances existing image links on the homepage, projects, and
+certifications pages. New images using the same markup join their gallery
+automatically. Hovering or focusing project images gently enlarges the preview;
+certificate cards gain a small lift and green border. Reduced motion keeps the
+color/focus feedback without movement.
 
 ## Light and dark themes
 
@@ -52,7 +73,7 @@ the palette. The site uses light colors and hides the switch without JavaScript.
 The first direct homepage visit in a browser tab opens with **Welcome to my
 portfolio.** and Amir's name, using the existing serif type and saved theme.
 The text enters in two lines, then the screen lifts away to introduce the profile
-and homepage copy. The greeting lasts about two seconds including the exit;
+and homepage copy. The greeting lasts about three seconds including the exit;
 **Skip intro** or Escape opens the page immediately.
 
 The greeting is remembered with the session key `portfolio-welcome-seen` and
