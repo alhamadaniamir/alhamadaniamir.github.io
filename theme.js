@@ -18,6 +18,7 @@
     document.querySelector('meta[name="color-scheme"]')?.setAttribute('content', dark ? 'dark' : 'light');
     controls.forEach(control => {
       control.setAttribute('aria-checked', String(dark));
+      control.title = dark ? 'Switch to light theme' : 'Switch to dark theme';
       control.hidden = false;
     });
   }

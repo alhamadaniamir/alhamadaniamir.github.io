@@ -54,7 +54,9 @@ color/focus feedback without movement.
 
 ## Light and dark themes
 
-The **Dark theme** switch is inside the Menu panel on every page.
+The sun/moon **Dark theme** button sits beside Menu in the header on every page.
+It stays available while scrolling, with a 44-pixel target for touch and a visible
+keyboard focus ring. The moon switches to dark colors; the sun returns to light.
 Light is the default. A visitor's choice is saved in their browser and shared
 across the portfolio pages; switching still works if browser storage is blocked.
 The loading screen follows the saved choice, while printed pages use light colors.
