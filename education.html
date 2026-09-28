@@ -15,6 +15,28 @@
     <!-- Read the saved theme before the first paint, including the loading screen. -->
     <script>
       (() => {
+        function handleTransitionPromises(event) {
+          const transition = event.viewTransition;
+          if (!transition) return;
+          transition.ready.catch(() => {});
+          transition.updateCallbackDone.catch(() => {});
+          transition.finished.catch(() => {});
+        }
+        window.addEventListener('pageswap', handleTransitionPromises);
+        // Register before the first paint so a slow deferred script cannot miss arrival.
+        window.addEventListener('pagereveal', (event) => {
+          handleTransitionPromises(event);
+          window.portfolioPageTransition = null;
+          const transition = event.viewTransition;
+          if (!transition) return;
+          if (document.readyState === 'loading' || document.querySelector('#site-styles')?.media !== 'all' ||
+              window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+              document.documentElement.matches('.page-preparing, .page-loading, .welcome-active, .welcome-pending')) {
+            transition.skipTransition();
+            return;
+          }
+          window.portfolioPageTransition = transition;
+        });
         let theme = 'light';
         try { if (localStorage.getItem('portfolio-theme') === 'dark') theme = 'dark'; } catch {}
         document.documentElement.dataset.theme = theme;
@@ -24,6 +46,7 @@
     </script>
     <!-- Critical loading styles stay inline so a slow stylesheet cannot hide the indicator. -->
     <style>
+      @media (prefers-reduced-motion: no-preference) { @view-transition { navigation: auto; types: page; } }
       :root { color-scheme: light; --paper: #f9f8f4; --ink: #242c29; --muted: #626d65; --accent: #285b4e; --rule: #dddfd6; --soft-green: #e6ebe2; }
       :root[data-theme="dark"] { color-scheme: dark; --paper: #151d19; --ink: #e6ece5; --muted: #afbdb1; --accent: #9ecdb2; --rule: #34463a; --soft-green: #23382c; }
       html.page-preparing { background: var(--paper); }
@@ -95,6 +118,9 @@
             return;
           }
           previousFocus = document.activeElement;
+          // Show the inline loader even if the stylesheet is still downloading.
+          const styles = document.querySelector('#site-styles');
+          if (!stylesReady && styles) styles.media = 'print';
           loader = document.createElement('div');
           loader.id = 'page-loader';
           loader.className = 'page-loader';
@@ -150,7 +176,7 @@
       })();
     </script>
     <link rel="preload" href="style.css" as="style" fetchpriority="high">
-    <link id="site-styles" rel="stylesheet" href="style.css" media="print">
+    <link id="site-styles" rel="stylesheet" href="style.css" media="all">
     <noscript><link rel="stylesheet" href="style.css"></noscript>
     <script src="theme.js" defer></script>
     <script src="script.js" defer></script>

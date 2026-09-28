@@ -6,7 +6,17 @@
 
   document.querySelectorAll('.site-menu').forEach((menu) => {
     const summary = menu.querySelector('summary');
-    if (!summary) return;
+    const panel = menu.querySelector('.menu-panel');
+    if (!summary || !panel) return;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let closing = null;
+
+    function cancelClose() {
+      const animation = closing;
+      closing = null;
+      animation?.cancel();
+      panel.inert = false;
+    }
 
     function returnFocusIfHidden() {
       if (!menu.open && menu.contains(document.activeElement) && document.activeElement !== summary) {
@@ -14,12 +24,33 @@
       }
     }
 
-    function closeMenu(restoreFocus = false) {
+    function closeMenu(restoreFocus = false, animate = true) {
       if (!menu.open) return;
-      menu.open = false;
-      if (restoreFocus) summary.focus({ preventScroll: true });
-      else returnFocusIfHidden();
+      cancelClose();
+      if (restoreFocus || panel.contains(document.activeElement)) summary.focus({ preventScroll: true });
+      if (!animate || reducedMotion.matches || typeof panel.animate !== 'function') {
+        menu.open = false;
+        return;
+      }
+      panel.inert = true;
+      const animation = panel.animate(
+        [{ opacity: getComputedStyle(panel).opacity, transform: getComputedStyle(panel).transform }, { opacity: 0, transform: 'translateY(-4px) scale(.99)' }],
+        { duration: 140, easing: 'ease-out' },
+      );
+      closing = animation;
+      animation.finished.then(() => {
+        if (closing !== animation) return;
+        menu.open = false;
+        cancelClose();
+      }, () => {});
     }
+
+    summary.addEventListener('click', (event) => {
+      if (event.defaultPrevented || event.button !== 0 || !menu.open) return;
+      event.preventDefault();
+      if (closing) cancelClose();
+      else closeMenu(true);
+    });
 
     document.addEventListener('keydown', (event) => {
       if (event.key !== 'Escape' || !menu.open) return;
@@ -33,16 +64,27 @@
 
     menu.addEventListener('click', (event) => {
       if (event.defaultPrevented || event.button !== 0) return;
-      if (event.target.closest('.menu-panel a[href]')) closeMenu();
+      // Let the browser navigate immediately and capture a clean header.
+      if (event.target.closest('.menu-panel a[href]')) closeMenu(false, false);
     });
 
     // Native details works without JavaScript; closing it must not hide keyboard focus.
-    menu.addEventListener('toggle', returnFocusIfHidden);
+    menu.addEventListener('toggle', () => {
+      if (!menu.open) cancelClose();
+      returnFocusIfHidden();
+    });
+    window.addEventListener('pagehide', () => closeMenu(false, false));
+    window.addEventListener('pageswap', () => closeMenu(false, false));
+    window.addEventListener('beforeprint', () => closeMenu(false, false));
+    reducedMotion.addEventListener('change', (event) => {
+      if (event.matches && closing) closeMenu(true, false);
+    });
   });
 
   function initPageTransitions() {
     const content = document.querySelector('main');
     if (!content || typeof content.animate !== 'function' ||
+        window.portfolioPageTransition ||
         document.documentElement.matches('.welcome-active, .welcome-pending')) return;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (reducedMotion.matches) return;
@@ -62,13 +104,28 @@
 
     let entered = false;
     let entranceAnimation = null;
+    let nativeTransition = null;
     const readinessObserver = new MutationObserver(enterPage);
+
+    // Native page transitions retain the previous page until the next one is ready.
+    // The normal arrival animation remains the fallback for unsupported browsers.
+    window.addEventListener('pagereveal', (event) => {
+      if (!event.viewTransition || event.viewTransition !== window.portfolioPageTransition) return;
+      nativeTransition = event.viewTransition;
+      entranceAnimation?.cancel();
+      entranceAnimation = null;
+      entered = true;
+      readinessObserver.disconnect();
+      nativeTransition.finished.catch(() => {});
+    });
 
     function stopEntrance() {
       entered = true;
       readinessObserver.disconnect();
       entranceAnimation?.cancel();
       entranceAnimation = null;
+      nativeTransition?.skipTransition();
+      nativeTransition = null;
     }
 
     function enterPage() {
@@ -86,8 +143,8 @@
       readinessObserver.disconnect();
       try {
         const animation = content.animate(
-          [{ opacity: 0.78, transform: 'translateY(6px)' }, { opacity: 1, transform: 'translateY(0)' }],
-          { duration: 380, easing: 'cubic-bezier(.22, 1, .36, 1)' },
+          [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'translateY(0)' }],
+          { duration: 480, easing: 'cubic-bezier(.22, 1, .36, 1)' },
         );
         animation.id = 'page-enter';
         entranceAnimation = animation;

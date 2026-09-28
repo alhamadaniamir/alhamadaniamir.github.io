@@ -15,6 +15,28 @@
     <!-- Read the saved theme before the first paint, including the loading screen. -->
     <script>
       (() => {
+        function handleTransitionPromises(event) {
+          const transition = event.viewTransition;
+          if (!transition) return;
+          transition.ready.catch(() => {});
+          transition.updateCallbackDone.catch(() => {});
+          transition.finished.catch(() => {});
+        }
+        window.addEventListener('pageswap', handleTransitionPromises);
+        // Register before the first paint so a slow deferred script cannot miss arrival.
+        window.addEventListener('pagereveal', (event) => {
+          handleTransitionPromises(event);
+          window.portfolioPageTransition = null;
+          const transition = event.viewTransition;
+          if (!transition) return;
+          if (document.readyState === 'loading' || document.querySelector('#site-styles')?.media !== 'all' ||
+              window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+              document.documentElement.matches('.page-preparing, .page-loading, .welcome-active, .welcome-pending')) {
+            transition.skipTransition();
+            return;
+          }
+          window.portfolioPageTransition = transition;
+        });
         let theme = 'light';
         try { if (localStorage.getItem('portfolio-theme') === 'dark') theme = 'dark'; } catch {}
         document.documentElement.dataset.theme = theme;
@@ -24,6 +46,7 @@
     </script>
     <!-- Critical loading styles stay inline so a slow stylesheet cannot hide the indicator. -->
     <style>
+      @media (prefers-reduced-motion: no-preference) { @view-transition { navigation: auto; types: page; } }
       :root { color-scheme: light; --paper: #f9f8f4; --ink: #242c29; --muted: #626d65; --accent: #285b4e; --rule: #dddfd6; --soft-green: #e6ebe2; }
       :root[data-theme="dark"] { color-scheme: dark; --paper: #151d19; --ink: #e6ece5; --muted: #afbdb1; --accent: #9ecdb2; --rule: #34463a; --soft-green: #23382c; }
       html.page-preparing { background: var(--paper); }
@@ -95,6 +118,9 @@
             return;
           }
           previousFocus = document.activeElement;
+          // Show the inline loader even if the stylesheet is still downloading.
+          const styles = document.querySelector('#site-styles');
+          if (!stylesReady && styles) styles.media = 'print';
           loader = document.createElement('div');
           loader.id = 'page-loader';
           loader.className = 'page-loader';
@@ -150,10 +176,11 @@
       })();
     </script>
     <link rel="preload" href="style.css" as="style" fetchpriority="high">
-    <link id="site-styles" rel="stylesheet" href="style.css" media="print">
+    <link id="site-styles" rel="stylesheet" href="style.css" media="all">
     <noscript><link rel="stylesheet" href="style.css"></noscript>
     <script src="theme.js" defer></script>
     <script src="script.js" defer></script>
+    <script src="gallery-preview.js" defer></script>
     <script src="media-viewer.js" defer></script>
   </head>
   <body>
@@ -308,7 +335,10 @@
     <span class="media-open" aria-hidden="true">View full size ↗</span>
   </a>
   <figcaption><span class="media-type">SCREENSHOT</span>Member management with search and CSV export.</figcaption>
- </figure><figure class="media-item">
+ </figure>
+ <details class="media-more">
+  <summary><span class="media-more-show">Show 3 more screenshots</span><span class="media-more-hide">Show fewer screenshots</span><svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 7.5 5 5 5-5"/></svg></summary>
+  <div class="media-more-content" id="ballclub-more-screenshots"><div class="media-more-grid"><figure class="media-item">
   <a class="media-image-link" href="assets/projects/ballclub/owner-accounts.png" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image in a new tab: Ballclub owner-account page with username search and controls to add or remove an owner.">
     <img class="project-image" src="assets/projects/ballclub/owner-accounts.png" alt="Ballclub owner-account page with username search and controls to add or remove an owner." width="1323" height="717" loading="lazy" decoding="async">
     <span class="media-open" aria-hidden="true">View full size ↗</span>
@@ -326,7 +356,7 @@
     <span class="media-open" aria-hidden="true">View full size ↗</span>
   </a>
   <figcaption><span class="media-type">SCREENSHOT</span>The owner sign-in screen.</figcaption>
- </figure></div></div></details>
+ </figure></div></div></details></div></div></details>
   <div class="project-bottom"><p class="project-stack">Vue 3 · FastAPI · MongoDB · Tailwind CSS · Chart.js</p><div class="project-links"><a href="https://github.com/alhamadaniamir/ballclub-app-front">Backend repository <span aria-hidden="true">↗</span></a></div></div>
  </article><article class="project" id="barbershop">
   <div class="project-topline"><span class="project-category">WEB DEVELOPMENT · SERVICE WORKFLOWS</span><span class="project-number" aria-hidden="true">05</span></div>

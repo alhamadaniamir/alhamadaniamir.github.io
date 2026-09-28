@@ -23,6 +23,12 @@ controls remain available for sound and manual playback.
 The four featured projects now include 13 photos/screenshots and five videos
 from `Documents/ProjectDocumentations`. Project images open in a gallery viewer.
 Archive videos have native playback controls and poster previews; they remain click-to-play.
+Ballclub shows four screenshots initially on both the homepage and project archive.
+**Show 3 more screenshots** reveals the remaining images; **Show fewer screenshots**
+is available at both the top and bottom of that group. The native disclosure works
+without JavaScript. `gallery-preview.js` adds a brief close fade and returns to the
+disclosure without scrolling through the full project. All seven screenshots stay
+available when browsing Ballclub in the image viewer.
 The Barbershop entry includes ten interface screenshots from
 `assets/projects/barbershop/`. The portfolio entry retains placeholders for
 future media.
@@ -94,12 +100,19 @@ in a fresh tab, or clear that session key before a new direct navigation. Its
 critical styles and logic live in `index.html` alongside the loading screen so
 they can appear even when the external stylesheet is slow.
 
-Links between portfolio pages navigate immediately. The arriving main content
-gently fades from 78% to full opacity with a six-pixel rise over 380 milliseconds
-as soon as it is ready. The header and homepage sidebar stay steady. The Menu
-opens with a small fade and downward movement, and its link arrows respond on hover
-or keyboard focus. Section bookmarks, external links, resume links, and new-tab
-actions retain their normal behavior. Reduced motion bypasses these effects.
+Links between portfolio pages navigate immediately. Browsers supporting
+cross-document view transitions blend the outgoing and incoming pages over about
+half a second with a small vertical movement; the header keeps its position.
+Other browsers fade the arriving main content in over 480 milliseconds with a
+ten-pixel rise, once its layout is ready. The welcome takes precedence on a fresh
+homepage visit. The page effects are separate from the circular theme transition.
+
+The Menu opens over 360 milliseconds, with its links following in small staggered
+steps. Closing it takes 140 milliseconds; selecting a destination navigates
+immediately. Escape closes the panel and returns focus to Menu. Section bookmarks,
+external links, résumé links, and new-tab actions retain their normal behavior.
+Reduced motion bypasses these effects. Header bookmark styling and responsive
+wrapping are unchanged.
 
 The homepage introduces offscreen sections with a small fade and upward movement.
 Headings lead their supporting copy, followed by cards and project media as visitors
@@ -131,7 +144,12 @@ release the page, and media never extends the welcome.
 
 Its styles and script stay near the top of each HTML page so the screen can appear
 while `style.css` is still loading. Keep the stylesheet's `id="site-styles"`
-and the accompanying `noscript` fallback when editing this area. This screen
+and the accompanying `noscript` fallback when editing this area. The stylesheet
+initially uses `media="all"` so page transitions capture the complete styled layout.
+If it is still downloading when the loader appears, the loader temporarily changes
+it to `media="print"` to allow the inline indicator to render, then restores `all`
+when loading completes. Each HTML head also opts into page transitions and registers
+the arrival handler before the first paint. This screen
 covers initial loading; future photos and videos load within their project
 areas using the settings below.
 
