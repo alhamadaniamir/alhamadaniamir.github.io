@@ -144,7 +144,7 @@
       try {
         const animation = content.animate(
           [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'translateY(0)' }],
-          { duration: 480, easing: 'cubic-bezier(.22, 1, .36, 1)' },
+          { duration: 580, easing: 'cubic-bezier(.22, 1, .36, 1)' },
         );
         animation.id = 'page-enter';
         entranceAnimation = animation;
@@ -338,7 +338,7 @@
       const items = [...elements];
       // Keep the initial viewport and restored scroll position immediately readable.
       if (!items.length || items[0].getBoundingClientRect().top < window.innerHeight) return;
-      groups.set(items[0], { items, distance: 8, duration: 660, ...options });
+      groups.set(items[0], { items, distance: 8, duration: 800, ...options });
     }
 
     document.querySelectorAll('.home-page main > .section').forEach((section) => {
@@ -353,8 +353,8 @@
     document.querySelectorAll('.home-page .project').forEach((project) => {
       register(project.querySelectorAll(':scope > .project-topline, :scope > h3, :scope > p'));
     });
-    document.querySelectorAll('.home-page .media-item').forEach((item) => register([item], { distance: 6, duration: 620 }));
-    document.querySelectorAll('.home-page .certificate-card').forEach((item) => register([item], { distance: 6, duration: 640 }));
+    document.querySelectorAll('.home-page .media-item').forEach((item) => register([item], { distance: 6, duration: 760 }));
+    document.querySelectorAll('.home-page .certificate-card').forEach((item) => register([item], { distance: 6, duration: 780 }));
 
     const observer = new IntersectionObserver((entries) => {
       const sectionStaggers = new Map();
@@ -371,7 +371,7 @@
         sectionStaggers.set(section, stagger + 1);
         group.items.forEach((item, index) => {
           // Give headings a small lead over copy and cards, without a long cascade.
-          const delay = Math.min(stagger + index, 3) * 75;
+          const delay = Math.min(stagger + index, 3) * 90;
           // Animate on entry only: content is never hidden awaiting JavaScript.
           const animation = item.animate(
             [{ opacity: 0, transform: `translateY(${group.distance}px)` }, { opacity: 1, transform: 'translateY(0)' }],
