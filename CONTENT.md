@@ -23,15 +23,23 @@ controls remain available for sound and manual playback.
 The four featured projects now include 13 photos/screenshots and five videos
 from `Documents/ProjectDocumentations`. Project images open in a gallery viewer.
 Archive videos have native playback controls and poster previews; they remain click-to-play.
+Both pages use the same compact two-column media layout. Videos stay within one
+column, with a maximum height of 320 pixels on desktop and 160 pixels on phones;
+the whole frame remains visible without cropping.
 Ballclub shows four screenshots initially on both the homepage and project archive.
 **Show 3 more screenshots** reveals the remaining images; **Show fewer screenshots**
 is available at both the top and bottom of that group. The native disclosure works
 without JavaScript. `gallery-preview.js` adds a brief close fade and returns to the
 disclosure without scrolling through the full project. All seven screenshots stay
 available when browsing Ballclub in the image viewer.
-The Barbershop entry includes ten interface screenshots from
-`assets/projects/barbershop/`. The portfolio entry retains placeholders for
-future media.
+The Barbershop entry uses the same four-preview pattern, with **Show 6 more
+screenshots** revealing the rest of its ten interface screenshots from
+`assets/projects/barbershop/`. All ten remain available in the image viewer.
+The portfolio entry retains placeholders for future media.
+
+On the full projects page, the IoT weighing scale's **Engineering decision**
+section explains the existing server-held Gemini key, the benefit of keeping it
+off the camera, and the availability trade-off of using an external API service.
 
 With JavaScript enabled, a **Collapse project** button stays at the bottom-right
 of the reading area while a project is expanded. It pauses videos and returns
@@ -203,8 +211,8 @@ The complete certificate collection is linked from the certification section.
 The image fits inside its frame without cropping. For the full-size link used by
 the current galleries, wrap the image in
 `<a class="media-image-link" href="THE_SAME_IMAGE_PATH" target="_blank" rel="noopener noreferrer">`.
-Duplicate a complete figure to add more images. For a screenshot or diagram that needs the full row, use
-`class="media-item media-item--wide"` on its figure.
+Duplicate a complete figure to add more images. Project figures share a compact
+two-column grid; visitors can use the image viewer to inspect finer details.
 
 ## Project videos
 
@@ -212,7 +220,7 @@ Put your video in the appropriate `assets/projects/PROJECT/` folder, then duplic
 with the following. Change both file paths and the caption to match your video.
 
 ```html
-<figure class="media-item media-item--wide">
+<figure class="media-item">
   <video class="project-video" controls playsinline preload="none">
     <source src="assets/projects/fruityvens-demo.mp4" type="video/mp4">
     Your browser does not support this video.
