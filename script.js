@@ -381,15 +381,27 @@
         group.items.forEach((item, index) => {
           // Give headings a small lead over copy and cards, without a long cascade.
           const delay = Math.min(stagger + index, 3) * 90;
-          // Animate on entry only: content is never hidden awaiting JavaScript.
-          const animation = item.animate(
-            [{ opacity: 0, transform: `translateY(${group.distance}px)` }, { opacity: 1, transform: 'translateY(0)' }],
-            { duration: group.duration, delay, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'backwards' },
-          );
-          animation.id = 'scroll-reveal';
-          activeAnimations.add(animation);
-          const cleanup = () => activeAnimations.delete(animation);
-          animation.finished.then(cleanup, cleanup);
+          const isHeading = item.matches('h1, h2, h3, .section-heading');
+          const nestedHeading = isHeading ? null : item.querySelector('h1, h2, h3');
+          const targets = [{ element: item, heading: isHeading }];
+          if (nestedHeading) targets.push({ element: nestedHeading, heading: true });
+          targets.forEach(({ element, heading }) => {
+            const distance = heading ? Math.max(group.distance, 12) : group.distance;
+            const frames = heading
+              ? [{ opacity: 0, transform: `translateY(${distance}px)`, filter: 'blur(2.5px)' }, { opacity: 1, transform: 'translateY(0)', filter: 'blur(0)' }]
+              : [{ opacity: 0, transform: `translateY(${distance}px)` }, { opacity: 1, transform: 'translateY(0)' }];
+            // Titles rise and sharpen into focus; supporting copy keeps its quieter fade.
+            const animation = element.animate(frames, {
+              duration: heading ? Math.max(group.duration, 900) : group.duration,
+              delay,
+              easing: 'cubic-bezier(.22, 1, .36, 1)',
+              fill: 'backwards',
+            });
+            animation.id = 'scroll-reveal';
+            activeAnimations.add(animation);
+            const cleanup = () => activeAnimations.delete(animation);
+            animation.finished.then(cleanup, cleanup);
+          });
         });
       });
     }, { threshold: 0, rootMargin: '0px 0px 24px 0px' });
