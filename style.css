@@ -151,6 +151,12 @@ h1 em { color: var(--accent); font-weight: 400; }
 .prose strong { color: var(--accent); font-weight: 600; }
 .prose p, .approach-section > p:not(.section-eyebrow) { color: var(--muted); font-size: 15px; line-height: 1.85; }
 .prose p + p { margin-top: 18px; }
+.prose p, .interest p, .project > p:not(.project-subtitle), .project-subtitle, .archive-section > p, .archive-intro .intro-lead, .contact-section > p:not(.section-eyebrow), .personal-interest p { transition: color .24s ease, transform .3s cubic-bezier(.22, 1, .36, 1); }
+.section h2, .archive-section h2, .project h3, .personal-interest h3, .education-item h3, .toolkit-group h3, .certificate-info h3 { transition: color .24s ease, transform .3s cubic-bezier(.22, 1, .36, 1); }
+@media (hover: hover) and (pointer: fine) {
+  .prose p:hover, .interest p:hover, .project > p:not(.project-subtitle):hover, .project-subtitle:hover, .archive-section > p:hover, .archive-intro .intro-lead:hover, .contact-section > p:not(.section-eyebrow):hover, .personal-interest p:hover { color: var(--ink); transform: translateX(3px); }
+  .section h2:hover, .archive-section h2:hover, .project h3:hover, .personal-interest h3:hover, .education-item h3:hover, .toolkit-group h3:hover, .certificate-info h3:hover { color: var(--accent); transform: translateX(3px); }
+}
 .intro-actions { display: flex; flex-wrap: wrap; gap: 0 28px; }
 .text-link { display: inline-flex; align-items: center; gap: 20px; margin-top: 25px; color: var(--accent); font-size: 13px; font-weight: 600; }
 .text-link span { transition: transform .2s ease; }
