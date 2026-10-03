@@ -328,7 +328,7 @@
 
   function initScrollReveals() {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (!document.body.classList.contains('home-page') || reducedMotion.matches ||
+    if (reducedMotion.matches ||
         !('IntersectionObserver' in window) || typeof Element.prototype.animate !== 'function') return;
 
     const groups = new Map();
@@ -341,20 +341,29 @@
       groups.set(items[0], { items, distance: 8, duration: 800, ...options });
     }
 
-    document.querySelectorAll('.home-page main > .section').forEach((section) => {
-      if (section.matches('.about-section, .approach-section, .contact-section')) {
-        register(section.children);
-      } else {
-        register(section.querySelectorAll(':scope > .section-heading, :scope > .section-intro'));
-      }
-    });
-    document.querySelectorAll('.home-page .interest').forEach((item) => register([item]));
-    document.querySelectorAll('.home-page .toolkit-group, .home-page .education-item').forEach((item) => register([item]));
-    document.querySelectorAll('.home-page .project').forEach((project) => {
-      register(project.querySelectorAll(':scope > .project-topline, :scope > h3, :scope > p'));
-    });
-    document.querySelectorAll('.home-page .media-item').forEach((item) => register([item], { distance: 6, duration: 760 }));
-    document.querySelectorAll('.home-page .certificate-card').forEach((item) => register([item], { distance: 6, duration: 780 }));
+    const isHome = document.body.classList.contains('home-page');
+    if (isHome) {
+      document.querySelectorAll('.home-page main > .section').forEach((section) => {
+        if (section.matches('.about-section, .approach-section, .contact-section')) {
+          register(section.children);
+        } else {
+          register(section.querySelectorAll(':scope > .section-heading, :scope > .section-intro'));
+        }
+      });
+      document.querySelectorAll('.home-page .interest').forEach((item) => register([item]));
+      document.querySelectorAll('.home-page .toolkit-group, .home-page .education-item').forEach((item) => register([item]));
+      document.querySelectorAll('.home-page .project').forEach((project) => {
+        register(project.querySelectorAll(':scope > .project-topline, :scope > h3, :scope > p'));
+      });
+    } else {
+      document.querySelectorAll('.archive-intro > *').forEach((item) => register([item]));
+      document.querySelectorAll('.archive-section > h2, .archive-section > p, .archive-section > .prose > p, .archive-section > .personal-interests > .personal-interest, .archive-section .education-item, .archive-section .certificate-card, .archive-section > .text-link, .archive-section > .social-links').forEach((item) => register([item]));
+      document.querySelectorAll('.archive-projects .project').forEach((project) => {
+        project.querySelectorAll(':scope > .project-topline, :scope > .project-title, :scope > .project-subtitle, :scope > p, :scope > .project-bottom').forEach((item) => register([item]));
+      });
+    }
+    document.querySelectorAll('.project-details > summary, .course-domains > summary, .media-more > summary').forEach((item) => register([item], { distance: 5, duration: 720 }));
+    document.querySelectorAll('.media-item').forEach((item) => register([item], { distance: 6, duration: 760 }));
 
     const observer = new IntersectionObserver((entries) => {
       const sectionStaggers = new Map();
@@ -408,7 +417,6 @@
     });
   }
   function prepareScrollReveals() {
-    if (!document.body.classList.contains('home-page')) return;
     const styles = document.querySelector('#site-styles');
     const readinessObserver = new MutationObserver(startWhenReady);
     let started = false;
