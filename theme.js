@@ -6,6 +6,7 @@
   const preferenceKey = 'portfolio-theme';
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let transitionTimer;
+  let switchTimer;
   let desiredTheme = root.dataset.theme === 'dark' ? 'dark' : 'light';
   let themeRequest = 0;
   let activeTransition = null;
@@ -25,6 +26,8 @@
 
   function stopThemeMotion() {
     clearTimeout(transitionTimer);
+    clearTimeout(switchTimer);
+    controls.forEach(control => control.classList.remove('theme-switching'));
     activeReveal?.cancel();
     activeReveal = null;
     activeTransition?.skipTransition();
@@ -88,6 +91,11 @@
     if (!animate || reducedMotion.matches || root.dataset.theme === desiredTheme) {
       renderTheme(desiredTheme);
       return;
+    }
+
+    if (control) {
+      control.classList.add('theme-switching');
+      switchTimer = setTimeout(() => control.classList.remove('theme-switching'), 680);
     }
 
     if (control && typeof document.startViewTransition === 'function' && typeof root.animate === 'function') {
