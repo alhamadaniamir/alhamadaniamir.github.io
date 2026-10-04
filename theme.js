@@ -56,12 +56,19 @@
       await transition.ready;
       if (request !== themeRequest || reducedMotion.matches) return;
 
-      const radius = Math.hypot(
-        Math.max(origin.x, window.innerWidth - origin.x),
-        Math.max(origin.y, window.innerHeight - origin.y),
-      );
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const corners = [[0, 0], [width, 0], [width, height], [0, height]];
+      // A growing diamond makes a deliberate diagonal wipe from the theme button.
+      const radius = Math.max(...corners.map(([x, y]) => Math.abs(x - origin.x) + Math.abs(y - origin.y))) + 2;
+      const polygon = (size) => {
+        const points = size === 0
+          ? Array(4).fill([origin.x, origin.y])
+          : [[origin.x, origin.y - size], [origin.x + size, origin.y], [origin.x, origin.y + size], [origin.x - size, origin.y]];
+        return `polygon(${points.map(([x, y]) => `${x}px ${y}px`).join(', ')})`;
+      };
       const reveal = root.animate(
-        { clipPath: [`circle(0px at ${origin.x}px ${origin.y}px)`, `circle(${radius}px at ${origin.x}px ${origin.y}px)`] },
+        { clipPath: [polygon(0), polygon(radius)] },
         { duration: 600, easing: 'cubic-bezier(.22, .68, .2, 1)', pseudoElement: '::view-transition-new(root)' },
       );
       reveal.id = 'theme-reveal';

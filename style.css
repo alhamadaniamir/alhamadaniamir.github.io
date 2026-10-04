@@ -109,7 +109,7 @@ html.theme-changing .nav-link::after { transition: transform .3s ease, backgroun
 /* During a theme reveal, layer the new palette over a still snapshot of the old one. */
 html.theme-reveal::view-transition-old(root), html.theme-reveal::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
 html.theme-reveal::view-transition-old(root) { z-index: 1; }
-html.theme-reveal::view-transition-new(root) { z-index: 2; }
+html.theme-reveal::view-transition-new(root) { z-index: 2; filter: drop-shadow(0 0 5px var(--accent)); }
 html.theme-reveal::view-transition-group(root) { animation: none; }
 html.theme-reveal::view-transition { pointer-events: none; }
 
