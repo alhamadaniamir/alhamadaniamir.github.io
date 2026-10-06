@@ -93,12 +93,13 @@ the palette. The site uses light colors and hides the switch without JavaScript.
 
 ## Page, Menu, and scroll transitions
 
-The first direct homepage visit in a browser tab opens with **Welcome to my
-portfolio.** and Amir's name, using the existing serif type and saved theme.
-The text enters in two lines, then the screen lifts away over 800 milliseconds.
-The profile and homepage copy softly rise six pixels over 820 milliseconds with
-80-millisecond steps, beginning under the departing welcome so the reveal flows
-into the page. The greeting lasts about three seconds including the exit;
+The first direct homepage visit in a browser tab opens with **Portfolio** and
+Amir's name on a green background, using the existing serif type. A fine line
+expands beneath the title. After two seconds, the title fades upward and the
+green surface lifts away over one second, revealing the homepage underneath.
+The saved dark theme uses a deeper green. The profile and homepage copy softly
+rise six pixels over 900 milliseconds with 80-millisecond steps, beginning under
+the departing welcome. The entire greeting lasts about three seconds;
 **Skip intro** or Escape opens the page immediately.
 
 The greeting is remembered with the session key `portfolio-welcome-seen` and
