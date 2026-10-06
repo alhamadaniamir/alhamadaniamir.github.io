@@ -253,7 +253,9 @@ the result without watching the video.
 
 ## Certifications
 
-The home page shows three selected credentials in a continuously moving row.
+The home page shows seven selected certificates and seminar records in a continuously moving row.
+These include Google and Cisco cybersecurity, ISC2 CC training, cloud security,
+digital marketing, blockchain, and peacebuilding.
 Cards gently grow as they reach the center, then return to their normal size.
 Clicking the strip pauses or resumes it; opening a certificate leaves it paused.
 Keyboard focus also pauses movement. Visitors can browse with the arrows or
