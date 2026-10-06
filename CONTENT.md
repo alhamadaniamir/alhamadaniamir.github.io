@@ -97,9 +97,10 @@ The first direct homepage visit in a browser tab opens with **Portfolio** and
 Amir's name on the dark theme's deep green background (#151d19), using the
 existing serif type in italic. A fine line expands beneath the title. After 1.8 seconds,
 the word zooms toward the viewer, centering on its final “o”. The entire word
-uses the same soft green (#9ecdb2) throughout, with the font's natural hollow
-letter shapes. There is no filled oval or color change on the “o”. The homepage
-fades into the letter's opening only as the zoom starts. An opening matched
+uses the same soft green (#9ecdb2) throughout. Only the inner opening of the
+final “o” is filled with the portfolio's off-white (#f9f8f4) from the start,
+aligned with the italic letter. This center blends into the homepage as the zoom
+starts; the letter itself stays green. An opening matched
 to that letter's counter grows with the word, as though passing through it into
 the homepage. The zoom lasts 1.2 seconds and adjusts if the viewport resizes.
 Browsers without CSS masks use a soft dissolve. The profile and homepage copy

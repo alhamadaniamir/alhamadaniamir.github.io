@@ -76,7 +76,8 @@
       .portfolio-welcome .welcome-skip:focus-visible { outline-color: var(--welcome-paper); }
       .portfolio-welcome.page-loader--leaving { opacity: 0; }
       .portfolio-welcome.welcome-aperture-active { opacity: 1; transition: none; }
-      .welcome-baseline { display: inline-block; width: 0; height: 0; }
+      .welcome-baseline { position: relative; display: inline-block; width: 0; height: 0; }
+      .welcome-baseline::before { content: ""; position: absolute; left: var(--counter-x); top: var(--counter-y); width: var(--counter-width); height: var(--counter-height); border-radius: 50%; transform: translate(-50%, -50%) rotate(16deg); background: var(--welcome-paper); }
       .portfolio-welcome.welcome-aperture-active.page-loader--leaving .welcome-content { opacity: 1; }
       .welcome-aperture-active .welcome-title { animation: none; }
       .welcome-aperture-active .welcome-rule, .welcome-aperture-active .welcome-name, .welcome-aperture-active .welcome-loading { visibility: hidden; }
@@ -141,6 +142,24 @@
           });
         }
 
+        function prepareLetterCenter() {
+          const letter = loader.querySelector('.welcome-aperture-letter');
+          const context = document.createElement('canvas').getContext('2d');
+          if (!letter || !context) return;
+          const font = getComputedStyle(letter);
+          const size = parseFloat(font.fontSize);
+          context.font = `${font.fontStyle} ${font.fontWeight} ${font.fontSize} ${font.fontFamily}`;
+          const metrics = context.measureText('o');
+          const spacing = parseFloat(font.letterSpacing) || 0;
+          const properties = {
+            x: (metrics.actualBoundingBoxRight - metrics.actualBoundingBoxLeft) / 2 - metrics.width - spacing,
+            y: (metrics.actualBoundingBoxDescent - metrics.actualBoundingBoxAscent) / 2,
+            width: (metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight) * .56,
+            height: (metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent) * .80,
+          };
+          Object.entries(properties).forEach(([key, value]) => letter.style.setProperty(`--counter-${key}`, `${value / size}em`));
+        }
+
         function revealThroughLetter() {
           const letter = loader.querySelector('.welcome-aperture-letter');
           if (!letter || !window.CSS?.supports('mask-image', 'radial-gradient(circle, transparent 1px, black 2px)')) return;
@@ -179,7 +198,7 @@
             const finalScale = Math.hypot(width, height) / (2 * Math.min(radiusX, radiusY)) + 2;
             // Exponential growth feels like moving through the letter, rather than wiping the screen.
             const scale = Math.exp(Math.log(finalScale) * eased);
-            // Reveal the page gradually inside the natural hollow letter as the zoom starts.
+            // Blend the white center into the homepage as the zoom starts.
             const opening = Math.min(1, progress / .22);
             const cover = 1 - opening * opening * (3 - 2 * opening);
             // Tilt the opening with the italic glyph so it does not cut across its stroke.
@@ -285,6 +304,7 @@
           });
           observer.observe(document.body, { childList: true });
           document.body.append(loader);
+          if (welcome) prepareLetterCenter();
           root.classList.add('page-loading');
           if (stylesReady) root.classList.remove('page-preparing');
           const continueButton = loader.querySelector('button');
