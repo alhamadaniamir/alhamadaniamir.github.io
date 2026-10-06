@@ -68,7 +68,7 @@
       .portfolio-welcome { --welcome-paper: #f9f8f4; --welcome-muted: #cfddd3; padding: 32px 24px; text-align: center; overflow: hidden; background: #151d19; color: var(--welcome-paper); transition: opacity 1s ease; }
       .portfolio-welcome .welcome-content { width: min(440px, 100%); transition: opacity .75s ease; }
       .welcome-heading { margin: 0; font: 400 clamp(44px, 7vw, 72px)/1.15 Georgia, serif; letter-spacing: -1.6px; }
-      .welcome-title { display: block; animation: welcome-title-in .95s cubic-bezier(.22, 1, .36, 1) both; }
+      .welcome-title { display: block; transition: color .3s ease; animation: welcome-title-in .95s cubic-bezier(.22, 1, .36, 1) both; }
       .welcome-rule { display: block; height: 1px; margin: 26px auto 0; background: #a8c6b7; transform-origin: center; animation: welcome-rule-expand 1.1s .55s cubic-bezier(.22, 1, .36, 1) both; }
       .welcome-name { margin: 22px 0 0; color: var(--welcome-muted); font: 10px/1.6 "Segoe UI", Arial, sans-serif; letter-spacing: 2.2px; text-transform: uppercase; animation: welcome-settle .75s .35s cubic-bezier(.22, 1, .36, 1) both; }
       .welcome-loading { margin: 20px 0 0; color: var(--welcome-muted); font: 11px/1.6 "Segoe UI", Arial, sans-serif; }
@@ -76,9 +76,12 @@
       .portfolio-welcome .welcome-skip:focus-visible { outline-color: var(--welcome-paper); }
       .portfolio-welcome.page-loader--leaving { opacity: 0; }
       .portfolio-welcome.welcome-aperture-active { opacity: 1; transition: none; }
-      .welcome-baseline { display: inline-block; width: 0; height: 0; }
+      .welcome-aperture-letter { color: #7b9c89; }
+      .welcome-baseline { position: relative; display: inline-block; width: 0; height: 0; }
+      .welcome-baseline::before { content: ""; position: absolute; left: var(--counter-x); top: var(--counter-y); width: var(--counter-width); height: var(--counter-height); border-radius: 50%; transform: translate(-50%, -50%); background: var(--paper); }
+      .welcome-aperture-active .welcome-baseline::before { visibility: hidden; }
       .portfolio-welcome.welcome-aperture-active.page-loader--leaving .welcome-content { opacity: 1; }
-      .welcome-aperture-active .welcome-title { animation: none; }
+      .welcome-aperture-active .welcome-title { animation: none; color: #7b9c89; }
       .welcome-aperture-active .welcome-rule, .welcome-aperture-active .welcome-name, .welcome-aperture-active .welcome-loading { visibility: hidden; }
       .portfolio-welcome.page-loader--leaving .welcome-content { opacity: 0; }
       .portfolio-welcome.page-loader--leaving .welcome-skip { opacity: 0; }
@@ -139,6 +142,25 @@
             const cleanup = () => entranceAnimations.delete(animation);
             animation.finished.then(cleanup, cleanup);
           });
+        }
+
+        function prepareLetterCenter() {
+          const letter = loader.querySelector('.welcome-aperture-letter');
+          const context = document.createElement('canvas').getContext('2d');
+          if (!letter || !context) return;
+          const font = getComputedStyle(letter);
+          const size = parseFloat(font.fontSize);
+          context.font = `${font.fontWeight} ${font.fontSize} ${font.fontFamily}`;
+          const metrics = context.measureText('o');
+          const spacing = parseFloat(font.letterSpacing) || 0;
+          // Fill the counter with the destination page's color before the zoom starts.
+          const properties = {
+            x: (metrics.actualBoundingBoxRight - metrics.actualBoundingBoxLeft) / 2 - metrics.width - spacing,
+            y: (metrics.actualBoundingBoxDescent - metrics.actualBoundingBoxAscent) / 2,
+            width: (metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight) * .56,
+            height: (metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent) * .80,
+          };
+          Object.entries(properties).forEach(([key, value]) => letter.style.setProperty(`--counter-${key}`, `${value / size}em`));
         }
 
         function revealThroughLetter() {
@@ -279,6 +301,7 @@
           });
           observer.observe(document.body, { childList: true });
           document.body.append(loader);
+          if (welcome) prepareLetterCenter();
           root.classList.add('page-loading');
           if (stylesReady) root.classList.remove('page-preparing');
           const continueButton = loader.querySelector('button');
