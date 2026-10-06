@@ -57,10 +57,11 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, .profile::-webkit-scrollbar, .
 .header-inner { max-width: 1232px; height: 86px; margin: 0 auto; padding: 0 48px; display: flex; align-items: center; }
 .wordmark { flex: 1; width: fit-content; font-size: 30px; line-height: 1; font-family: var(--serif); font-weight: 700; letter-spacing: -1.8px; }
 .wordmark-dot { color: var(--accent); }
-.main-nav { display: flex; height: 100%; gap: 30px; align-items: center; }
-.nav-link { display: flex; position: relative; align-items: center; height: 100%; color: var(--muted); font-size: 13px; font-weight: 600; }
-.nav-link::after { position: absolute; content: ""; height: 2px; bottom: 0; left: 0; right: 0; background: var(--accent); transform: scaleX(0); transition: transform .18s ease; }
-.nav-link:hover, .nav-link[aria-current] { color: var(--accent); }
+.main-nav { display: flex; height: auto; gap: 6px; align-items: center; }
+.nav-link { display: flex; position: relative; align-items: center; justify-content: center; min-height: 44px; padding: 8px 13px; border-radius: 8px; color: var(--muted); font-size: 13px; font-weight: 600; transition: color .24s ease, background-color .24s ease; }
+.nav-link::after { position: absolute; content: ""; width: 14px; height: 2px; bottom: 5px; left: calc(50% - 7px); border-radius: 2px; background: var(--accent); transform: scaleX(0); transition: transform .3s cubic-bezier(.22, 1, .36, 1); }
+.nav-link:hover, .nav-link:focus-visible, .nav-link[aria-current] { color: var(--accent); background: var(--soft-green); }
+.nav-link:focus-visible { outline-offset: 3px; border-radius: 8px; }
 .nav-link[aria-current]::after { transform: scaleX(1); }
 .header-resume { margin-left: 48px; padding: 6px 12px; border: 1px solid var(--rule); color: var(--accent); font-size: 12px; font-weight: 600; transition: background .18s ease; }
 .header-resume:hover { background: var(--soft-green); }
@@ -475,7 +476,7 @@ html.media-viewer-open { overflow: hidden; }
   .profile-name { font-size: 29px; }
   .profile-links { max-width: 170px; }
   .profile-school { max-width: 170px; }
-  .main-nav { gap: 24px; }
+  .main-nav { gap: 4px; }
   .header-resume { margin-left: 28px; }
   .site-footer { margin-left: 36px; margin-right: 36px; }
   h1 { font-size: 43px; }
@@ -493,7 +494,7 @@ html.media-viewer-open { overflow: hidden; }
 @media (max-width: 760px) {
   .header-inner { padding: 10px 26px 0; }
   .wordmark { font-size: 27px; }
-  .main-nav { gap: 23px; }
+  .main-nav { gap: 4px; }
   .nav-link { font-size: 12px; }
   .header-resume { display: none; }
   .page-layout { display: block; padding: 32px 26px 0; max-width: 670px; }
@@ -537,7 +538,7 @@ html.media-viewer-open { overflow: hidden; }
 
 @media (max-width: 400px) {
   .header-inner { padding-left: 20px; padding-right: 20px; }
-  .main-nav { gap: 17px; }
+  .main-nav { gap: 2px; }
   .nav-link { font-size: 11px; }
   .page-layout { padding: 27px 20px 0; }
   .profile { column-gap: 15px; grid-template-columns: 70px minmax(0, 1fr); }
@@ -564,15 +565,19 @@ html.media-viewer-open { overflow: hidden; }
 
 @media (max-width: 1050px) {
   .theme-toggle--header { margin-left: 20px; }
-  .main-nav { gap: 20px; }
+  .main-nav { gap: 4px; }
 }
 @media (max-width: 900px) {
   .header-inner { height: auto; min-height: 108px; flex-wrap: wrap; padding-top: 10px; }
-  .main-nav { display: flex; order: 4; flex: 1 0 100%; flex-wrap: wrap; justify-content: space-between; gap: 0 8px; height: auto; min-height: 44px; margin-left: 0; padding: 4px 0 8px; }
-  .nav-link { height: auto; min-height: 36px; white-space: nowrap; }
+  .main-nav { display: flex; order: 4; flex: 1 0 100%; flex-wrap: wrap; justify-content: space-between; gap: 4px; height: auto; min-height: 44px; margin-left: 0; padding: 4px 0 8px; }
+  .nav-link { min-height: 44px; padding: 8px 10px; white-space: nowrap; }
   .theme-toggle--header { margin-left: auto; }
   .site-menu { margin-left: 8px; }
   .theme-toggle--header[hidden] + .site-menu { margin-left: auto; }
+}
+@media (max-width: 400px) {
+  .main-nav { gap: 2px; }
+  .nav-link { padding-left: 4px; padding-right: 4px; }
 }
 @media (max-width: 760px) {
   .wordmark { font-size: 25px; }

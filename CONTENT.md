@@ -94,14 +94,14 @@ the palette. The site uses light colors and hides the switch without JavaScript.
 ## Page, Menu, and scroll transitions
 
 The first direct homepage visit in a browser tab opens with **Portfolio** and
-Amir's name on a green background, using the existing serif type. A fine line
-expands beneath the title. After two seconds, a circular opening grows from the
-final “o” in Portfolio, revealing the homepage as the lettering fades. The
-aperture clears the screen over one second and adjusts if the viewport resizes.
-Browsers without CSS masks use a soft dissolve.
-The saved dark theme uses a deeper green. The profile and homepage copy softly
-rise six pixels over 900 milliseconds with 60-millisecond steps, beginning as
-the circular opening grows. The entire greeting lasts about three seconds;
+Amir's name on the dark theme's deep green background (#151d19), using the
+existing serif type. A fine line expands beneath the title. After 1.8 seconds,
+the word zooms toward the viewer, centering on its final “o”. An opening matched
+to that letter's counter grows with the word, as though passing through it into
+the homepage. The zoom lasts 1.2 seconds and adjusts if the viewport resizes.
+Browsers without CSS masks use a soft dissolve. The profile and homepage copy
+softly rise six pixels over 900 milliseconds with 60-millisecond steps, beginning
+as the opening grows. The entire greeting lasts about three seconds;
 **Skip intro** or Escape opens the page immediately.
 
 The greeting is remembered with the session key `portfolio-welcome-seen` and
@@ -110,6 +110,11 @@ links. Reduced motion bypasses it. To preview it again, open the homepage direct
 in a fresh tab, or clear that session key before a new direct navigation. Its
 critical styles and logic live in `index.html` alongside the loading screen so
 they can appear even when the external stylesheet is slow.
+
+The top section bookmarks use a soft green active background and a short centered
+underline. Their targets remain homepage sections; the separate menu opens detail
+pages. Bookmark links wrap as needed on narrow screens and retain keyboard focus
+indicators and 44-pixel touch targets.
 
 Links between portfolio pages navigate immediately. Browsers supporting
 cross-document view transitions blend the outgoing and incoming pages over about

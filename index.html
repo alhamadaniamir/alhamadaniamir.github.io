@@ -65,8 +65,7 @@
       .page-loader button:hover { text-decoration: underline; text-underline-offset: 4px; }
       .page-loader button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
       /* An editorial opening in the portfolio's green and serif typography. */
-      .portfolio-welcome { --welcome-paper: #f9f8f4; --welcome-muted: #cfddd3; padding: 32px 24px; text-align: center; background: #285b4e; color: var(--welcome-paper); transition: opacity 1s ease; }
-      :root[data-theme="dark"] .portfolio-welcome { background: #183c31; }
+      .portfolio-welcome { --welcome-paper: #f9f8f4; --welcome-muted: #cfddd3; padding: 32px 24px; text-align: center; overflow: hidden; background: #151d19; color: var(--welcome-paper); transition: opacity 1s ease; }
       .portfolio-welcome .welcome-content { width: min(440px, 100%); transition: opacity .75s ease; }
       .welcome-heading { margin: 0; font: 400 clamp(44px, 7vw, 72px)/1.15 Georgia, serif; letter-spacing: -1.6px; }
       .welcome-title { display: block; animation: welcome-title-in .95s cubic-bezier(.22, 1, .36, 1) both; }
@@ -77,6 +76,10 @@
       .portfolio-welcome .welcome-skip:focus-visible { outline-color: var(--welcome-paper); }
       .portfolio-welcome.page-loader--leaving { opacity: 0; }
       .portfolio-welcome.welcome-aperture-active { opacity: 1; transition: none; }
+      .welcome-baseline { display: inline-block; width: 0; height: 0; }
+      .portfolio-welcome.welcome-aperture-active.page-loader--leaving .welcome-content { opacity: 1; }
+      .welcome-aperture-active .welcome-title { animation: none; }
+      .welcome-aperture-active .welcome-rule, .welcome-aperture-active .welcome-name, .welcome-aperture-active .welcome-loading { visibility: hidden; }
       .portfolio-welcome.page-loader--leaving .welcome-content { opacity: 0; }
       .portfolio-welcome.page-loader--leaving .welcome-skip { opacity: 0; }
       @keyframes welcome-title-in { from { opacity: 0; transform: translateY(12px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
@@ -120,7 +123,7 @@
           if (!loader) showLoader();
           window.clearTimeout(welcomeTimer);
           // The brief greeting runs while the document prepares; media never delays it.
-          welcomeTimer = window.setTimeout(() => restorePage(true), Math.max(0, 2000 - (performance.now() - welcomeStarted)));
+          welcomeTimer = window.setTimeout(() => restorePage(true), Math.max(0, 1800 - (performance.now() - welcomeStarted)));
         }
 
         function revealIntroduction() {
@@ -141,23 +144,52 @@
         function revealThroughLetter() {
           const letter = loader.querySelector('.welcome-aperture-letter');
           if (!letter || !window.CSS?.supports('mask-image', 'radial-gradient(circle, transparent 1px, black 2px)')) return;
+          const title = loader.querySelector('.welcome-title');
           const bounds = loader.getBoundingClientRect();
           const glyph = letter.getBoundingClientRect();
-          // Anchor the opening in the final o, and retain its position on resize.
-          const originX = (glyph.left + glyph.width / 2 - bounds.left) / bounds.width;
-          const originY = (glyph.top + glyph.height * .56 - bounds.top) / bounds.height;
-          const initialRadius = glyph.width * .18;
+          const titleBounds = title.getBoundingClientRect();
+          const baseline = letter.querySelector('.welcome-baseline').getBoundingClientRect().top;
+          const context = document.createElement('canvas').getContext('2d');
+          if (!context) return;
+          const font = getComputedStyle(letter);
+          context.font = `${font.fontWeight} ${font.fontSize} ${font.fontFamily}`;
+          const metrics = context.measureText('o');
+          const inkWidth = metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight;
+          const inkHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+          const anchorX = glyph.left + (metrics.actualBoundingBoxRight - metrics.actualBoundingBoxLeft) / 2;
+          const anchorY = baseline + (metrics.actualBoundingBoxDescent - metrics.actualBoundingBoxAscent) / 2;
+          const originX = (anchorX - bounds.left) / bounds.width;
+          const originY = (anchorY - bounds.top) / bounds.height;
+          // Match the opening to the real glyph's counter, and scale the word with it.
+          const radiusX = Math.max(1, inkWidth * .28);
+          const radiusY = Math.max(1, inkHeight * .40);
+          title.style.transformOrigin = `${anchorX - titleBounds.left}px ${anchorY - titleBounds.top}px`;
+          let layoutWidth = bounds.width, layoutHeight = bounds.height;
+          let currentX = anchorX, currentY = anchorY;
           const started = performance.now();
           loader.classList.add('welcome-aperture-active');
           function draw(time) {
-            const progress = Math.min(1, Math.max(0, (time - started) / 1000));
-            // Accelerate out of the letter, then settle as the aperture clears the corners.
-            const eased = progress < .5 ? 4 * progress ** 3 : 1 - (-2 * progress + 2) ** 3 / 2;
+            const progress = Math.min(1, Math.max(0, (time - started) / 1200));
+            const eased = progress * progress * (3 - 2 * progress);
             const width = loader.clientWidth, height = loader.clientHeight;
-            const x = width * originX, y = height * originY;
-            const finalRadius = Math.hypot(Math.max(x, width - x), Math.max(y, height - y)) + 4;
-            const radius = initialRadius + (finalRadius - initialRadius) * eased;
-            const mask = `radial-gradient(circle at ${x}px ${y}px, transparent ${radius}px, black ${radius + 1}px)`;
+            const pan = Math.min(1, progress / .65);
+            const centered = pan * pan * (3 - 2 * pan);
+            const x = width * (originX + (.5 - originX) * centered);
+            const y = height * (originY + (.5 - originY) * centered);
+            const finalScale = Math.hypot(width / (2 * radiusX), height / (2 * radiusY)) + 2;
+            // Exponential growth feels like moving through the letter, rather than wiping the screen.
+            const scale = Math.exp(Math.log(finalScale) * eased);
+            const mask = `radial-gradient(ellipse ${radiusX * scale}px ${radiusY * scale}px at ${x}px ${y}px, transparent 99.5%, black 100%)`;
+            // Re-measure the untransformed layout origin if the viewport changes mid-flight.
+            if (width !== layoutWidth || height !== layoutHeight) {
+              title.style.transform = 'none';
+              const layout = title.getBoundingClientRect();
+              currentX = layout.left + anchorX - titleBounds.left;
+              currentY = layout.top + anchorY - titleBounds.top;
+              layoutWidth = width;
+              layoutHeight = height;
+            }
+            title.style.transform = `translate(${x - currentX}px, ${y - currentY}px) scale(${scale})`;
             loader.style.maskImage = mask;
             loader.style.webkitMaskImage = mask;
             apertureFrame = progress < 1 ? requestAnimationFrame(draw) : 0;
@@ -187,7 +219,7 @@
             else {
               if (welcome) { revealIntroduction(); revealThroughLetter(); }
               loader.classList.add('page-loader--leaving');
-              window.setTimeout(() => { cancelAnimationFrame(apertureFrame); loader.remove(); }, welcome ? 1030 : 180);
+              window.setTimeout(() => { cancelAnimationFrame(apertureFrame); loader.remove(); }, welcome ? 1230 : 180);
             }
           }
         }
@@ -230,7 +262,7 @@
           loader.setAttribute('aria-label', welcome ? 'Welcome to my portfolio' : 'Loading portfolio');
           loader.tabIndex = -1;
           loader.innerHTML = welcome
-            ? '<div class="welcome-content"><p class="welcome-heading"><span class="welcome-title">Portfoli<span class="welcome-aperture-letter">o</span></span></p><span class="welcome-rule" aria-hidden="true"></span><p class="welcome-name">Amir Al Hamadani</p><p class="welcome-loading" role="status" hidden>Preparing portfolio…</p></div><button class="welcome-skip" type="button">Skip intro <span aria-hidden="true">→</span></button>'
+            ? '<div class="welcome-content"><p class="welcome-heading"><span class="welcome-title">Portfoli<span class="welcome-aperture-letter">o<span class="welcome-baseline" aria-hidden="true"></span></span></span></p><span class="welcome-rule" aria-hidden="true"></span><p class="welcome-name">Amir Al Hamadani</p><p class="welcome-loading" role="status" hidden>Preparing portfolio…</p></div><button class="welcome-skip" type="button">Skip intro <span aria-hidden="true">→</span></button>'
             : '<div class="page-loader-content"><div class="page-loader-brand" aria-hidden="true">Portfolio</div><div class="page-loader-track" aria-hidden="true"></div><div class="page-loader-meta"><p class="page-loader-label" role="status">Loading…</p><button type="button" aria-label="Continue to portfolio">Continue <span aria-hidden="true">→</span></button></div></div>';
           if (welcome) {
             welcomeStarted = performance.now();
