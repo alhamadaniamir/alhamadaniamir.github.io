@@ -4,6 +4,108 @@
   const year = document.querySelector('#year');
   if (year) year.textContent = String(new Date().getFullYear());
 
+  function initCertificateSlideshows() {
+    document.querySelectorAll('.certificate-list, .archive-certificates').forEach((slidesElement, carouselIndex) => {
+      const slides = [...slidesElement.querySelectorAll(':scope > .certificate-card')];
+      if (slides.length < 2) return;
+
+      const section = slidesElement.closest('.archive-section, .certifications-section');
+      const heading = section?.querySelector('h2');
+      const label = heading?.textContent.trim() || 'Certificates';
+      const carousel = document.createElement('div');
+      carousel.className = 'certificate-carousel';
+      carousel.setAttribute('role', 'region');
+      carousel.setAttribute('aria-roledescription', 'carousel');
+      carousel.setAttribute('aria-label', label);
+      const listId = slidesElement.id || `certificate-slides-${carouselIndex + 1}`;
+      slidesElement.id = listId;
+      slidesElement.setAttribute('role', 'group');
+      slidesElement.setAttribute('aria-label', `${label} slides`);
+      const parent = slidesElement.parentNode;
+      parent.insertBefore(carousel, slidesElement);
+      carousel.append(slidesElement);
+
+      const controls = document.createElement('div');
+      controls.className = 'certificate-carousel-controls';
+      const status = document.createElement('p');
+      status.className = 'certificate-carousel-status';
+      status.setAttribute('aria-live', 'polite');
+      status.setAttribute('aria-atomic', 'true');
+      const visualStatus = document.createElement('span');
+      visualStatus.setAttribute('aria-hidden', 'true');
+      const accessibleStatus = document.createElement('span');
+      accessibleStatus.className = 'visually-hidden';
+      status.append(visualStatus, accessibleStatus);
+      const buttons = document.createElement('div');
+      buttons.className = 'certificate-carousel-buttons';
+      const previous = document.createElement('button');
+      previous.type = 'button';
+      previous.className = 'certificate-carousel-button';
+      previous.setAttribute('aria-label', 'Previous certificate');
+      previous.setAttribute('aria-controls', listId);
+      previous.innerHTML = '<span aria-hidden="true">←</span>';
+      const next = document.createElement('button');
+      next.type = 'button';
+      next.className = 'certificate-carousel-button';
+      next.setAttribute('aria-label', 'Next certificate');
+      next.setAttribute('aria-controls', listId);
+      next.innerHTML = '<span aria-hidden="true">→</span>';
+      buttons.append(previous, next);
+      controls.append(status, buttons);
+      carousel.append(controls);
+
+      const initialHashIndex = slides.findIndex(slide => slide.id && `#${slide.id}` === window.location.hash);
+      let activeIndex = -1;
+
+      function showSlide(index, direction = 1, animate = true) {
+        const previousSlide = slides[activeIndex];
+        const nextSlide = slides[index];
+        if (!nextSlide || index === activeIndex) return;
+        if (previousSlide?.contains(document.activeElement)) {
+          (nextSlide.querySelector('a, button') || next).focus({ preventScroll: true });
+        }
+        if (previousSlide) previousSlide.hidden = true;
+        activeIndex = index;
+        nextSlide.hidden = false;
+        nextSlide.setAttribute('aria-roledescription', 'slide');
+        nextSlide.setAttribute('aria-label', `${index + 1} of ${slides.length}: ${nextSlide.querySelector('h3')?.textContent.trim() || 'Certificate'}`);
+        previous.disabled = index === 0;
+        next.disabled = index === slides.length - 1;
+        visualStatus.textContent = `${String(index + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+        accessibleStatus.textContent = `Certificate ${index + 1} of ${slides.length}: ${nextSlide.querySelector('h3')?.textContent.trim() || 'Certificate'}`;
+        carousel.style.setProperty('--certificate-progress', `${((index + 1) / slides.length) * 100}%`);
+        if (animate && !window.matchMedia('(prefers-reduced-motion: reduce)').matches && typeof nextSlide.animate === 'function') {
+          const animation = nextSlide.animate(
+            [{ opacity: 0, transform: `translateX(${direction * 14}px)` }, { opacity: 1, transform: 'translateX(0)' }],
+            { duration: 360, easing: 'cubic-bezier(.22, 1, .36, 1)' },
+          );
+          animation.finished.catch(() => {});
+        }
+      }
+
+      slides.forEach(slide => { slide.hidden = true; });
+      showSlide(Math.max(0, initialHashIndex), 1, false);
+      previous.addEventListener('click', () => showSlide(activeIndex - 1, -1));
+      next.addEventListener('click', () => showSlide(activeIndex + 1, 1));
+      carousel.addEventListener('keydown', event => {
+        if (event.altKey || event.ctrlKey || event.metaKey) return;
+        if (event.key === 'ArrowLeft' && activeIndex > 0) {
+          event.preventDefault();
+          showSlide(activeIndex - 1, -1);
+        } else if (event.key === 'ArrowRight' && activeIndex < slides.length - 1) {
+          event.preventDefault();
+          showSlide(activeIndex + 1, 1);
+        }
+      });
+      window.addEventListener('hashchange', () => {
+        const hashIndex = slides.findIndex(slide => slide.id && `#${slide.id}` === window.location.hash);
+        if (hashIndex >= 0) showSlide(hashIndex, hashIndex > activeIndex ? 1 : -1, false);
+      });
+    });
+  }
+
+  initCertificateSlideshows();
+
   document.querySelectorAll('.site-menu').forEach((menu) => {
     const summary = menu.querySelector('summary');
     const panel = menu.querySelector('.menu-panel');
