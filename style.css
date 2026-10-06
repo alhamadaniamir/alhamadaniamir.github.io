@@ -447,7 +447,6 @@ html.media-viewer-open { overflow: hidden; }
 .certificate-marquee-note { margin: 0; color: var(--muted); font: 10px/1.6 var(--mono); }
 .certificate-marquee-buttons { display: flex; align-items: center; gap: 8px; }
 .certificate-marquee-button { display: grid; place-items: center; min-width: 44px; height: 44px; padding: 0; border: 1px solid var(--rule); border-radius: 50%; background: var(--paper); color: var(--accent); cursor: pointer; font: 18px/1 var(--sans); transition: background-color .2s ease, border-color .2s ease; }
-.certificate-marquee-toggle { min-width: 62px; padding: 0 12px; border-radius: 22px; font-size: 11px; }
 .certificate-marquee-button:hover { border-color: var(--border-accent); background: var(--soft-green); }
 .certificate-actions { display: flex; flex-wrap: wrap; gap: 5px 20px; }
 .certificate-preview img { transition: border-color .18s ease; }

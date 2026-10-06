@@ -44,17 +44,16 @@
       note.textContent = `${cards.length} certificates · Click to pause`;
       const buttons = document.createElement('div');
       buttons.className = 'certificate-marquee-buttons';
-      function createControl(label, content, extraClass = '') {
+      function createControl(label, content) {
         const button = document.createElement('button');
         button.type = 'button';
-        button.className = `certificate-marquee-button ${extraClass}`.trim();
+        button.className = 'certificate-marquee-button';
         button.setAttribute('aria-label', label);
         button.setAttribute('aria-controls', viewport.id);
         button.innerHTML = content;
         buttons.append(button);
         return button;
       }
-      const pause = createControl('Pause certificate slideshow', 'Pause', 'certificate-marquee-toggle');
       const previous = createControl('Previous certificates', '<span aria-hidden="true">←</span>');
       const next = createControl('Next certificates', '<span aria-hidden="true">→</span>');
       controls.append(note, buttons);
@@ -91,11 +90,7 @@
         frame = requestAnimationFrame(tick);
       }
       function syncMotion() {
-        pause.hidden = reducedMotion.matches;
         note.textContent = `${cards.length} certificates · ${reducedMotion.matches ? 'Swipe or use arrows to browse' : paused ? 'Click to resume' : 'Click to pause'}`;
-        pause.textContent = paused ? 'Play' : 'Pause';
-        pause.setAttribute('aria-pressed', String(paused));
-        pause.setAttribute('aria-label', paused ? 'Resume certificate slideshow' : 'Pause certificate slideshow');
         copies.forEach(copy => { copy.hidden = reducedMotion.matches; });
         const moving = canMove();
         reel.dataset.moving = String(moving);
@@ -141,7 +136,6 @@
         syncMotion();
         viewport.scrollLeft += target.getBoundingClientRect().left - viewport.getBoundingClientRect().left - 4;
       }
-      pause.addEventListener('click', () => { paused = !paused; syncMotion(); });
       previous.addEventListener('click', () => browse(-1));
       next.addEventListener('click', () => browse(1));
       viewport.addEventListener('click', event => {

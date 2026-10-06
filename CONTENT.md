@@ -256,8 +256,8 @@ the result without watching the video.
 The home page shows three selected credentials in a continuously moving row.
 Cards gently grow as they reach the center, then return to their normal size.
 Clicking the strip pauses or resumes it; opening a certificate leaves it paused.
-Keyboard focus also pauses movement. Visitors can use the Play/Pause button,
-browse with the arrows, or swipe on a phone. Hovering does not pause the row.
+Keyboard focus also pauses movement. Visitors can browse with the arrows or
+swipe on a phone. With the strip focused, Space or Enter pauses or resumes it. Hovering does not pause the row.
 With reduced motion enabled, it stays still without scaling and can be browsed manually.
 The complete set of certificates and participation records remains a card grid
 in `certifications.html`, including expandable ISC2 domain and assessment
