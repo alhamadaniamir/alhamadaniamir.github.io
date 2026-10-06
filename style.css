@@ -432,24 +432,23 @@ html.media-viewer-open { overflow: hidden; }
 .archive-certificates .certificate-info { flex: 1; }
 .archive-certificates .certificate-info h3 { font-size: 22px; }
 .certificate-marquee { --certificate-width: min(300px, calc(100vw - 76px)); margin-top: 28px; }
-.certificate-marquee-viewport { width: 100%; overflow-x: auto; overflow-y: hidden; padding: 4px 4px 10px; scroll-behavior: auto; overscroll-behavior-x: contain; scrollbar-width: none; }
+.certificate-marquee-viewport { width: 100%; overflow-x: auto; overflow-y: hidden; padding: 22px 4px; scroll-behavior: auto; overscroll-behavior-x: contain; scrollbar-width: none; }
 .certificate-marquee-viewport::-webkit-scrollbar { display: none; }
 .certificate-marquee-track { position: relative; display: flex; gap: 18px; width: max-content; }
 .certificate-marquee .certificate-marquee-track > .certificate-reel-group { display: flex; flex: 0 0 auto; gap: 18px; width: max-content; margin: 0; }
 .certificate-marquee .certificate-reel-copy[hidden] { display: none !important; }
 .certificate-marquee .certificate-card { display: flex; flex-direction: column; align-items: stretch; flex: 0 0 var(--certificate-width); width: var(--certificate-width); min-width: 0; gap: 16px; padding: 16px; background: var(--paper); }
+.certificate-marquee .certificate-card { scale: var(--certificate-scale, 1); transform-origin: center; translate: none; }
 .certificate-marquee .certificate-preview { width: 100%; max-width: none; }
 .certificate-marquee .certificate-info { display: flex; flex-direction: column; flex: 1; }
 .certificate-marquee .certificate-info h3 { font-size: 19px; line-height: 1.4; }
 .certificate-marquee .certificate-actions { margin-top: auto; padding-top: 4px; }
 .certificate-marquee-controls { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px 16px; margin-top: 8px; }
 .certificate-marquee-note { margin: 0; color: var(--muted); font: 10px/1.6 var(--mono); }
-.certificate-touch-hint { display: none; }
 .certificate-marquee-buttons { display: flex; align-items: center; gap: 8px; }
 .certificate-marquee-button { display: grid; place-items: center; min-width: 44px; height: 44px; padding: 0; border: 1px solid var(--rule); border-radius: 50%; background: var(--paper); color: var(--accent); cursor: pointer; font: 18px/1 var(--sans); transition: background-color .2s ease, border-color .2s ease; }
 .certificate-marquee-toggle { min-width: 62px; padding: 0 12px; border-radius: 22px; font-size: 11px; }
 .certificate-marquee-button:hover { border-color: var(--border-accent); background: var(--soft-green); }
-@media (hover: none) { .certificate-hover-hint { display: none; } .certificate-touch-hint { display: inline; } }
 .certificate-actions { display: flex; flex-wrap: wrap; gap: 5px 20px; }
 .certificate-preview img { transition: border-color .18s ease; }
 .certificate-description:empty { display: none; }
@@ -617,7 +616,7 @@ html.media-viewer-open { overflow: hidden; }
   .certificate-marquee-viewport { overflow: visible; padding: 0; }
   .certificate-marquee-track { display: block; width: auto; }
   .certificate-marquee .certificate-marquee-track > .certificate-reel-group { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: auto; }
-  .certificate-marquee .certificate-card { width: auto; }
+  .certificate-marquee .certificate-card { width: auto; scale: 1; }
   html.media-viewer-open { overflow: visible; }
   .media-viewer, .media-viewer::backdrop { display: none !important; }
   :root, :root[data-theme="dark"] { color-scheme: light; --paper: #fff; --surface: #f0f0e8; --ink: #242c29; --muted: #626d65; --accent: #285b4e; --accent-dark: #184438; --rule: #dddfd6; --soft-green: #e6ebe2; --border-accent: #aebdaf; --panel-ink: #4c5f53; }

@@ -19,7 +19,7 @@
       viewport.id = `certificate-reel-${reelIndex + 1}`;
       viewport.tabIndex = 0;
       viewport.setAttribute('role', 'group');
-      viewport.setAttribute('aria-label', 'Certificate previews. Use the arrow keys or swipe to browse.');
+      viewport.setAttribute('aria-label', 'Certificate previews. Click to pause or resume. Use the arrow keys or swipe to browse.');
       const track = document.createElement('div');
       track.className = 'certificate-marquee-track';
       group.parentNode.insertBefore(reel, group);
@@ -41,7 +41,7 @@
       controls.className = 'certificate-marquee-controls';
       const note = document.createElement('p');
       note.className = 'certificate-marquee-note';
-      note.innerHTML = `${cards.length} certificates<span class="certificate-hover-hint"> · Hover to pause</span><span class="certificate-touch-hint"> · Swipe to browse</span>`;
+      note.textContent = `${cards.length} certificates · Click to pause`;
       const buttons = document.createElement('div');
       buttons.className = 'certificate-marquee-buttons';
       function createControl(label, content, extraClass = '') {
@@ -62,23 +62,37 @@
 
       let frame = 0, lastTime = 0, offset = 0, loopWidth = 0, touchTimer;
       let inView = !('IntersectionObserver' in window);
-      let hovered = false, focused = false, paused = false, interacting = false, printing = false, departed = false;
+      const allCards = [...track.querySelectorAll('.certificate-card')];
+      let cardCenters = [];
+      let focused = false, paused = false, interacting = false, printing = false, departed = false;
+      function updateEmphasis() {
+        const center = viewport.scrollLeft + viewport.clientWidth / 2 - 4;
+        const radius = Math.max(viewport.clientWidth / 2, cards[0].offsetWidth);
+        allCards.forEach((card, index) => {
+          const proximity = Math.max(0, 1 - Math.abs(cardCenters[index] - center) / radius);
+          // A rounded curve grows and settles gently as the card passes the center.
+          const emphasis = (1 - Math.cos(Math.PI * proximity)) / 2;
+          card.style.setProperty('--certificate-scale', reducedMotion.matches ? '1' : (1 + emphasis * .06).toFixed(4));
+        });
+      }
       function canMove() {
-        return loopWidth > 0 && inView && !hovered && !focused && !paused && !interacting && !printing && !departed &&
+        return loopWidth > 0 && inView && !focused && !paused && !interacting && !printing && !departed &&
           !document.hidden && !reducedMotion.matches &&
           !document.documentElement.matches('.page-preparing, .page-loading, .welcome-active, .welcome-pending, .media-viewer-open');
       }
       function tick(time) {
         frame = 0;
         if (!canMove()) return;
-        if (lastTime) offset += Math.min(time - lastTime, 80) * .025;
+        if (lastTime) offset += Math.min(time - lastTime, 80) * .036;
         lastTime = time;
         offset = ((offset % loopWidth) + loopWidth) % loopWidth;
         viewport.scrollLeft = offset;
+        updateEmphasis();
         frame = requestAnimationFrame(tick);
       }
       function syncMotion() {
         pause.hidden = reducedMotion.matches;
+        note.textContent = `${cards.length} certificates · ${reducedMotion.matches ? 'Swipe or use arrows to browse' : paused ? 'Click to resume' : 'Click to pause'}`;
         pause.textContent = paused ? 'Play' : 'Pause';
         pause.setAttribute('aria-pressed', String(paused));
         pause.setAttribute('aria-label', paused ? 'Resume certificate slideshow' : 'Pause certificate slideshow');
@@ -102,13 +116,15 @@
         const nextWidth = width + (parseFloat(getComputedStyle(track).columnGap) || 0);
         if (loopWidth && nextWidth !== loopWidth) offset = viewport.scrollLeft / loopWidth * nextWidth;
         loopWidth = nextWidth;
+        cardCenters = allCards.map(card => card.offsetLeft + card.offsetWidth / 2);
         viewport.scrollLeft = offset;
+        updateEmphasis();
         syncMotion();
       }
       function browse(direction) {
         paused = true;
         syncMotion();
-        const step = cards[0].getBoundingClientRect().width + (parseFloat(getComputedStyle(group).columnGap) || 0);
+        const step = cards[0].offsetWidth + (parseFloat(getComputedStyle(group).columnGap) || 0);
         // Normalize to the identical sequence so either arrow can keep browsing indefinitely.
         if (!reducedMotion.matches && loopWidth) {
           const position = viewport.scrollLeft % loopWidth;
@@ -128,12 +144,25 @@
       pause.addEventListener('click', () => { paused = !paused; syncMotion(); });
       previous.addEventListener('click', () => browse(-1));
       next.addEventListener('click', () => browse(1));
-      reel.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') { hovered = true; syncMotion(); } });
-      reel.addEventListener('pointerleave', () => { hovered = false; syncMotion(); });
-      viewport.addEventListener('focusin', () => { focused = true; syncMotion(); });
-      viewport.addEventListener('focusout', event => { focused = viewport.contains(event.relatedTarget); syncMotion(); });
+      viewport.addEventListener('click', event => {
+        if (window.getSelection()?.toString()) return;
+        clearTimeout(touchTimer);
+        interacting = false;
+        focused = false;
+        // Preview and PDF links retain their normal action and leave the reel paused.
+        paused = event.target.closest('a, button') ? true : !paused;
+        syncMotion();
+      });
+      viewport.addEventListener('focusin', event => { focused = event.target.matches(':focus-visible'); syncMotion(); });
+      viewport.addEventListener('focusout', event => { focused = viewport.contains(event.relatedTarget) && event.relatedTarget.matches(':focus-visible'); syncMotion(); });
       viewport.addEventListener('keydown', event => {
         if (event.target !== viewport || event.altKey || event.ctrlKey || event.metaKey) return;
+        if (event.key === ' ' || event.key === 'Enter') {
+          event.preventDefault();
+          paused = !paused;
+          focused = false;
+          syncMotion();
+        }
         if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
           event.preventDefault();
           browse(event.key === 'ArrowLeft' ? -1 : 1);
@@ -148,7 +177,7 @@
       viewport.addEventListener('pointerdown', holdForInteraction, { passive: true });
       viewport.addEventListener('pointerup', holdForInteraction, { passive: true });
       viewport.addEventListener('wheel', holdForInteraction, { passive: true });
-      viewport.addEventListener('scroll', () => { if (!frame) offset = viewport.scrollLeft; }, { passive: true });
+      viewport.addEventListener('scroll', () => { if (!frame) { offset = viewport.scrollLeft; updateEmphasis(); } }, { passive: true });
       document.addEventListener('visibilitychange', syncMotion);
       reducedMotion.addEventListener('change', () => { syncMotion(); measure(); });
       window.addEventListener('hashchange', showHashTarget);

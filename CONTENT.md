@@ -254,9 +254,11 @@ the result without watching the video.
 ## Certifications
 
 The home page shows three selected credentials in a continuously moving row.
-Hovering over it or focusing a certificate pauses the movement; visitors can also
-pause it with the button, browse with the arrows, or swipe on a phone. With reduced
-motion enabled, it stays still and can be browsed manually.
+Cards gently grow as they reach the center, then return to their normal size.
+Clicking the strip pauses or resumes it; opening a certificate leaves it paused.
+Keyboard focus also pauses movement. Visitors can use the Play/Pause button,
+browse with the arrows, or swipe on a phone. Hovering does not pause the row.
+With reduced motion enabled, it stays still without scaling and can be browsed manually.
 The complete set of certificates and participation records remains a card grid
 in `certifications.html`, including expandable ISC2 domain and assessment
 certificates. A preview opens the certificate viewer, and the original PDF is
