@@ -95,11 +95,13 @@ the palette. The site uses light colors and hides the switch without JavaScript.
 
 The first direct homepage visit in a browser tab opens with **Portfolio** and
 Amir's name on a green background, using the existing serif type. A fine line
-expands beneath the title. After two seconds, the title fades upward and the
-green surface lifts away over one second, revealing the homepage underneath.
+expands beneath the title. After two seconds, a circular opening grows from the
+final “o” in Portfolio, revealing the homepage as the lettering fades. The
+aperture clears the screen over one second and adjusts if the viewport resizes.
+Browsers without CSS masks use a soft dissolve.
 The saved dark theme uses a deeper green. The profile and homepage copy softly
-rise six pixels over 900 milliseconds with 80-millisecond steps, beginning under
-the departing welcome. The entire greeting lasts about three seconds;
+rise six pixels over 900 milliseconds with 60-millisecond steps, beginning as
+the circular opening grows. The entire greeting lasts about three seconds;
 **Skip intro** or Escape opens the page immediately.
 
 The greeting is remembered with the session key `portfolio-welcome-seen` and
