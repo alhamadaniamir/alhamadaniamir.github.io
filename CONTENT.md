@@ -95,11 +95,11 @@ the palette. The site uses light colors and hides the switch without JavaScript.
 
 The first direct homepage visit in a browser tab opens with **Portfolio** and
 Amir's name on the dark theme's deep green background (#151d19), using the
-existing serif type. A fine line expands beneath the title. After 1.8 seconds,
-the word zooms toward the viewer, centering on its muted green final “o”. The
-letter’s center uses the destination page’s background color from the start
-(cream in light mode, deep green in dark mode). The remaining letters turn green
-as the zoom begins, avoiding a bright white rim. An opening matched
+existing serif type in italic. A fine line expands beneath the title. After 1.8 seconds,
+the word zooms toward the viewer, centering on its final “o”. The entire word
+uses the same soft green (#9ecdb2) throughout, with the font's natural hollow
+letter shapes. There is no filled oval or color change on the “o”. The homepage
+fades into the letter's opening only as the zoom starts. An opening matched
 to that letter's counter grows with the word, as though passing through it into
 the homepage. The zoom lasts 1.2 seconds and adjusts if the viewport resizes.
 Browsers without CSS masks use a soft dissolve. The profile and homepage copy
