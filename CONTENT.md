@@ -253,10 +253,14 @@ the result without watching the video.
 
 ## Certifications
 
-The home page shows three selected credentials. The complete set of certificates
-and participation records is in `certifications.html`, including expandable
-ISC2 domain and assessment certificates. Each preview opens its original PDF
-in a new tab. The supplied files are in `assets/certifications/`.
+The home page shows three selected credentials in a continuously moving row.
+Hovering over it or focusing a certificate pauses the movement; visitors can also
+pause it with the button, browse with the arrows, or swipe on a phone. With reduced
+motion enabled, it stays still and can be browsed manually.
+The complete set of certificates and participation records remains a card grid
+in `certifications.html`, including expandable ISC2 domain and assessment
+certificates. A preview opens the certificate viewer, and the original PDF is
+available in a new tab. The supplied files are in `assets/certifications/`.
 
 1. Add the new original PDF and a JPEG or WebP preview to `assets/certifications/`.
 2. Duplicate an existing `.certificate-card` in the appropriate section of

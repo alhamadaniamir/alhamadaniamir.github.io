@@ -4,107 +4,173 @@
   const year = document.querySelector('#year');
   if (year) year.textContent = String(new Date().getFullYear());
 
-  function initCertificateSlideshows() {
-    document.querySelectorAll('.certificate-list, .archive-certificates').forEach((slidesElement, carouselIndex) => {
-      const slides = [...slidesElement.querySelectorAll(':scope > .certificate-card')];
-      if (slides.length < 2) return;
-
-      const section = slidesElement.closest('.archive-section, .certifications-section');
-      const heading = section?.querySelector('h2');
-      const label = heading?.textContent.trim() || 'Certificates';
-      const carousel = document.createElement('div');
-      carousel.className = 'certificate-carousel';
-      carousel.setAttribute('role', 'region');
-      carousel.setAttribute('aria-roledescription', 'carousel');
-      carousel.setAttribute('aria-label', label);
-      const listId = slidesElement.id || `certificate-slides-${carouselIndex + 1}`;
-      slidesElement.id = listId;
-      slidesElement.setAttribute('role', 'group');
-      slidesElement.setAttribute('aria-label', `${label} slides`);
-      const parent = slidesElement.parentNode;
-      parent.insertBefore(carousel, slidesElement);
-      carousel.append(slidesElement);
-
+  function initCertificateReels() {
+    document.querySelectorAll('.home-page .certificate-list').forEach((group, reelIndex) => {
+      const cards = [...group.querySelectorAll(':scope > .certificate-card')];
+      if (cards.length < 2) return;
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const label = group.closest('.archive-section, .certifications-section')?.querySelector('h2')?.textContent.trim() || 'Certificates';
+      const reel = document.createElement('div');
+      reel.className = 'certificate-marquee';
+      reel.setAttribute('role', 'region');
+      reel.setAttribute('aria-label', `${label} slideshow`);
+      const viewport = document.createElement('div');
+      viewport.className = 'certificate-marquee-viewport';
+      viewport.id = `certificate-reel-${reelIndex + 1}`;
+      viewport.tabIndex = 0;
+      viewport.setAttribute('role', 'group');
+      viewport.setAttribute('aria-label', 'Certificate previews. Use the arrow keys or swipe to browse.');
+      const track = document.createElement('div');
+      track.className = 'certificate-marquee-track';
+      group.parentNode.insertBefore(reel, group);
+      group.classList.add('certificate-reel-group');
+      track.append(group);
+      // Repeat the sequence for a seamless wrap; only the originals are in the tab order.
+      const copies = Array.from({ length: 2 }, () => {
+        const copy = group.cloneNode(true);
+        copy.removeAttribute('id');
+        copy.classList.add('certificate-reel-copy');
+        copy.setAttribute('aria-hidden', 'true');
+        copy.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
+        copy.querySelectorAll('a, button, [tabindex]').forEach(element => { element.tabIndex = -1; });
+        track.append(copy);
+        return copy;
+      });
+      viewport.append(track);
       const controls = document.createElement('div');
-      controls.className = 'certificate-carousel-controls';
-      const status = document.createElement('p');
-      status.className = 'certificate-carousel-status';
-      status.setAttribute('aria-live', 'polite');
-      status.setAttribute('aria-atomic', 'true');
-      const visualStatus = document.createElement('span');
-      visualStatus.setAttribute('aria-hidden', 'true');
-      const accessibleStatus = document.createElement('span');
-      accessibleStatus.className = 'visually-hidden';
-      status.append(visualStatus, accessibleStatus);
+      controls.className = 'certificate-marquee-controls';
+      const note = document.createElement('p');
+      note.className = 'certificate-marquee-note';
+      note.innerHTML = `${cards.length} certificates<span class="certificate-hover-hint"> · Hover to pause</span><span class="certificate-touch-hint"> · Swipe to browse</span>`;
       const buttons = document.createElement('div');
-      buttons.className = 'certificate-carousel-buttons';
-      const previous = document.createElement('button');
-      previous.type = 'button';
-      previous.className = 'certificate-carousel-button';
-      previous.setAttribute('aria-label', 'Previous certificate');
-      previous.setAttribute('aria-controls', listId);
-      previous.innerHTML = '<span aria-hidden="true">←</span>';
-      const next = document.createElement('button');
-      next.type = 'button';
-      next.className = 'certificate-carousel-button';
-      next.setAttribute('aria-label', 'Next certificate');
-      next.setAttribute('aria-controls', listId);
-      next.innerHTML = '<span aria-hidden="true">→</span>';
-      buttons.append(previous, next);
-      controls.append(status, buttons);
-      carousel.append(controls);
+      buttons.className = 'certificate-marquee-buttons';
+      function createControl(label, content, extraClass = '') {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `certificate-marquee-button ${extraClass}`.trim();
+        button.setAttribute('aria-label', label);
+        button.setAttribute('aria-controls', viewport.id);
+        button.innerHTML = content;
+        buttons.append(button);
+        return button;
+      }
+      const pause = createControl('Pause certificate slideshow', 'Pause', 'certificate-marquee-toggle');
+      const previous = createControl('Previous certificates', '<span aria-hidden="true">←</span>');
+      const next = createControl('Next certificates', '<span aria-hidden="true">→</span>');
+      controls.append(note, buttons);
+      reel.append(viewport, controls);
 
-      const initialHashIndex = slides.findIndex(slide => slide.id && `#${slide.id}` === window.location.hash);
-      let activeIndex = -1;
-
-      function showSlide(index, direction = 1, animate = true) {
-        const previousSlide = slides[activeIndex];
-        const nextSlide = slides[index];
-        if (!nextSlide || index === activeIndex) return;
-        if (previousSlide?.contains(document.activeElement)) {
-          (nextSlide.querySelector('a, button') || next).focus({ preventScroll: true });
-        }
-        if (previousSlide) previousSlide.hidden = true;
-        activeIndex = index;
-        nextSlide.hidden = false;
-        nextSlide.setAttribute('aria-roledescription', 'slide');
-        nextSlide.setAttribute('aria-label', `${index + 1} of ${slides.length}: ${nextSlide.querySelector('h3')?.textContent.trim() || 'Certificate'}`);
-        previous.disabled = index === 0;
-        next.disabled = index === slides.length - 1;
-        visualStatus.textContent = `${String(index + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
-        accessibleStatus.textContent = `Certificate ${index + 1} of ${slides.length}: ${nextSlide.querySelector('h3')?.textContent.trim() || 'Certificate'}`;
-        carousel.style.setProperty('--certificate-progress', `${((index + 1) / slides.length) * 100}%`);
-        if (animate && !window.matchMedia('(prefers-reduced-motion: reduce)').matches && typeof nextSlide.animate === 'function') {
-          const animation = nextSlide.animate(
-            [{ opacity: 0, transform: `translateX(${direction * 14}px)` }, { opacity: 1, transform: 'translateX(0)' }],
-            { duration: 360, easing: 'cubic-bezier(.22, 1, .36, 1)' },
-          );
-          animation.finished.catch(() => {});
+      let frame = 0, lastTime = 0, offset = 0, loopWidth = 0, touchTimer;
+      let inView = !('IntersectionObserver' in window);
+      let hovered = false, focused = false, paused = false, interacting = false, printing = false, departed = false;
+      function canMove() {
+        return loopWidth > 0 && inView && !hovered && !focused && !paused && !interacting && !printing && !departed &&
+          !document.hidden && !reducedMotion.matches &&
+          !document.documentElement.matches('.page-preparing, .page-loading, .welcome-active, .welcome-pending, .media-viewer-open');
+      }
+      function tick(time) {
+        frame = 0;
+        if (!canMove()) return;
+        if (lastTime) offset += Math.min(time - lastTime, 80) * .025;
+        lastTime = time;
+        offset = ((offset % loopWidth) + loopWidth) % loopWidth;
+        viewport.scrollLeft = offset;
+        frame = requestAnimationFrame(tick);
+      }
+      function syncMotion() {
+        pause.hidden = reducedMotion.matches;
+        pause.textContent = paused ? 'Play' : 'Pause';
+        pause.setAttribute('aria-pressed', String(paused));
+        pause.setAttribute('aria-label', paused ? 'Resume certificate slideshow' : 'Pause certificate slideshow');
+        copies.forEach(copy => { copy.hidden = reducedMotion.matches; });
+        const moving = canMove();
+        reel.dataset.moving = String(moving);
+        if (moving && !frame) {
+          offset = viewport.scrollLeft;
+          lastTime = 0;
+          frame = requestAnimationFrame(tick);
+        } else if (!moving) {
+          cancelAnimationFrame(frame);
+          frame = 0;
+          lastTime = 0;
+          offset = viewport.scrollLeft;
         }
       }
-
-      slides.forEach(slide => { slide.hidden = true; });
-      showSlide(Math.max(0, initialHashIndex), 1, false);
-      previous.addEventListener('click', () => showSlide(activeIndex - 1, -1));
-      next.addEventListener('click', () => showSlide(activeIndex + 1, 1));
-      carousel.addEventListener('keydown', event => {
-        if (event.altKey || event.ctrlKey || event.metaKey) return;
-        if (event.key === 'ArrowLeft' && activeIndex > 0) {
+      function measure() {
+        const width = group.getBoundingClientRect().width;
+        if (!width) return;
+        const nextWidth = width + (parseFloat(getComputedStyle(track).columnGap) || 0);
+        if (loopWidth && nextWidth !== loopWidth) offset = viewport.scrollLeft / loopWidth * nextWidth;
+        loopWidth = nextWidth;
+        viewport.scrollLeft = offset;
+        syncMotion();
+      }
+      function browse(direction) {
+        paused = true;
+        syncMotion();
+        const step = cards[0].getBoundingClientRect().width + (parseFloat(getComputedStyle(group).columnGap) || 0);
+        // Normalize to the identical sequence so either arrow can keep browsing indefinitely.
+        if (!reducedMotion.matches && loopWidth) {
+          const position = viewport.scrollLeft % loopWidth;
+          viewport.scrollLeft = direction < 0 && position < step ? position + loopWidth : position;
+        }
+        viewport.scrollBy({ left: direction * step, behavior: reducedMotion.matches ? 'instant' : 'smooth' });
+      }
+      function showHashTarget() {
+        const target = cards.find(card => card.id && `#${card.id}` === window.location.hash);
+        if (!target) return;
+        const details = group.closest('details');
+        if (details) details.open = true;
+        paused = true;
+        syncMotion();
+        viewport.scrollLeft += target.getBoundingClientRect().left - viewport.getBoundingClientRect().left - 4;
+      }
+      pause.addEventListener('click', () => { paused = !paused; syncMotion(); });
+      previous.addEventListener('click', () => browse(-1));
+      next.addEventListener('click', () => browse(1));
+      reel.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') { hovered = true; syncMotion(); } });
+      reel.addEventListener('pointerleave', () => { hovered = false; syncMotion(); });
+      viewport.addEventListener('focusin', () => { focused = true; syncMotion(); });
+      viewport.addEventListener('focusout', event => { focused = viewport.contains(event.relatedTarget); syncMotion(); });
+      viewport.addEventListener('keydown', event => {
+        if (event.target !== viewport || event.altKey || event.ctrlKey || event.metaKey) return;
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
           event.preventDefault();
-          showSlide(activeIndex - 1, -1);
-        } else if (event.key === 'ArrowRight' && activeIndex < slides.length - 1) {
-          event.preventDefault();
-          showSlide(activeIndex + 1, 1);
+          browse(event.key === 'ArrowLeft' ? -1 : 1);
         }
       });
-      window.addEventListener('hashchange', () => {
-        const hashIndex = slides.findIndex(slide => slide.id && `#${slide.id}` === window.location.hash);
-        if (hashIndex >= 0) showSlide(hashIndex, hashIndex > activeIndex ? 1 : -1, false);
-      });
+      function holdForInteraction() {
+        clearTimeout(touchTimer);
+        interacting = true;
+        syncMotion();
+        touchTimer = setTimeout(() => { interacting = false; syncMotion(); }, 1800);
+      }
+      viewport.addEventListener('pointerdown', holdForInteraction, { passive: true });
+      viewport.addEventListener('pointerup', holdForInteraction, { passive: true });
+      viewport.addEventListener('wheel', holdForInteraction, { passive: true });
+      viewport.addEventListener('scroll', () => { if (!frame) offset = viewport.scrollLeft; }, { passive: true });
+      document.addEventListener('visibilitychange', syncMotion);
+      reducedMotion.addEventListener('change', () => { syncMotion(); measure(); });
+      window.addEventListener('hashchange', showHashTarget);
+      window.addEventListener('pagehide', () => { departed = true; syncMotion(); clearTimeout(touchTimer); interacting = false; });
+      window.addEventListener('pageshow', () => { departed = false; syncMotion(); });
+      window.addEventListener('beforeprint', () => { printing = true; syncMotion(); });
+      window.addEventListener('afterprint', () => { printing = false; measure(); });
+      new MutationObserver(syncMotion).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+      if ('ResizeObserver' in window) {
+        const resizeObserver = new ResizeObserver(measure);
+        resizeObserver.observe(viewport);
+        resizeObserver.observe(group);
+      } else window.addEventListener('resize', measure);
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(entries => { inView = entries[0].isIntersecting; syncMotion(); }, { threshold: 0 }).observe(viewport);
+      }
+      measure();
+      requestAnimationFrame(showHashTarget);
     });
   }
 
-  initCertificateSlideshows();
+  initCertificateReels();
 
   document.querySelectorAll('.site-menu').forEach((menu) => {
     const summary = menu.querySelector('summary');
