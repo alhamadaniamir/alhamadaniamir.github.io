@@ -166,11 +166,24 @@
         clearTimeout(touchTimer);
         interacting = true;
         syncMotion();
-        touchTimer = setTimeout(() => { interacting = false; syncMotion(); }, 1800);
+        touchTimer = setTimeout(() => { interacting = false; syncMotion(); }, 500);
       }
-      viewport.addEventListener('pointerdown', holdForInteraction, { passive: true });
-      viewport.addEventListener('pointerup', holdForInteraction, { passive: true });
-      viewport.addEventListener('wheel', holdForInteraction, { passive: true });
+      let pointerStart = null;
+      viewport.addEventListener('pointerdown', event => {
+        pointerStart = event.pointerType === 'mouse' ? null : { x: event.clientX, y: event.clientY };
+      }, { passive: true });
+      viewport.addEventListener('pointermove', event => {
+        if (!pointerStart) return;
+        const dx = Math.abs(event.clientX - pointerStart.x);
+        const dy = Math.abs(event.clientY - pointerStart.y);
+        if (dx > 8 && dx > dy) holdForInteraction();
+      }, { passive: true });
+      ['pointerup', 'pointercancel', 'pointerleave'].forEach(type => {
+        viewport.addEventListener(type, () => { pointerStart = null; }, { passive: true });
+      });
+      viewport.addEventListener('wheel', event => {
+        if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) holdForInteraction();
+      }, { passive: true });
       viewport.addEventListener('scroll', () => { if (!frame) { offset = viewport.scrollLeft; updateEmphasis(); } }, { passive: true });
       document.addEventListener('visibilitychange', syncMotion);
       reducedMotion.addEventListener('change', () => { syncMotion(); measure(); });
@@ -195,134 +208,7 @@
 
   initCertificateReels();
 
-  function initToolkitCarousel() {
-    const viewport = document.querySelector('.home-page .toolkit-content');
-    if (!viewport) return;
-    const cards = [...viewport.querySelectorAll('.toolkit-group')];
-    if (cards.length < 2) return;
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const title = document.querySelector('#toolkit-title');
-    const carousel = document.createElement('div');
-    carousel.className = 'toolkit-carousel';
-    carousel.setAttribute('role', 'region');
-    carousel.setAttribute('aria-labelledby', title?.id || 'toolkit-title');
-    viewport.parentNode.insertBefore(carousel, viewport);
-    viewport.classList.add('toolkit-track');
-    viewport.tabIndex = 0;
-    viewport.setAttribute('aria-label', 'Technical skills cards. Slides automatically. Hover or focus to pause, or swipe to browse.');
-    carousel.append(viewport);
 
-    cards.forEach((card, index) => {
-      card.setAttribute('role', 'group');
-      card.setAttribute('aria-roledescription', 'slide');
-      card.setAttribute('aria-label', `${index + 1} of ${cards.length}: ${card.querySelector('h3')?.textContent.trim() || 'Skills'}`);
-    });
-    const copies = cards.map((card) => {
-      const copy = card.cloneNode(true);
-      copy.removeAttribute('id');
-      copy.classList.add('toolkit-reel-copy');
-      copy.setAttribute('aria-hidden', 'true');
-      copy.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
-      copy.querySelectorAll('a, button, [tabindex]').forEach(element => { element.tabIndex = -1; });
-      viewport.append(copy);
-      return copy;
-    });
-    const slides = [...cards, ...copies];
-    let activeIndex = 0;
-    let inView = !('IntersectionObserver' in window);
-    let hovered = false, focused = false, interacting = false, departed = false;
-    let timer = 0, motionTimer = 0, interactionTimer = 0;
-
-    function canAdvance() {
-      return inView && !hovered && !focused && !interacting && !departed && !document.hidden && !reducedMotion.matches;
-    }
-    function schedule(delay = 3400) {
-      clearTimeout(timer);
-      if (canAdvance()) timer = setTimeout(advance, delay);
-    }
-    function resetLoop() {
-      clearTimeout(motionTimer);
-      motionTimer = 0;
-      if (activeIndex >= cards.length) {
-        viewport.scrollTo({ left: cards[0].offsetLeft, behavior: 'instant' });
-        activeIndex = 0;
-      }
-      schedule();
-    }
-    function advance() {
-      if (!canAdvance()) return;
-      activeIndex = (activeIndex + 1) % slides.length;
-      viewport.scrollTo({ left: slides[activeIndex].offsetLeft, behavior: 'smooth' });
-      clearTimeout(motionTimer);
-      motionTimer = setTimeout(resetLoop, 760);
-    }
-    function currentIndex() {
-      const left = viewport.scrollLeft + 12;
-      return slides.reduce((best, card, index) => card.offsetLeft <= left ? index : best, 0);
-    }
-    function pauseForInteraction() {
-      interacting = true;
-      clearTimeout(timer);
-      clearTimeout(interactionTimer);
-      interactionTimer = setTimeout(() => {
-        interacting = false;
-        activeIndex = currentIndex();
-        resetLoop();
-      }, 4200);
-    }
-
-    carousel.addEventListener('pointerenter', event => {
-      if (event.pointerType === 'mouse') { hovered = true; clearTimeout(timer); }
-    });
-    carousel.addEventListener('pointerleave', () => { hovered = false; schedule(); });
-    viewport.addEventListener('focusin', () => { focused = true; clearTimeout(timer); });
-    viewport.addEventListener('focusout', event => {
-      focused = viewport.contains(event.relatedTarget);
-      schedule();
-    });
-    viewport.addEventListener('pointerdown', pauseForInteraction, { passive: true });
-    viewport.addEventListener('wheel', pauseForInteraction, { passive: true });
-    viewport.addEventListener('touchstart', pauseForInteraction, { passive: true });
-    viewport.addEventListener('scroll', () => { if (!motionTimer) activeIndex = currentIndex(); }, { passive: true });
-    viewport.addEventListener('scrollend', resetLoop);
-    viewport.addEventListener('keydown', event => {
-      if (event.altKey || event.ctrlKey || event.metaKey) return;
-      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-        event.preventDefault();
-        pauseForInteraction();
-        activeIndex = Math.max(0, Math.min(slides.length - 1, currentIndex() + (event.key === 'ArrowLeft' ? -1 : 1)));
-        viewport.scrollTo({ left: slides[activeIndex].offsetLeft, behavior: reducedMotion.matches ? 'instant' : 'smooth' });
-      }
-    });
-    document.addEventListener('visibilitychange', () => { if (document.hidden) clearTimeout(timer); else schedule(); });
-    window.addEventListener('pagehide', () => {
-      departed = true;
-      clearTimeout(timer);
-      clearTimeout(motionTimer);
-      clearTimeout(interactionTimer);
-    });
-    window.addEventListener('pageshow', () => { departed = false; schedule(); });
-    reducedMotion.addEventListener('change', () => {
-      clearTimeout(timer);
-      if (reducedMotion.matches) {
-        viewport.scrollTo({ left: cards[0].offsetLeft, behavior: 'instant' });
-        copies.forEach(copy => { copy.hidden = true; });
-        activeIndex = 0;
-      } else {
-        copies.forEach(copy => { copy.hidden = false; });
-        schedule();
-      }
-    });
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(entries => {
-        inView = entries[0].isIntersecting;
-        schedule();
-      }, { threshold: 0 }).observe(viewport);
-    }
-    if (reducedMotion.matches) copies.forEach(copy => { copy.hidden = true; });
-  }
-
-  initToolkitCarousel();
 
   document.querySelectorAll('.site-menu').forEach((menu) => {
     const summary = menu.querySelector('summary');
