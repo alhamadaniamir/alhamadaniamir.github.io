@@ -195,6 +195,100 @@
 
   initCertificateReels();
 
+  function initToolkitCarousel() {
+    const viewport = document.querySelector('.home-page .toolkit-content');
+    if (!viewport) return;
+    const cards = [...viewport.querySelectorAll('.toolkit-group')];
+    if (cards.length < 2) return;
+    const title = document.querySelector('#toolkit-title');
+    const carousel = document.createElement('div');
+    carousel.className = 'toolkit-carousel';
+    carousel.setAttribute('role', 'region');
+    carousel.setAttribute('aria-labelledby', title?.id || 'toolkit-title');
+    viewport.parentNode.insertBefore(carousel, viewport);
+    viewport.classList.add('toolkit-track');
+    viewport.tabIndex = 0;
+    viewport.setAttribute('aria-label', 'Technical skills cards. Swipe or use the arrow keys to browse.');
+    carousel.append(viewport);
+    cards.forEach((card, index) => {
+      card.setAttribute('role', 'group');
+      card.setAttribute('aria-roledescription', 'slide');
+      card.setAttribute('aria-label', `${index + 1} of ${cards.length}: ${card.querySelector('h3')?.textContent.trim() || 'Skills'}`);
+    });
+    const controls = document.createElement('div');
+    controls.className = 'toolkit-controls';
+    const status = document.createElement('p');
+    status.className = 'toolkit-status';
+    status.setAttribute('aria-live', 'polite');
+    status.setAttribute('aria-atomic', 'true');
+    const buttons = document.createElement('div');
+    buttons.className = 'toolkit-buttons';
+    function button(label, arrow) {
+      const control = document.createElement('button');
+      control.type = 'button';
+      control.className = 'toolkit-button';
+      control.setAttribute('aria-label', label);
+      control.innerHTML = `<span aria-hidden="true">${arrow}</span>`;
+      buttons.append(control);
+      return control;
+    }
+    const previous = button('Previous skill category', '←');
+    const next = button('Next skill category', '→');
+    controls.append(status, buttons);
+    const heading = document.querySelector('.toolkit-section .section-heading');
+    if (heading) heading.append(controls);
+    else carousel.append(controls);
+    let activeIndex = 0;
+    let programmaticScroll = false;
+    let programmaticTimer = 0;
+    function update() {
+      if (programmaticScroll) return;
+      const left = viewport.scrollLeft + 12;
+      activeIndex = cards.reduce((best, card, index) => card.offsetLeft <= left ? index : best, 0);
+      status.textContent = `${activeIndex + 1} / ${cards.length}`;
+      previous.disabled = activeIndex === 0;
+      next.disabled = activeIndex === cards.length - 1;
+    }
+    function browse(direction) {
+      const index = Math.max(0, Math.min(cards.length - 1, activeIndex + direction));
+      activeIndex = index;
+      programmaticScroll = true;
+      clearTimeout(programmaticTimer);
+      programmaticTimer = setTimeout(() => { programmaticScroll = false; update(); }, 650);
+      status.textContent = `${activeIndex + 1} / ${cards.length}`;
+      previous.disabled = activeIndex === 0;
+      next.disabled = activeIndex === cards.length - 1;
+      viewport.scrollTo({ left: cards[index].offsetLeft, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+      viewport.focus({ preventScroll: true });
+    }
+    previous.addEventListener('click', () => browse(-1));
+    next.addEventListener('click', () => browse(1));
+    viewport.addEventListener('scroll', update, { passive: true });
+    viewport.addEventListener('scrollend', () => {
+      if (!programmaticScroll) return;
+      clearTimeout(programmaticTimer);
+      programmaticScroll = false;
+      update();
+    });
+    for (const eventName of ['pointerdown', 'wheel', 'touchstart']) {
+      viewport.addEventListener(eventName, () => {
+        clearTimeout(programmaticTimer);
+        programmaticScroll = false;
+        update();
+      }, { passive: true });
+    }
+    viewport.addEventListener('keydown', event => {
+      if (event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        event.preventDefault();
+        browse(event.key === 'ArrowLeft' ? -1 : 1);
+      }
+    });
+    update();
+  }
+
+  initToolkitCarousel();
+
   document.querySelectorAll('.site-menu').forEach((menu) => {
     const summary = menu.querySelector('summary');
     const panel = menu.querySelector('.menu-panel');
