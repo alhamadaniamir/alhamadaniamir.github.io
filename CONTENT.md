@@ -19,6 +19,9 @@ listed skill remain visible, without cards, borders, or slideshow controls.
 Featured project explanations, photos, and videos appear directly below each
 project on the homepage. The full archive keeps the expandable **Project details
 & media** area for focused browsing, and it works without JavaScript.
+Project explanations use a two-column layout with clear headings on wider screens
+and one column on phones. Body text, captions, technology lists, and repository
+links use larger type and stronger contrast for readability.
 Homepage videos autoplay muted while they are visible and pause when scrolled away;
 controls remain available for sound and manual playback.
 The four featured projects now include 13 photos/screenshots and five videos
@@ -62,6 +65,10 @@ reduced motion. Background videos pause while it is open. **Open original** open
 the source image, while **Open PDF** retains access to original certificates.
 The separate certificate and verification links keep their existing destinations.
 Without JavaScript, thumbnails still open their original files in a new tab.
+Certificate and seminar previews use a fixed, compact height with the entire
+image contained inside it. Spacing is tighter in both the homepage slideshow
+and the static certificate archive; titles, issuers, dates, descriptions, and
+credential links remain available.
 
 Phone previews use two compact columns for both photos and videos. Full images fit
 inside the viewer without cropping; zoomed images retain their proportions and
