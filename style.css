@@ -265,10 +265,10 @@ summary::-webkit-details-marker { display: none; }
 .education-item h3 { font-weight: 600; font-size: 14px; line-height: 1.6; }
 .education-item h3 + p { font-size: 13px; color: var(--accent); margin-top: 2px; }
 .education-detail { margin-top: 9px; font-size: 12px; color: var(--muted); line-height: 1.8; }
-.toolkit-section .section-heading { flex-wrap: wrap; align-items: center; gap: 8px 16px; }
 .toolkit-section .section-heading h2 { margin-top: 0; }
 .toolkit-content { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 25px 36px; margin-top: 26px; }
 .toolkit-carousel { margin-top: 26px; }
+.toolkit-reel-copy[hidden] { display: none !important; }
 .toolkit-track { position: relative; display: flex; gap: 16px; margin-top: 0; padding: 8px 4px 14px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-behavior: smooth; overscroll-behavior-x: contain; scrollbar-width: none; }
 .toolkit-track::-webkit-scrollbar { display: none; }
 .toolkit-carousel .toolkit-group { display: flex; flex: 0 0 calc((100% - 16px) / 2); flex-direction: column; min-width: 0; min-height: 216px; padding: 23px; border: 1px solid var(--rule); background: var(--paper); scroll-snap-align: start; transition: border-color .25s ease, background-color .25s ease, translate .25s cubic-bezier(.22, 1, .36, 1); }
@@ -276,12 +276,6 @@ summary::-webkit-details-marker { display: none; }
 .toolkit-carousel .toolkit-group h3 { margin-bottom: 19px; color: var(--accent); font-size: 15px; font-weight: 600; line-height: 1.5; }
 .toolkit-tags { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 8px; padding: 0; margin: 0; list-style: none; }
 .toolkit-tags li { padding: 4px 9px; border: 1px solid var(--rule); border-radius: 3px; color: var(--muted); font-size: 11px; line-height: 1.5; }
-.toolkit-controls { display: flex; align-items: center; justify-content: flex-end; gap: 14px; margin-left: auto; }
-.toolkit-status { min-width: 40px; margin-right: 2px; color: var(--muted); font: 10px/1.6 var(--mono); text-align: center; }
-.toolkit-buttons { display: flex; gap: 8px; }
-.toolkit-button { display: grid; place-items: center; width: 42px; height: 42px; padding: 0; border: 1px solid var(--rule); border-radius: 50%; background: var(--paper); color: var(--accent); cursor: pointer; transition: background-color .2s ease, border-color .2s ease, opacity .2s ease; }
-.toolkit-button:hover:not(:disabled) { border-color: var(--border-accent); background: var(--soft-green); }
-.toolkit-button:disabled { opacity: .38; cursor: default; }
 @media (prefers-reduced-motion: reduce) { .toolkit-track { scroll-behavior: auto; } }
 
 .certificate-list { display: grid; gap: 22px; margin-top: 30px; }

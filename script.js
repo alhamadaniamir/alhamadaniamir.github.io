@@ -200,6 +200,7 @@
     if (!viewport) return;
     const cards = [...viewport.querySelectorAll('.toolkit-group')];
     if (cards.length < 2) return;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const title = document.querySelector('#toolkit-title');
     const carousel = document.createElement('div');
     carousel.className = 'toolkit-carousel';
@@ -208,83 +209,117 @@
     viewport.parentNode.insertBefore(carousel, viewport);
     viewport.classList.add('toolkit-track');
     viewport.tabIndex = 0;
-    viewport.setAttribute('aria-label', 'Technical skills cards. Swipe or use the arrow keys to browse.');
+    viewport.setAttribute('aria-label', 'Technical skills cards. Slides automatically. Hover or focus to pause, or swipe to browse.');
     carousel.append(viewport);
+
     cards.forEach((card, index) => {
       card.setAttribute('role', 'group');
       card.setAttribute('aria-roledescription', 'slide');
       card.setAttribute('aria-label', `${index + 1} of ${cards.length}: ${card.querySelector('h3')?.textContent.trim() || 'Skills'}`);
     });
-    const controls = document.createElement('div');
-    controls.className = 'toolkit-controls';
-    const status = document.createElement('p');
-    status.className = 'toolkit-status';
-    status.setAttribute('aria-live', 'polite');
-    status.setAttribute('aria-atomic', 'true');
-    const buttons = document.createElement('div');
-    buttons.className = 'toolkit-buttons';
-    function button(label, arrow) {
-      const control = document.createElement('button');
-      control.type = 'button';
-      control.className = 'toolkit-button';
-      control.setAttribute('aria-label', label);
-      control.innerHTML = `<span aria-hidden="true">${arrow}</span>`;
-      buttons.append(control);
-      return control;
-    }
-    const previous = button('Previous skill category', '←');
-    const next = button('Next skill category', '→');
-    controls.append(status, buttons);
-    const heading = document.querySelector('.toolkit-section .section-heading');
-    if (heading) heading.append(controls);
-    else carousel.append(controls);
-    let activeIndex = 0;
-    let programmaticScroll = false;
-    let programmaticTimer = 0;
-    function update() {
-      if (programmaticScroll) return;
-      const left = viewport.scrollLeft + 12;
-      activeIndex = cards.reduce((best, card, index) => card.offsetLeft <= left ? index : best, 0);
-      status.textContent = `${activeIndex + 1} / ${cards.length}`;
-      previous.disabled = activeIndex === 0;
-      next.disabled = activeIndex === cards.length - 1;
-    }
-    function browse(direction) {
-      const index = Math.max(0, Math.min(cards.length - 1, activeIndex + direction));
-      activeIndex = index;
-      programmaticScroll = true;
-      clearTimeout(programmaticTimer);
-      programmaticTimer = setTimeout(() => { programmaticScroll = false; update(); }, 650);
-      status.textContent = `${activeIndex + 1} / ${cards.length}`;
-      previous.disabled = activeIndex === 0;
-      next.disabled = activeIndex === cards.length - 1;
-      viewport.scrollTo({ left: cards[index].offsetLeft, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
-      viewport.focus({ preventScroll: true });
-    }
-    previous.addEventListener('click', () => browse(-1));
-    next.addEventListener('click', () => browse(1));
-    viewport.addEventListener('scroll', update, { passive: true });
-    viewport.addEventListener('scrollend', () => {
-      if (!programmaticScroll) return;
-      clearTimeout(programmaticTimer);
-      programmaticScroll = false;
-      update();
+    const copies = cards.map((card) => {
+      const copy = card.cloneNode(true);
+      copy.removeAttribute('id');
+      copy.classList.add('toolkit-reel-copy');
+      copy.setAttribute('aria-hidden', 'true');
+      copy.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
+      copy.querySelectorAll('a, button, [tabindex]').forEach(element => { element.tabIndex = -1; });
+      viewport.append(copy);
+      return copy;
     });
-    for (const eventName of ['pointerdown', 'wheel', 'touchstart']) {
-      viewport.addEventListener(eventName, () => {
-        clearTimeout(programmaticTimer);
-        programmaticScroll = false;
-        update();
-      }, { passive: true });
+    const slides = [...cards, ...copies];
+    let activeIndex = 0;
+    let inView = !('IntersectionObserver' in window);
+    let hovered = false, focused = false, interacting = false, departed = false;
+    let timer = 0, motionTimer = 0, interactionTimer = 0;
+
+    function canAdvance() {
+      return inView && !hovered && !focused && !interacting && !departed && !document.hidden && !reducedMotion.matches;
     }
+    function schedule(delay = 3400) {
+      clearTimeout(timer);
+      if (canAdvance()) timer = setTimeout(advance, delay);
+    }
+    function resetLoop() {
+      clearTimeout(motionTimer);
+      motionTimer = 0;
+      if (activeIndex >= cards.length) {
+        viewport.scrollTo({ left: cards[0].offsetLeft, behavior: 'instant' });
+        activeIndex = 0;
+      }
+      schedule();
+    }
+    function advance() {
+      if (!canAdvance()) return;
+      activeIndex = (activeIndex + 1) % slides.length;
+      viewport.scrollTo({ left: slides[activeIndex].offsetLeft, behavior: 'smooth' });
+      clearTimeout(motionTimer);
+      motionTimer = setTimeout(resetLoop, 760);
+    }
+    function currentIndex() {
+      const left = viewport.scrollLeft + 12;
+      return slides.reduce((best, card, index) => card.offsetLeft <= left ? index : best, 0);
+    }
+    function pauseForInteraction() {
+      interacting = true;
+      clearTimeout(timer);
+      clearTimeout(interactionTimer);
+      interactionTimer = setTimeout(() => {
+        interacting = false;
+        activeIndex = currentIndex();
+        resetLoop();
+      }, 4200);
+    }
+
+    carousel.addEventListener('pointerenter', event => {
+      if (event.pointerType === 'mouse') { hovered = true; clearTimeout(timer); }
+    });
+    carousel.addEventListener('pointerleave', () => { hovered = false; schedule(); });
+    viewport.addEventListener('focusin', () => { focused = true; clearTimeout(timer); });
+    viewport.addEventListener('focusout', event => {
+      focused = viewport.contains(event.relatedTarget);
+      schedule();
+    });
+    viewport.addEventListener('pointerdown', pauseForInteraction, { passive: true });
+    viewport.addEventListener('wheel', pauseForInteraction, { passive: true });
+    viewport.addEventListener('touchstart', pauseForInteraction, { passive: true });
+    viewport.addEventListener('scroll', () => { if (!motionTimer) activeIndex = currentIndex(); }, { passive: true });
+    viewport.addEventListener('scrollend', resetLoop);
     viewport.addEventListener('keydown', event => {
       if (event.altKey || event.ctrlKey || event.metaKey) return;
       if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
         event.preventDefault();
-        browse(event.key === 'ArrowLeft' ? -1 : 1);
+        pauseForInteraction();
+        activeIndex = Math.max(0, Math.min(slides.length - 1, currentIndex() + (event.key === 'ArrowLeft' ? -1 : 1)));
+        viewport.scrollTo({ left: slides[activeIndex].offsetLeft, behavior: reducedMotion.matches ? 'instant' : 'smooth' });
       }
     });
-    update();
+    document.addEventListener('visibilitychange', () => { if (document.hidden) clearTimeout(timer); else schedule(); });
+    window.addEventListener('pagehide', () => {
+      departed = true;
+      clearTimeout(timer);
+      clearTimeout(motionTimer);
+      clearTimeout(interactionTimer);
+    });
+    window.addEventListener('pageshow', () => { departed = false; schedule(); });
+    reducedMotion.addEventListener('change', () => {
+      clearTimeout(timer);
+      if (reducedMotion.matches) {
+        viewport.scrollTo({ left: cards[0].offsetLeft, behavior: 'instant' });
+        copies.forEach(copy => { copy.hidden = true; });
+        activeIndex = 0;
+      } else {
+        copies.forEach(copy => { copy.hidden = false; });
+        schedule();
+      }
+    });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(entries => {
+        inView = entries[0].isIntersecting;
+        schedule();
+      }, { threshold: 0 }).observe(viewport);
+    }
+    if (reducedMotion.matches) copies.forEach(copy => { copy.hidden = true; });
   }
 
   initToolkitCarousel();
