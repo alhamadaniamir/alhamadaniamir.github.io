@@ -76,8 +76,9 @@
       .portfolio-welcome .welcome-skip:focus-visible { outline-color: var(--welcome-paper); }
       .portfolio-welcome.page-loader--leaving { opacity: 0; }
       .portfolio-welcome.welcome-aperture-active { opacity: 1; transition: none; }
+      .welcome-aperture-letter { position: relative; isolation: isolate; white-space: nowrap; }
       .welcome-baseline { position: relative; display: inline-block; width: 0; height: 0; }
-      .welcome-baseline::before { content: ""; position: absolute; left: var(--counter-x); top: var(--counter-y); width: var(--counter-width); height: var(--counter-height); border-radius: 50%; transform: translate(-50%, -50%) rotate(16deg); background: var(--welcome-paper); }
+      .welcome-baseline::before { content: ""; position: absolute; z-index: -1; left: var(--counter-x); top: var(--counter-y); width: var(--counter-width); height: var(--counter-height); transform: translate(-50%, -50%); background: var(--welcome-paper); -webkit-mask-image: var(--counter-mask); mask-image: var(--counter-mask); -webkit-mask-size: 100% 100%; mask-size: 100% 100%; }
       .portfolio-welcome.welcome-aperture-active.page-loader--leaving .welcome-content { opacity: 1; }
       .welcome-aperture-active .welcome-title { animation: none; }
       .welcome-aperture-active .welcome-rule, .welcome-aperture-active .welcome-name, .welcome-aperture-active .welcome-loading { visibility: hidden; }
@@ -115,6 +116,7 @@
         let statusTimer;
         let welcomeStarted = 0;
         let apertureFrame = 0;
+        let letterCounter;
         const entranceAnimations = new Set();
         const inertElements = new Map();
 
@@ -144,77 +146,113 @@
 
         function prepareLetterCenter() {
           const letter = loader.querySelector('.welcome-aperture-letter');
-          const context = document.createElement('canvas').getContext('2d');
-          if (!letter || !context) return;
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d', { willReadFrequently: true });
+          if (!letter || !context || !window.CSS?.supports('mask-image', 'radial-gradient(circle, transparent 1px, black 2px)')) return;
           const font = getComputedStyle(letter);
-          const size = parseFloat(font.fontSize);
-          context.font = `${font.fontStyle} ${font.fontWeight} ${font.fontSize} ${font.fontFamily}`;
+          // Trace the enclosed counter of the actual font, rather than guessing an oval.
+          // Normalized coordinates keep the same shape at every responsive text size.
+          const size = 256;
+          const canvasFont = `${font.fontStyle} ${font.fontWeight} ${size}px ${font.fontFamily}`;
+          context.font = canvasFont;
           const metrics = context.measureText('o');
-          const spacing = parseFloat(font.letterSpacing) || 0;
+          const baselineX = Math.ceil(metrics.actualBoundingBoxLeft) + 4;
+          const baselineY = Math.ceil(metrics.actualBoundingBoxAscent) + 4;
+          canvas.width = Math.ceil(metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight) + 8;
+          canvas.height = Math.ceil(metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent) + 8;
+          context.font = canvasFont;
+          context.fillText('o', baselineX, baselineY);
+          const { width, height } = canvas;
+          const pixels = context.getImageData(0, 0, width, height).data;
+          const seedX = Math.round(baselineX + (metrics.actualBoundingBoxRight - metrics.actualBoundingBoxLeft) / 2);
+          const seedY = Math.round(baselineY + (metrics.actualBoundingBoxDescent - metrics.actualBoundingBoxAscent) / 2);
+          const seed = seedY * width + seedX;
+          if (pixels[seed * 4 + 3] >= 224) return;
+          const visited = new Uint8Array(width * height);
+          const leftEdges = new Int32Array(height).fill(width);
+          const rightEdges = new Int32Array(height).fill(-1);
+          const queue = [seed];
+          visited[seed] = 1;
+          let top = height, bottom = 0, left = width, right = 0;
+          for (let cursor = 0; cursor < queue.length; cursor++) {
+            const pixel = queue[cursor], x = pixel % width, y = Math.floor(pixel / width);
+            // An unclosed glyph should use the existing fade fallback, not an exterior fill.
+            if (!x || !y || x === width - 1 || y === height - 1) return;
+            leftEdges[y] = Math.min(leftEdges[y], x);
+            rightEdges[y] = Math.max(rightEdges[y], x);
+            left = Math.min(left, x); right = Math.max(right, x + 1);
+            top = Math.min(top, y); bottom = Math.max(bottom, y + 1);
+            for (const neighbor of [pixel - 1, pixel + 1, pixel - width, pixel + width]) {
+              if (!visited[neighbor] && pixels[neighbor * 4 + 3] < 224) {
+                visited[neighbor] = 1;
+                queue.push(neighbor);
+              }
+            }
+          }
+          const centerX = (left + right) / 2, centerY = (top + bottom) / 2;
+          const rows = [];
+          for (let y = top; y < bottom; y += 3) rows.push(y);
+          if (rows[rows.length - 1] !== bottom - 1) rows.push(bottom - 1);
+          const point = (x, y) => ({ x: (x - centerX) / size, y: (y - centerY) / size });
+          const points = [
+            ...rows.map(y => point(leftEdges[y] - .5, y + .5)),
+            ...rows.slice().reverse().map(y => point(rightEdges[y] + 1.5, y + .5)),
+          ];
+          const midpoint = (a, b) => `${((a.x + b.x) / 2).toFixed(5)} ${((a.y + b.y) / 2).toFixed(5)}`;
+          let path = `M ${midpoint(points[points.length - 1], points[0])}`;
+          points.forEach((p, index) => {
+            path += ` Q ${p.x.toFixed(5)} ${p.y.toFixed(5)} ${midpoint(p, points[(index + 1) % points.length])}`;
+          });
+          path += ' Z';
           const properties = {
-            x: (metrics.actualBoundingBoxRight - metrics.actualBoundingBoxLeft) / 2 - metrics.width - spacing,
-            y: (metrics.actualBoundingBoxDescent - metrics.actualBoundingBoxAscent) / 2,
-            width: (metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight) * .56,
-            height: (metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent) * .80,
+            x: (centerX - baselineX) / size,
+            y: (centerY - baselineY) / size,
+            width: (right - left + 2) / size,
+            height: (bottom - top + 2) / size,
           };
-          Object.entries(properties).forEach(([key, value]) => letter.style.setProperty(`--counter-${key}`, `${value / size}em`));
+          const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${-properties.width / 2} ${-properties.height / 2} ${properties.width} ${properties.height}"><path d="${path}" fill="white"/></svg>`;
+          Object.entries(properties).forEach(([key, value]) => letter.style.setProperty(`--counter-${key}`, `${value}em`));
+          letter.style.setProperty('--counter-mask', `url("data:image/svg+xml,${encodeURIComponent(svg)}")`);
+          letterCounter = { ...properties, path, radius: Math.min(...points.map(p => Math.hypot(p.x, p.y))) * .9 };
         }
 
         function revealThroughLetter() {
           const letter = loader.querySelector('.welcome-aperture-letter');
-          if (!letter || !window.CSS?.supports('mask-image', 'radial-gradient(circle, transparent 1px, black 2px)')) return;
+          if (!letter || !letterCounter || !window.CSS?.supports('mask-image', 'radial-gradient(circle, transparent 1px, black 2px)')) return;
           const title = loader.querySelector('.welcome-title');
-          const bounds = loader.getBoundingClientRect();
-          const glyph = letter.getBoundingClientRect();
-          const titleBounds = title.getBoundingClientRect();
-          const baseline = letter.querySelector('.welcome-baseline').getBoundingClientRect().top;
-          const context = document.createElement('canvas').getContext('2d');
-          if (!context) return;
-          const font = getComputedStyle(letter);
-          context.font = `${font.fontStyle} ${font.fontWeight} ${font.fontSize} ${font.fontFamily}`;
-          const metrics = context.measureText('o');
-          const inkWidth = metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight;
-          const inkHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
-          const anchorX = glyph.left + (metrics.actualBoundingBoxRight - metrics.actualBoundingBoxLeft) / 2;
-          const anchorY = baseline + (metrics.actualBoundingBoxDescent - metrics.actualBoundingBoxAscent) / 2;
-          const originX = (anchorX - bounds.left) / bounds.width;
-          const originY = (anchorY - bounds.top) / bounds.height;
-          // Match the opening to the real glyph's counter, and scale the word with it.
-          const radiusX = Math.max(1, inkWidth * .28);
-          const radiusY = Math.max(1, inkHeight * .40);
-          title.style.transformOrigin = `${anchorX - titleBounds.left}px ${anchorY - titleBounds.top}px`;
-          let layoutWidth = bounds.width, layoutHeight = bounds.height;
-          let currentX = anchorX, currentY = anchorY;
-          const started = performance.now();
           loader.classList.add('welcome-aperture-active');
+          function measureOrigin() {
+            title.style.transform = 'none';
+            const bounds = loader.getBoundingClientRect();
+            const titleBounds = title.getBoundingClientRect();
+            const baseline = letter.querySelector('.welcome-baseline').getBoundingClientRect();
+            const size = parseFloat(getComputedStyle(letter).fontSize);
+            const x = baseline.left + letterCounter.x * size;
+            const y = baseline.top + letterCounter.y * size;
+            title.style.transformOrigin = `${x - titleBounds.left}px ${y - titleBounds.top}px`;
+            return { width: bounds.width, height: bounds.height, size, x: x - bounds.left, y: y - bounds.top };
+          }
+          let layout = measureOrigin();
+          const started = performance.now();
           function draw(time) {
             const progress = Math.min(1, Math.max(0, (time - started) / 1200));
             const eased = progress * progress * (3 - 2 * progress);
             const width = loader.clientWidth, height = loader.clientHeight;
+            if (width !== layout.width || height !== layout.height) layout = measureOrigin();
             const pan = Math.min(1, progress / .65);
             const centered = pan * pan * (3 - 2 * pan);
-            const x = width * (originX + (.5 - originX) * centered);
-            const y = height * (originY + (.5 - originY) * centered);
-            const finalScale = Math.hypot(width, height) / (2 * Math.min(radiusX, radiusY)) + 2;
+            const x = layout.x + (width / 2 - layout.x) * centered;
+            const y = layout.y + (height / 2 - layout.y) * centered;
+            const finalScale = Math.hypot(width, height) / (2 * letterCounter.radius * layout.size) + 2;
             // Exponential growth feels like moving through the letter, rather than wiping the screen.
             const scale = Math.exp(Math.log(finalScale) * eased);
             // Blend the white center into the homepage as the zoom starts.
             const opening = Math.min(1, progress / .22);
             const cover = 1 - opening * opening * (3 - 2 * opening);
-            // Tilt the opening with the italic glyph so it does not cut across its stroke.
-            const tilt = font.fontStyle === 'italic' ? 16 : 0;
-            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><defs><mask id="opening" maskUnits="userSpaceOnUse" x="0" y="0" width="${width}" height="${height}"><rect width="100%" height="100%" fill="white"/><ellipse cx="${x}" cy="${y}" rx="${radiusX * scale}" ry="${radiusY * scale}" transform="rotate(${tilt} ${x} ${y})" fill="black" opacity="${1 - cover}"/></mask></defs><rect width="100%" height="100%" fill="white" mask="url(#opening)"/></svg>`;
+            // Use the exact same contour as the white center, including its italic lean.
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><defs><mask id="opening" maskUnits="userSpaceOnUse" x="0" y="0" width="${width}" height="${height}"><rect width="100%" height="100%" fill="white"/><path d="${letterCounter.path}" transform="translate(${x} ${y}) scale(${layout.size * scale})" fill="black" opacity="${1 - cover}"/></mask></defs><rect width="100%" height="100%" fill="white" mask="url(#opening)"/></svg>`;
             const mask = `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
-            // Re-measure the untransformed layout origin if the viewport changes mid-flight.
-            if (width !== layoutWidth || height !== layoutHeight) {
-              title.style.transform = 'none';
-              const layout = title.getBoundingClientRect();
-              currentX = layout.left + anchorX - titleBounds.left;
-              currentY = layout.top + anchorY - titleBounds.top;
-              layoutWidth = width;
-              layoutHeight = height;
-            }
-            title.style.transform = `translate(${x - currentX}px, ${y - currentY}px) scale(${scale})`;
+            title.style.transform = `translate(${x - layout.x}px, ${y - layout.y}px) scale(${scale})`;
             loader.style.maskImage = mask;
             loader.style.webkitMaskImage = mask;
             apertureFrame = progress < 1 ? requestAnimationFrame(draw) : 0;
@@ -287,7 +325,7 @@
           loader.setAttribute('aria-label', welcome ? 'Welcome to my portfolio' : 'Loading portfolio');
           loader.tabIndex = -1;
           loader.innerHTML = welcome
-            ? '<div class="welcome-content"><p class="welcome-heading"><span class="welcome-title">Portfoli<span class="welcome-aperture-letter">o<span class="welcome-baseline" aria-hidden="true"></span></span></span></p><span class="welcome-rule" aria-hidden="true"></span><p class="welcome-name">Amir Al Hamadani</p><p class="welcome-loading" role="status" hidden>Preparing portfolio…</p></div><button class="welcome-skip" type="button">Skip intro <span aria-hidden="true">→</span></button>'
+            ? '<div class="welcome-content"><p class="welcome-heading"><span class="welcome-title">Portfoli<span class="welcome-aperture-letter"><span class="welcome-baseline" aria-hidden="true"></span>o</span></span></p><span class="welcome-rule" aria-hidden="true"></span><p class="welcome-name">Amir Al Hamadani</p><p class="welcome-loading" role="status" hidden>Preparing portfolio…</p></div><button class="welcome-skip" type="button">Skip intro <span aria-hidden="true">→</span></button>'
             : '<div class="page-loader-content"><div class="page-loader-brand" aria-hidden="true">Portfolio</div><div class="page-loader-track" aria-hidden="true"></div><div class="page-loader-meta"><p class="page-loader-label" role="status">Loading…</p><button type="button" aria-label="Continue to portfolio">Continue <span aria-hidden="true">→</span></button></div></div>';
           if (welcome) {
             welcomeStarted = performance.now();

@@ -107,10 +107,11 @@ existing serif type in italic. A fine line expands beneath the title. After 1.8 
 the word zooms toward the viewer, centering on its final “o”. The entire word
 uses the same soft green (#9ecdb2) throughout. Only the inner opening of the
 final “o” is filled with the portfolio's off-white (#f9f8f4) from the start,
-aligned with the italic letter. This center blends into the homepage as the zoom
-starts; the letter itself stays green. An opening matched
-to that letter's counter grows with the word, as though passing through it into
-the homepage. The zoom lasts 1.2 seconds and adjusts if the viewport resizes.
+aligned with the italic letter. The inner outline is traced from the rendered
+font and shared by the white fill and the expanding opening. The fill sits
+behind the green letter so its stroke stays intact. This center blends into the
+homepage as the word grows, as though passing through it. The zoom lasts
+1.2 seconds and recalculates its position and scale if the viewport resizes.
 Browsers without CSS masks use a soft dissolve. The profile and homepage copy
 softly rise six pixels over 900 milliseconds with 60-millisecond steps, beginning
 as the opening grows. The entire greeting lasts about three seconds;
