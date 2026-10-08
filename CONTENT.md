@@ -11,10 +11,10 @@ The Portfolio wordmark returns to the home page.
 
 The home-page About section introduces the engineering work. Personal interests
 appear only on `about.html`: sports and fitness, time outdoors, music and family,
-reading, and Islam. Edit that page when changing those details. Technical skills remain
-shown together in a two-column card grid; on phones they stack vertically. All
-six categories and every listed tool remain visible without a slideshow or
-controls.
+reading, and Islam. Edit that page when changing those details. Technical skills use
+compact rows with category labels beside plain, comma-separated skill lists.
+On narrow screens, each label sits above its list. All six categories and every
+listed skill remain visible, without cards, borders, or slideshow controls.
 
 Featured project explanations, photos, and videos appear directly below each
 project on the homepage. The full archive keeps the expandable **Project details

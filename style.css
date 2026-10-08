@@ -266,12 +266,12 @@ summary::-webkit-details-marker { display: none; }
 .education-item h3 + p { font-size: 13px; color: var(--accent); margin-top: 2px; }
 .education-detail { margin-top: 9px; font-size: 12px; color: var(--muted); line-height: 1.8; }
 .toolkit-section .section-heading h2 { margin-top: 0; }
-.toolkit-content { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 26px; }
-.toolkit-group { display: flex; flex-direction: column; min-width: 0; min-height: 175px; padding: 22px; border: 1px solid var(--rule); background: var(--paper); transition: border-color .25s ease, background-color .25s ease, translate .25s cubic-bezier(.22, 1, .36, 1); }
-.toolkit-group:hover { translate: 0 -2px; border-color: var(--border-accent); background: var(--surface); }
-.toolkit-group h3 { margin-bottom: 17px; color: var(--accent); font-size: 15px; font-weight: 600; line-height: 1.5; }
-.toolkit-tags { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 8px; padding: 0; margin: 0; list-style: none; }
-.toolkit-tags li { padding: 4px 9px; border: 1px solid var(--rule); border-radius: 3px; color: var(--muted); font-size: 11px; line-height: 1.5; }
+.toolkit-content { display: grid; gap: 24px; margin-top: 28px; }
+.toolkit-group { display: grid; grid-template-columns: 150px minmax(0, 1fr); column-gap: 28px; align-items: baseline; min-width: 0; }
+.toolkit-group h3 { margin: 0; color: var(--accent); font-size: 12px; font-weight: 600; line-height: 1.85; }
+.toolkit-tags { min-width: 0; padding: 0; margin: 0; list-style: none; color: var(--ink); font-size: 12px; line-height: 1.85; }
+.toolkit-tags li { display: inline; }
+.toolkit-tags li:not(:last-child)::after { content: ", "; }
 
 .certificate-list { display: grid; gap: 22px; margin-top: 30px; }
 .certificate-card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 26px; align-items: center; padding: 22px; border: 1px solid var(--rule); transition: translate .24s cubic-bezier(.2, .65, .3, 1), border-color .22s ease, box-shadow .22s ease; }
@@ -490,8 +490,8 @@ html.media-viewer-open { overflow: hidden; }
 @media (min-width: 761px) and (max-width: 900px), (max-width: 520px) {
   .certificate-card { grid-template-columns: minmax(0, 1fr); }
   .certificate-preview { width: 100%; max-width: 360px; }
-  .toolkit-content { grid-template-columns: minmax(0, 1fr); gap: 14px; }
-  .toolkit-group { min-height: 0; padding: 19px; }
+  .toolkit-content { gap: 22px; }
+  .toolkit-group { grid-template-columns: minmax(0, 1fr); row-gap: 5px; }
 }
 
 @media (max-width: 760px) {
