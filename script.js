@@ -549,6 +549,8 @@
 
     const isHome = document.body.classList.contains('home-page');
     if (isHome) {
+      const sidebarProfile = document.querySelector('.home-page .profile');
+      if (sidebarProfile) register([sidebarProfile], { distance: 14, duration: 920 });
       document.querySelectorAll('.home-page main > .section').forEach((section) => {
         if (section.matches('.about-section, .approach-section, .contact-section')) {
           register(section.children);

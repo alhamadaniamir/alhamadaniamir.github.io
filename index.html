@@ -131,7 +131,7 @@
 
         function revealIntroduction() {
           if (reducedMotion.matches || typeof Element.prototype.animate !== 'function') return;
-          const elements = document.querySelectorAll('.profile, .about-section > .section-eyebrow, .about-section > h1, .about-section > .intro-lead, .about-section > .prose, .about-section > .intro-actions');
+          const elements = document.querySelectorAll('.home-hero .hero-copy, .home-hero .hero-portrait-wrap, .home-hero .hero-scroll-cue, .profile, .about-section > .section-eyebrow, .about-section > h1, .about-section > .intro-lead, .about-section > .prose, .about-section > .intro-actions');
           [...elements].filter(element => element.getBoundingClientRect().top < window.innerHeight).forEach((element, index) => {
             const animation = element.animate(
               [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'translateY(0)' }],
@@ -425,6 +425,26 @@
       </div>
     </header>
 
+    <section class="home-hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="hero-kicker"><span class="status-dot" aria-hidden="true"></span>COMPUTER ENGINEERING · SYSTEMS &amp; SOFTWARE</p>
+        <h1 id="hero-title">Hi, I’m Amir<span class="hero-period">.</span></h1>
+        <p class="hero-description">An ambitious Computer Engineering student exploring how hardware, software, and intelligent systems can work together to solve real problems.</p>
+        <nav class="hero-socials" aria-label="Connect with Amir">
+          <a href="https://github.com/alhamadaniamir" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3-.3 6.2-1.5 6.2-6.7a5.2 5.2 0 0 0-1.4-3.6 4.8 4.8 0 0 0-.1-3.6S17.6 1.3 15 3.2a13.2 13.2 0 0 0-7 0C5.4 1.3 4.2 1.6 4.2 1.6a4.8 4.8 0 0 0-.1 3.6A5.2 5.2 0 0 0 2.7 8.8c0 5.2 3.2 6.4 6.2 6.7A3.4 3.4 0 0 0 8 18.1V22"/></svg></a>
+          <a href="https://www.linkedin.com/in/amir-al-hamadani-116a98423/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn (opens in a new tab)" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9v10M5 5v.1M10 19v-6a4 4 0 0 1 8 0v6m-8 0V9"/><circle cx="5" cy="5" r="1.5"/></svg></a>
+          <a href="https://www.instagram.com/mmr_rara/" target="_blank" rel="noopener noreferrer" aria-label="Instagram (opens in a new tab)" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="18" cy="6" r=".8"/></svg></a>
+          <a href="mailto:alhamadani.amirrara@gmail.com" aria-label="Email Amir" title="Email"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></svg></a>
+        </nav>
+      </div>
+      <div class="hero-portrait-wrap">
+        <div class="hero-portrait-ring" aria-hidden="true"></div>
+        <img class="hero-portrait" src="assets/profile.jpg" alt="Portrait of Amir Al Hamadani" width="960" height="966" fetchpriority="high">
+        <span class="hero-portrait-caption">AMIR AL HAMADANI</span>
+      </div>
+      <a class="hero-scroll-cue" href="#about"><span>Scroll to explore</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v13m-5-5 5 5 5-5"/></svg></a>
+    </section>
+
     <div class="page-layout">
       <aside class="profile" aria-label="Profile and links">
         <a class="profile-mark" href="#about" aria-label="Back to introduction">
@@ -447,7 +467,7 @@
         <section class="about-section section" id="about" aria-labelledby="about-title">
           <div class="section-eyebrow"><span class="status-dot" aria-hidden="true"></span>ABOUT ME</div>
           <h1 id="about-title">Understanding how.<br><em>Building what’s next.</em></h1>
-          <p class="intro-lead">Hi, I’m Amir an ambitious Computer Engineering student turning curiosity into working systems.</p>
+          <p class="intro-lead">I’m an aspiring engineer who studies problems deeply, tests carefully, and builds toward practical, dependable solutions.</p>
           <div class="prose">
             <p>I’m fascinated by how electronics, software, machines, and control systems work together. As a Computer Engineering student, I’m learning to connect those disciplines through embedded systems, robotics, and applications that solve practical problems and make everyday work easier.</p>
             <p>I’m drawn to <strong>reverse engineering</strong>: understanding existing designs and finding ways to improve them. <strong>Cybersecurity</strong> pushes me to examine how systems can fail and how to protect them, while <strong>robotics</strong> connects that understanding to machines that sense, move, and respond.</p>
