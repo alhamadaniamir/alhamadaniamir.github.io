@@ -157,17 +157,22 @@ with the top navigation hidden and a compact View Resume link to the right of
 the social links. It opens the PDF in a new tab. The full label remains visible
 at every screen size; its PDF badge is hidden on smaller screens. One downward
 wheel action, upward swipe, or Page Down starts a two-second transition: the portrait
-has a distinct green ring and halo, then moves into the sidebar as two diagonal
-panels slide apart to reveal the portfolio behind it. Navigation fades in during
-the move, and
-normal page scrolling resumes on arrival. The introductory text fades out before
-the portfolio text appears; its font size, width, and line breaks stay fixed
+moves into the sidebar, while the two heading lines and About paragraphs arrive
+alternately from the left and right and settle into place. The portrait has a soft
+green halo and a slight lift on hover, with no increase in glow intensity. Navigation
+fades in during the move, and normal page scrolling resumes on arrival. The animation
+uses its own progress instead of moving the document on each frame. The introductory
+text fades out before the portfolio text appears; its font size, width, and line breaks stay fixed
 throughout the motion. After entry, the introduction and its scroll space
 are removed, so scrolling back up stops at the portfolio. The session key
 `portfolio-profile-welcome-seen` skips the profile welcome on refresh and return
 visits in the same tab. Section bookmarks open their destination directly.
 Reduced-motion preferences and short viewports keep the introduction in normal
 page flow.
+
+The sidebar displays an **Open to work** badge beneath the student role and
+highlights the résumé link beneath LinkedIn. The dropdown menus contain the
+portfolio pages; the résumé is available from the welcome screen and sidebar.
 
 `script.js` uses the browser's intersection observer and animation APIs. Content
 stays visible without JavaScript or animation support. Reduced-motion preferences,

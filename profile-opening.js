@@ -10,17 +10,14 @@
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const socials = hero.querySelector('.hero-socials');
   const resume = hero.querySelector('.hero-resume');
+  const profile = layout.querySelector('.profile');
   const portrait = { source: hero.querySelector('.hero-portrait'), target: layout.querySelector('.profile-photo') };
+  const textPieces = [...layout.querySelectorAll('.opening-title-piece, .intro-lead-text, .about-section .prose > p')];
   const space = document.createElement('div');
   space.className = 'hero-scroll-space';
   space.setAttribute('aria-hidden', 'true');
   space.hidden = true;
   hero.before(space);
-  const curtain = document.createElement('div');
-  curtain.className = 'profile-entry-curtain';
-  curtain.setAttribute('aria-hidden', 'true');
-  curtain.innerHTML = '<span class="profile-entry-panel profile-entry-panel--left"></span><span class="profile-entry-panel profile-entry-panel--right"></span>';
-  hero.after(curtain);
 
   let enabled = false;
   let distance = 0;
@@ -32,6 +29,7 @@
   let entryFrame = 0;
   let touchStart = null;
   let completed = false;
+  let autoplayProgress = null;
   const sessionKey = 'portfolio-profile-welcome-seen';
   const entryDuration = 2000;
   const clamp = value => Math.min(1, Math.max(0, value));
@@ -49,6 +47,7 @@
   }
 
   function render() {
+    if (frame) cancelAnimationFrame(frame);
     frame = 0;
     if (measuring || printing) return;
     if (completed) {
@@ -60,38 +59,46 @@
       }
       return;
     }
-    if (!loading() && ((enabled && window.scrollY >= distance) ||
+    if (!loading() && ((enabled && (autoplayProgress >= 1 || window.scrollY >= distance)) ||
         (!enabled && body.classList.contains('profile-opening-ready') && hero.getBoundingClientRect().bottom <= header.offsetHeight))) {
       completeOpening();
       return;
     }
-    const headerProgress = enabled ? window.scrollY / distance : window.scrollY / Math.max(1, hero.offsetHeight);
+    const headerProgress = enabled ? (autoplayProgress ?? window.scrollY / distance) : window.scrollY / Math.max(1, hero.offsetHeight);
     const navigation = ease((headerProgress - .4) / .4);
-    body.style.setProperty('--opening-navigation', String(navigation));
+    header.style.setProperty('--opening-navigation', String(navigation));
     body.classList.toggle('opening-header-hidden', navigation === 0);
     if (!loading()) header.inert = navigation < .95;
     if (!enabled) return;
-    const progress = clamp(window.scrollY / distance);
+    const progress = clamp(autoplayProgress ?? window.scrollY / distance);
     lastProgress = progress;
     const active = progress < 1;
     body.classList.toggle('hero-morph-active', active);
     body.classList.toggle('hero-morph-complete', !active);
-    body.style.setProperty('--opening-offset', px(Math.min(0, window.scrollY - distance)));
+    layout.style.setProperty('--opening-offset', px(Math.min(0, window.scrollY - distance)));
     const departure = ease((progress - .04) / .28);
-    body.style.setProperty('--opening-extras', String(1 - departure));
-    body.style.setProperty('--opening-copy-shift', px(-20 * departure));
-    body.style.setProperty('--opening-ring-scale', String(.96 + .12 * departure));
-    body.style.setProperty('--opening-cue', String(1 - ease((progress - .12) / .25)));
-    body.style.setProperty('--opening-curtain-progress', String(ease((progress - .16) / .7)));
-    body.style.setProperty('--opening-reveal-opacity', String(ease((progress - .2) / .25)));
-    body.style.setProperty('--opening-sidebar-opacity', String(ease((progress - .76) / .22)));
-    body.style.setProperty('--opening-glow', String(1 - ease((progress - .4) / .5)));
+    hero.style.setProperty('--opening-extras', String(1 - departure));
+    hero.style.setProperty('--opening-copy-shift', px(-20 * departure));
+    hero.style.setProperty('--opening-ring-scale', String(.96 + .12 * departure));
+    hero.style.setProperty('--opening-cue', String(1 - ease((progress - .12) / .25)));
+    layout.style.setProperty('--opening-reveal-opacity', String(ease((progress - .23) / .22)));
+    profile.style.setProperty('--opening-sidebar-opacity', String(ease((progress - .76) / .22)));
+    hero.style.setProperty('--opening-glow', String(1 - ease((progress - .4) / .5)));
+    textPieces.forEach((piece, index) => {
+      const delay = index < 2 ? .3 + index * .04 : .4 + (index - 2) * .04;
+      const p = clamp((progress - delay) / (index < 2 ? .45 : .4));
+      const t = p - 1;
+      const settle = 1 + 2.08 * t * t * t + 1.08 * t * t;
+      const travel = window.innerWidth <= 760 ? 12 : 28;
+      piece.style.setProperty('--piece-shift', px((index % 2 ? 1 : -1) * travel * (1 - settle)));
+      piece.style.setProperty('--piece-opacity', String(ease(p)));
+    });
 
     if (active) {
       const p = ease((progress - .03) / .77);
       const { start, end, source } = portrait;
-      source.style.setProperty('--flight-x', px(mix(start.left, end.left, p)));
-      source.style.setProperty('--flight-y', px(mix(start.top, end.top, p) - Math.sin(Math.PI * p) * 18));
+      source.style.setProperty('--flight-x', px(mix(start.left, end.left, p) - start.left));
+      source.style.setProperty('--flight-y', px(mix(start.top, end.top, p) - start.top - Math.sin(Math.PI * p) * 18));
       source.style.setProperty('--flight-width', px(mix(start.width, end.width, p)));
       source.style.setProperty('--flight-height', px(mix(start.height, end.height, p)));
       source.style.setProperty('--flight-radius', px((1 - p) * Math.min(start.width, start.height) / 2));
@@ -112,12 +119,20 @@
   }
 
   function scheduleRender() {
+    if (entryFrame) return;
     if (!frame) frame = requestAnimationFrame(render);
   }
 
-  function cancelEntry() {
+  function cancelEntry(preserveProgress = false) {
+    const wasRunning = !!entryFrame;
     cancelAnimationFrame(entryFrame);
     entryFrame = 0;
+    if (preserveProgress && autoplayProgress !== null && enabled) {
+      window.scrollTo({ top: autoplayProgress * distance, behavior: 'instant' });
+    }
+    autoplayProgress = null;
+    body.classList.remove('hero-entry-running');
+    if (wasRunning) scheduleRender();
   }
 
   function completeOpening(preservePosition = true) {
@@ -141,11 +156,12 @@
   // a mouse wheel or trackpad travels. Regular scrolling resumes on arrival.
   function enterPortfolio() {
     if (!enabled || loading() || entryFrame || window.scrollY >= distance) return;
-    const from = window.scrollY;
+    const from = clamp(window.scrollY / distance);
     const started = performance.now();
+    body.classList.add('hero-entry-running');
     function step(now) {
       const elapsed = clamp((now - started) / entryDuration);
-      window.scrollTo({ top: mix(from, distance, elapsed), behavior: 'instant' });
+      autoplayProgress = mix(from, 1, elapsed);
       render();
       entryFrame = elapsed < 1 && !completed ? requestAnimationFrame(step) : 0;
     }
@@ -154,7 +170,7 @@
 
   window.addEventListener('wheel', event => {
     if (!enabled || loading() || event.ctrlKey || event.defaultPrevented || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
-    if (event.deltaY < 0) { cancelEntry(); return; }
+    if (event.deltaY < 0) { cancelEntry(true); return; }
     if (event.deltaY > 0 && (entryFrame || window.scrollY < distance)) {
       if (!event.cancelable) return;
       event.preventDefault();
@@ -164,13 +180,13 @@
 
   window.addEventListener('touchstart', event => {
     touchStart = event.touches.length === 1 ? { x: event.touches[0].clientX, y: event.touches[0].clientY } : null;
-    if (event.touches.length > 1) cancelEntry();
+    if (event.touches.length > 1) cancelEntry(true);
   }, { passive: true });
   window.addEventListener('touchmove', event => {
     if (!enabled || loading() || !touchStart || event.touches.length !== 1 || event.defaultPrevented) return;
     const dx = touchStart.x - event.touches[0].clientX;
     const dy = touchStart.y - event.touches[0].clientY;
-    if (dy < -12) { cancelEntry(); return; }
+    if (dy < -12) { cancelEntry(true); return; }
     if (dy > 12 && Math.abs(dy) > Math.abs(dx) && (entryFrame || window.scrollY < distance) && event.cancelable) {
       event.preventDefault();
       enterPortfolio();
@@ -181,7 +197,7 @@
   window.addEventListener('touchcancel', clearTouch, { passive: true });
 
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' || event.key === 'ArrowUp' || event.key === 'PageUp' || event.key === 'Home') cancelEntry();
+    if (event.key === 'Escape' || event.key === 'ArrowUp' || event.key === 'PageUp' || event.key === 'Home') cancelEntry(true);
     if (!enabled || loading() || window.scrollY >= distance || event.defaultPrevented || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
     if (!['ArrowDown', 'PageDown', ' '].includes(event.key) || event.target.closest('input, textarea, select, button, summary, [contenteditable="true"]')) return;
     event.preventDefault();
@@ -250,6 +266,8 @@
     const target = portrait.target.getBoundingClientRect();
     portrait.start = { left: source.left, top: source.top, width: source.width, height: source.height };
     portrait.end = { left: target.left, top: target.top + window.scrollY - distance, width: target.width, height: target.height };
+    portrait.source.style.setProperty('--flight-origin-x', px(source.left));
+    portrait.source.style.setProperty('--flight-origin-y', px(source.top));
     body.classList.remove('hero-morph-measuring');
     enabled = true;
     measuring = false;
@@ -314,7 +332,7 @@
   });
 
   document.addEventListener('keydown', event => {
-    if (!enabled || loading() || event.key !== 'Tab' || window.scrollY <= 0 || window.scrollY >= distance) return;
+    if (!enabled || loading() || event.key !== 'Tab' || (!entryFrame && window.scrollY <= 0) || window.scrollY >= distance) return;
     const wasInHero = hero.contains(document.activeElement);
     cancelEntry();
     window.scrollTo({ top: distance, behavior: 'instant' });
