@@ -74,10 +74,22 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, .profile::-webkit-scrollbar, .
 .hero-kicker .status-dot { flex: 0 0 6px; }
 .hero-copy h1 { margin-top: 15px; color: var(--accent); font-family: var(--serif); font-size: clamp(44px, 4.7vw, 64px); font-weight: 400; line-height: 1.08; letter-spacing: -1.8px; }
 .hero-description { max-width: 590px; margin-top: 20px; color: var(--muted); font-size: clamp(16px, 1.7vw, 19px); line-height: 1.8; }
-.hero-socials { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 27px; }
+.hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 22px; margin-top: 27px; }
+.hero-socials { display: flex; flex-wrap: wrap; gap: 11px; }
 .hero-socials a { display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid var(--rule); border-radius: 50%; color: var(--accent); background: var(--paper); transition: color .2s ease, background-color .2s ease, border-color .2s ease, transform .25s cubic-bezier(.22, 1, .36, 1); }
 .hero-socials a:hover { transform: translateY(-3px); border-color: var(--accent); background: var(--soft-green); }
 .hero-socials svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.hero-resume { display: inline-flex; align-items: center; justify-content: center; gap: 14px; min-height: 54px; max-width: 100%; padding: 12px 18px; border: 1px solid var(--accent); border-radius: 12px; background: var(--accent); color: var(--paper); box-shadow: 0 6px 18px var(--shadow); font-size: 15px; font-weight: 600; line-height: 1.5; transition: background-color .25s ease, transform .25s ease, box-shadow .25s ease; }
+.hero-resume svg { flex: 0 0 21px; width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.hero-resume-format { padding-left: 14px; border-left: 1px solid currentColor; font: 10px/1.5 var(--mono); letter-spacing: .8px; }
+.hero-resume:hover { background: var(--accent-dark); transform: translateY(-2px); box-shadow: 0 9px 22px var(--shadow); }
+.hero-resume:active { transform: translateY(0); }
+@media (min-width: 761px) and (max-width: 1000px) {
+  .hero-actions { gap: 10px; }
+  .hero-resume { gap: 10px; padding: 12px 14px; }
+  .hero-resume-label { display: none; }
+  .hero-resume-format { padding: 0; border: 0; }
+}
 .hero-portrait-wrap { position: relative; grid-column: 1; grid-row: 1; display: grid; place-items: center; width: 310px; aspect-ratio: 1; justify-self: center; }
 .hero-portrait-ring { position: absolute; inset: 0; border: 1px solid var(--border-accent); border-radius: 50%; transform: rotate(-9deg) scale(.96); transition: transform .8s cubic-bezier(.22, 1, .36, 1), border-color .4s ease; }
 .hero-portrait-wrap:hover .hero-portrait-ring { transform: rotate(0) scale(1); border-color: var(--accent); }
@@ -540,8 +552,13 @@ html.media-viewer-open { overflow: hidden; }
   .hero-copy h1 { margin-top: 10px; font-size: clamp(34px, 8vw, 42px); letter-spacing: -1.2px; }
   .hero-copy h1 br { display: none; }
   .hero-description { max-width: 520px; margin: 13px auto 0; font-size: 15px; line-height: 1.7; }
-  .hero-socials { margin-top: 19px; }
+  .hero-actions { flex-wrap: nowrap; gap: 10px; margin-top: 19px; }
+  .hero-socials { flex-wrap: nowrap; gap: 8px; }
   .hero-socials a { width: 40px; height: 40px; }
+  .hero-resume { flex: 0 0 auto; min-height: 44px; gap: 7px; padding: 10px; border-radius: 10px; }
+  .hero-resume svg { flex-basis: 17px; width: 17px; height: 17px; }
+  .hero-resume-label { display: none; }
+  .hero-resume-format { border: 0; padding: 0; font-size: 11px; }
   .hero-scroll-cue { right: 50%; bottom: 17px; transform: translateX(50%); white-space: nowrap; }
   .hero-scroll-cue svg { animation: none; }
   .page-layout { display: block; padding: 32px 26px 0; max-width: 670px; }
@@ -667,14 +684,13 @@ html.media-viewer-open { overflow: hidden; }
   .certificate-card:hover, .certificate-card:has(:focus-visible) { translate: none; }
 }
 
-/* The real sidebar photo, name, and introduction travel from the opening layout.
-   Their source elements reserve the opening positions; no visual copies float above the page. */
+/* The sidebar portrait travels from its opening position into the portfolio. */
 /* Keep type in its natural layout; only opacity and translation change on scroll. */
 .profile-opening-ready .site-header { opacity: var(--opening-navigation, 0); transform: translateY(calc(-18px * (1 - var(--opening-navigation, 0)))); }
 .profile-opening-ready.opening-header-hidden .site-header { visibility: hidden; pointer-events: none; }
 .profile-opening-ready:not(.hero-morph-ready) .home-hero { min-height: 100svh; margin-top: calc(-1 * var(--header-height, 86px)); }
 .hero-morph-ready .home-hero { position: fixed; z-index: 4; top: 0; right: 0; left: 0; height: 100svh; min-height: 0; pointer-events: none; }
-.hero-morph-ready .hero-socials, .hero-morph-ready .hero-scroll-cue { pointer-events: auto; }
+.hero-morph-ready .hero-socials, .hero-morph-ready .hero-resume, .hero-morph-ready .hero-scroll-cue { pointer-events: auto; }
 .hero-morph-ready .page-layout { position: relative; z-index: 3; }
 .hero-morph-ready .hero-portrait { opacity: 0; }
 .hero-morph-ready .hero-copy { opacity: var(--opening-extras, 1); transform: translate3d(0, var(--opening-copy-shift, 0px), 0); }

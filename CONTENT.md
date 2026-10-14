@@ -153,11 +153,17 @@ waits for the styled layout and welcome to finish, without waiting for photos or
 videos to download. The welcome replaces the normal page arrival effect when shown.
 
 After the welcome, the homepage opens on a full-screen profile introduction,
-with the top navigation hidden. Scrolling moves the portrait into the sidebar
-and gently reveals the navigation and About section. The introductory text fades
+with the top navigation hidden and a prominent résumé PDF download to the right
+of the social links. On phones the download uses a compact PDF label to fit beside
+the icons. One downward wheel action, upward swipe, or Page Down starts an
+850-millisecond transition that moves the portrait into the sidebar and reveals
+the navigation and About section. Normal page scrolling resumes on arrival.
+The introductory text fades
 out before the portfolio text appears; its font size, width, and line breaks stay
-fixed throughout the motion. The transition follows scrolling in either direction,
-and section bookmarks account for the opening distance. Reduced-motion preferences
+fixed throughout the motion. After entry, the introduction and its scroll space
+are removed, so scrolling back up stops at the portfolio. The session key
+`portfolio-profile-welcome-seen` skips the profile welcome on refresh and return
+visits in the same tab. Section bookmarks open their destination directly. Reduced-motion preferences
 and short viewports keep the introduction in normal page flow.
 
 `script.js` uses the browser's intersection observer and animation APIs. Content
