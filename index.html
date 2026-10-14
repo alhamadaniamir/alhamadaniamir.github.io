@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light">
-    <meta name="theme-color" content="#f9f8f4">
+    <meta name="theme-color" content="#f3eddf">
     <title>Amir Al Hamadani - Computer Engineering</title>
     <meta name="description" content="Amir Al Hamadani is an aspiring Computer Engineer exploring electronics, software, robotics, and the systems that connect them.">
     <meta property="og:type" content="website">
@@ -41,13 +41,13 @@
         try { if (localStorage.getItem('portfolio-theme') === 'dark') theme = 'dark'; } catch {}
         document.documentElement.dataset.theme = theme;
         document.querySelector('meta[name="color-scheme"]').content = theme;
-        document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#151d19' : '#f9f8f4';
+        document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#151d19' : '#f3eddf';
       })();
     </script>
     <!-- Critical loading styles stay inline so a slow stylesheet cannot hide the indicator. -->
     <style>
       @media (prefers-reduced-motion: no-preference) { @view-transition { navigation: auto; types: page; } }
-      :root { color-scheme: light; --paper: #f9f8f4; --ink: #242c29; --muted: #626d65; --accent: #285b4e; --rule: #dddfd6; --soft-green: #e6ebe2; }
+      :root { color-scheme: light; --paper: #f3eddf; --ink: #242c29; --muted: #626d65; --accent: #285b4e; --rule: #dcd8ca; --soft-green: #e6ebe2; }
       :root[data-theme="dark"] { color-scheme: dark; --paper: #151d19; --ink: #e6ece5; --muted: #afbdb1; --accent: #9ecdb2; --rule: #34463a; --soft-green: #23382c; }
       html.page-preparing { background: var(--paper); }
       html.page-preparing body { visibility: hidden; max-width: 100vw; overflow: hidden; }
@@ -65,7 +65,7 @@
       .page-loader button:hover { text-decoration: underline; text-underline-offset: 4px; }
       .page-loader button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
       /* An editorial opening in the portfolio's green and serif typography. */
-      .portfolio-welcome { --welcome-paper: #f9f8f4; --welcome-muted: #cfddd3; padding: 32px 24px; text-align: center; overflow: hidden; background: #151d19; color: var(--welcome-paper); transition: opacity 1s ease; }
+      .portfolio-welcome { --welcome-paper: #f3eddf; --welcome-muted: #cfddd3; padding: 32px 24px; text-align: center; overflow: hidden; background: #151d19; color: var(--welcome-paper); transition: opacity 1s ease; }
       .portfolio-welcome .welcome-content { width: min(440px, 100%); transition: opacity .75s ease; }
       .welcome-heading { margin: 0; font: italic 400 clamp(44px, 7vw, 72px)/1.15 Georgia, serif; letter-spacing: -1.6px; }
       .welcome-title { display: block; color: #9ecdb2; animation: welcome-title-in .95s cubic-bezier(.22, 1, .36, 1) both; }
@@ -440,7 +440,7 @@
           </nav>
           <a class="hero-resume" href="assets/Amir-Al-Hamadani-Resume.pdf" download="Amir-Al-Hamadani-Resume.pdf" aria-label="Download résumé (PDF)">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg>
-            <span class="hero-resume-label">Download résumé</span><span class="hero-resume-format">PDF</span>
+            <span class="hero-resume-label">Résumé</span><span class="hero-resume-format">PDF</span>
           </a>
         </div>
       </div>

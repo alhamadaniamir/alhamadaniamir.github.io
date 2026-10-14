@@ -2,13 +2,13 @@
 
 :root {
   color-scheme: light;
-  --paper: #f9f8f4;
-  --surface: #f0f0e8;
+  --paper: #f3eddf;
+  --surface: #eae4d7;
   --ink: #242c29;
   --muted: #626d65;
   --accent: #285b4e;
   --accent-dark: #184438;
-  --rule: #dddfd6;
+  --rule: #dcd8ca;
   --soft-green: #e6ebe2;
   --border-accent: #aebdaf;
   --panel-ink: #4c5f53;
@@ -79,14 +79,14 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, .profile::-webkit-scrollbar, .
 .hero-socials a { display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid var(--rule); border-radius: 50%; color: var(--accent); background: var(--paper); transition: color .2s ease, background-color .2s ease, border-color .2s ease, transform .25s cubic-bezier(.22, 1, .36, 1); }
 .hero-socials a:hover { transform: translateY(-3px); border-color: var(--accent); background: var(--soft-green); }
 .hero-socials svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-.hero-resume { display: inline-flex; align-items: center; justify-content: center; gap: 14px; min-height: 54px; max-width: 100%; padding: 12px 18px; border: 1px solid var(--accent); border-radius: 12px; background: var(--accent); color: var(--paper); box-shadow: 0 6px 18px var(--shadow); font-size: 15px; font-weight: 600; line-height: 1.5; transition: background-color .25s ease, transform .25s ease, box-shadow .25s ease; }
-.hero-resume svg { flex: 0 0 21px; width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.hero-resume-format { padding-left: 14px; border-left: 1px solid currentColor; font: 10px/1.5 var(--mono); letter-spacing: .8px; }
-.hero-resume:hover { background: var(--accent-dark); transform: translateY(-2px); box-shadow: 0 9px 22px var(--shadow); }
+.hero-resume { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 42px; max-width: 100%; padding: 8px 12px; border: 1px solid var(--accent); border-radius: 9px; background: var(--accent); color: var(--paper); font-size: 12px; font-weight: 600; line-height: 1.5; transition: background-color .25s ease, transform .25s ease; }
+.hero-resume svg { flex: 0 0 16px; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.hero-resume-format { padding-left: 8px; border-left: 1px solid currentColor; font: 9px/1.5 var(--mono); letter-spacing: .6px; }
+.hero-resume:hover { background: var(--accent-dark); transform: translateY(-2px); }
 .hero-resume:active { transform: translateY(0); }
 @media (min-width: 761px) and (max-width: 1000px) {
   .hero-actions { gap: 10px; }
-  .hero-resume { gap: 10px; padding: 12px 14px; }
+  .hero-resume { gap: 8px; padding: 8px 10px; }
   .hero-resume-label { display: none; }
   .hero-resume-format { padding: 0; border: 0; }
 }
@@ -555,8 +555,7 @@ html.media-viewer-open { overflow: hidden; }
   .hero-actions { flex-wrap: nowrap; gap: 10px; margin-top: 19px; }
   .hero-socials { flex-wrap: nowrap; gap: 8px; }
   .hero-socials a { width: 40px; height: 40px; }
-  .hero-resume { flex: 0 0 auto; min-height: 44px; gap: 7px; padding: 10px; border-radius: 10px; }
-  .hero-resume svg { flex-basis: 17px; width: 17px; height: 17px; }
+  .hero-resume { flex: 0 0 auto; min-height: 40px; gap: 6px; padding: 8px 10px; }
   .hero-resume-label { display: none; }
   .hero-resume-format { border: 0; padding: 0; font-size: 11px; }
   .hero-scroll-cue { right: 50%; bottom: 17px; transform: translateX(50%); white-space: nowrap; }
@@ -693,8 +692,8 @@ html.media-viewer-open { overflow: hidden; }
 .hero-morph-ready .hero-socials, .hero-morph-ready .hero-resume, .hero-morph-ready .hero-scroll-cue { pointer-events: auto; }
 .hero-morph-ready .page-layout { position: relative; z-index: 3; }
 .hero-morph-ready .hero-portrait { opacity: 0; }
-.hero-morph-ready .hero-copy { opacity: var(--opening-extras, 1); transform: translate3d(0, var(--opening-copy-shift, 0px), 0); }
-.hero-morph-ready .hero-portrait-ring { opacity: var(--opening-extras, 1); }
+.hero-morph-ready .hero-copy { opacity: var(--opening-extras, 1); transform: translate3d(var(--opening-copy-shift, 0px), 0, 0); }
+.hero-morph-ready .hero-portrait-ring { opacity: var(--opening-extras, 1); transform: scale(var(--opening-ring-scale, .96)); transition: none; }
 .hero-morph-ready .hero-scroll-cue { opacity: var(--opening-cue, 1); }
 .hero-morph-complete .home-hero { visibility: hidden; pointer-events: none; }
 .hero-morph-active .page-layout { transform: translateY(var(--opening-offset, 0px)); }
@@ -704,6 +703,8 @@ html.media-viewer-open { overflow: hidden; }
 .profile-name-text, .intro-lead-text { display: block; }
 .hero-morph-active .profile > :not(.profile-mark) { opacity: var(--opening-name, 0); transform: translate3d(0, calc(10px * (1 - var(--opening-name, 0))), 0); }
 .hero-morph-active .about-section > * { opacity: var(--opening-details, 0); transform: translate3d(0, var(--opening-arrival-shift, 18px), 0); }
+.hero-morph-active .about-section > .section-eyebrow,
+.hero-morph-active .about-section > h1 { opacity: var(--opening-title, 0); transform: translate3d(calc(24px * (1 - var(--opening-title, 0))), 0, 0); transition: none; }
 .hero-morph-active main > .section:not(.about-section) { opacity: var(--opening-details, 0); }
 .hero-morph-active .about-section { border-color: color-mix(in srgb, transparent, var(--rule) calc(var(--opening-details, 0) * 100%)); }
 /* Measure the resting layout without disturbing the visible scroll position. */

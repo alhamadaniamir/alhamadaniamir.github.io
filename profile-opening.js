@@ -28,6 +28,7 @@
   let touchStart = null;
   let completed = false;
   const sessionKey = 'portfolio-profile-welcome-seen';
+  const entryDuration = 3000;
   const clamp = value => Math.min(1, Math.max(0, value));
   const ease = value => { const p = clamp(value); return p * p * (3 - 2 * p); };
   const mix = (a, b, p) => a + (b - a) * p;
@@ -71,20 +72,22 @@
     body.classList.toggle('hero-morph-active', active);
     body.classList.toggle('hero-morph-complete', !active);
     body.style.setProperty('--opening-offset', px(Math.min(0, window.scrollY - distance)));
-    const departure = ease((progress - .06) / .32);
-    const arrival = ease((progress - .38) / .5);
+    const departure = ease((progress - .04) / .28);
+    const arrival = ease((progress - .43) / .49);
     body.style.setProperty('--opening-extras', String(1 - departure));
     body.style.setProperty('--opening-copy-shift', px(-20 * departure));
+    body.style.setProperty('--opening-ring-scale', String(.96 + .12 * departure));
+    body.style.setProperty('--opening-title', String(ease((progress - .29) / .42)));
     body.style.setProperty('--opening-cue', String(1 - ease((progress - .12) / .25)));
     body.style.setProperty('--opening-details', String(arrival));
-    body.style.setProperty('--opening-arrival-shift', px(18 * (1 - arrival)));
-    body.style.setProperty('--opening-name', String(ease((progress - .7) / .25)));
+    body.style.setProperty('--opening-arrival-shift', px(24 * (1 - arrival)));
+    body.style.setProperty('--opening-name', String(ease((progress - .7) / .23)));
 
     if (active) {
-      const p = ease((progress - .12) / .7);
+      const p = ease((progress - .04) / .74);
       const { start, end, target } = portrait;
       target.style.setProperty('--flight-x', px(mix(start.left, end.left, p) - end.left));
-      target.style.setProperty('--flight-y', px(mix(start.top, end.top, p) - end.top));
+      target.style.setProperty('--flight-y', px(mix(start.top, end.top, p) - end.top - Math.sin(Math.PI * p) * 14));
       target.style.setProperty('--flight-width', px(mix(start.width, end.width, p)));
       target.style.setProperty('--flight-height', px(mix(start.height, end.height, p)));
       target.style.setProperty('--flight-radius', px((1 - p) * Math.min(start.width, start.height) / 2));
@@ -137,8 +140,8 @@
     const from = window.scrollY;
     const started = performance.now();
     function step(now) {
-      const elapsed = clamp((now - started) / 850);
-      window.scrollTo({ top: mix(from, distance, ease(elapsed)), behavior: 'instant' });
+      const elapsed = clamp((now - started) / entryDuration);
+      window.scrollTo({ top: mix(from, distance, elapsed), behavior: 'instant' });
       render();
       entryFrame = elapsed < 1 && !completed ? requestAnimationFrame(step) : 0;
     }

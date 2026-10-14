@@ -107,7 +107,7 @@ Amir's name on the dark theme's deep green background (#151d19), using the
 existing serif type in italic. A fine line expands beneath the title. After 1.8 seconds,
 the word zooms toward the viewer, centering on its final “o”. The entire word
 uses the same soft green (#9ecdb2) throughout. Only the inner opening of the
-final “o” is filled with the portfolio's off-white (#f9f8f4) from the start,
+final “o” is filled with the portfolio's ivory (#f3eddf) from the start,
 aligned with the italic letter. The inner outline is traced from the rendered
 font and shared by the white fill and the expanding opening. The fill sits
 behind the green letter so its stroke stays intact. This center blends into the
@@ -153,18 +153,20 @@ waits for the styled layout and welcome to finish, without waiting for photos or
 videos to download. The welcome replaces the normal page arrival effect when shown.
 
 After the welcome, the homepage opens on a full-screen profile introduction,
-with the top navigation hidden and a prominent résumé PDF download to the right
+with the top navigation hidden and a compact résumé PDF download to the right
 of the social links. On phones the download uses a compact PDF label to fit beside
-the icons. One downward wheel action, upward swipe, or Page Down starts an
-850-millisecond transition that moves the portrait into the sidebar and reveals
-the navigation and About section. Normal page scrolling resumes on arrival.
-The introductory text fades
-out before the portfolio text appears; its font size, width, and line breaks stay
-fixed throughout the motion. After entry, the introduction and its scroll space
+the icons. One downward wheel action, upward swipe, or Page Down starts a three-
+second transition that matches the Portfolio opening: the portrait gently curves
+into the sidebar, the opening ring expands and fades, and the About heading arrives
+before its paragraphs and sidebar links. Navigation fades in during the move, and
+normal page scrolling resumes on arrival. The introductory text fades out before
+the portfolio text appears; its font size, width, and line breaks stay fixed
+throughout the motion. After entry, the introduction and its scroll space
 are removed, so scrolling back up stops at the portfolio. The session key
 `portfolio-profile-welcome-seen` skips the profile welcome on refresh and return
-visits in the same tab. Section bookmarks open their destination directly. Reduced-motion preferences
-and short viewports keep the introduction in normal page flow.
+visits in the same tab. Section bookmarks open their destination directly.
+Reduced-motion preferences and short viewports keep the introduction in normal
+page flow.
 
 `script.js` uses the browser's intersection observer and animation APIs. Content
 stays visible without JavaScript or animation support. Reduced-motion preferences,
