@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light">
-    <meta name="theme-color" content="#f7f3e9">
+    <meta name="theme-color" content="#fcfaf5">
     <title>About — Amir Al Hamadani</title>
     <meta name="description" content="Get to know Amir Al Hamadani: a Computer Engineering student with interests in sports, the outdoors, music, reading, and Islam.">
     <meta property="og:type" content="website">
@@ -41,13 +41,13 @@
         try { if (localStorage.getItem('portfolio-theme') === 'dark') theme = 'dark'; } catch {}
         document.documentElement.dataset.theme = theme;
         document.querySelector('meta[name="color-scheme"]').content = theme;
-        document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#151d19' : '#f7f3e9';
+        document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#151d19' : '#fcfaf5';
       })();
     </script>
     <!-- Critical loading styles stay inline so a slow stylesheet cannot hide the indicator. -->
     <style>
       @media (prefers-reduced-motion: no-preference) { @view-transition { navigation: auto; types: page; } }
-      :root { color-scheme: light; --paper: #f7f3e9; --ink: #242c29; --muted: #626d65; --accent: #285b4e; --rule: #e1ddd0; --soft-green: #e6ebe2; }
+      :root { color-scheme: light; --paper: #fcfaf5; --ink: #242c29; --muted: #626d65; --accent: #285b4e; --rule: #e7e3d9; --soft-green: #e6ebe2; }
       :root[data-theme="dark"] { color-scheme: dark; --paper: #151d19; --ink: #e6ece5; --muted: #afbdb1; --accent: #9ecdb2; --rule: #34463a; --soft-green: #23382c; }
       html.page-preparing { background: var(--paper); }
       html.page-preparing body { visibility: hidden; }

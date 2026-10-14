@@ -16,6 +16,11 @@
   space.setAttribute('aria-hidden', 'true');
   space.hidden = true;
   hero.before(space);
+  const curtain = document.createElement('div');
+  curtain.className = 'profile-entry-curtain';
+  curtain.setAttribute('aria-hidden', 'true');
+  curtain.innerHTML = '<span class="profile-entry-panel profile-entry-panel--left"></span><span class="profile-entry-panel profile-entry-panel--right"></span>';
+  hero.after(curtain);
 
   let enabled = false;
   let distance = 0;
@@ -77,8 +82,7 @@
     body.style.setProperty('--opening-copy-shift', px(-20 * departure));
     body.style.setProperty('--opening-ring-scale', String(.96 + .12 * departure));
     body.style.setProperty('--opening-cue', String(1 - ease((progress - .12) / .25)));
-    const reveal = ease((progress - .22) / .68);
-    body.style.setProperty('--opening-reveal-radius', px(Math.hypot(window.innerWidth, window.innerHeight) * reveal));
+    body.style.setProperty('--opening-curtain-progress', String(ease((progress - .16) / .7)));
     body.style.setProperty('--opening-reveal-opacity', String(ease((progress - .2) / .25)));
     body.style.setProperty('--opening-sidebar-opacity', String(ease((progress - .76) / .22)));
     body.style.setProperty('--opening-glow', String(1 - ease((progress - .4) / .5)));
@@ -246,9 +250,6 @@
     const target = portrait.target.getBoundingClientRect();
     portrait.start = { left: source.left, top: source.top, width: source.width, height: source.height };
     portrait.end = { left: target.left, top: target.top + window.scrollY - distance, width: target.width, height: target.height };
-    const layoutBox = layout.getBoundingClientRect();
-    body.style.setProperty('--opening-reveal-x', px(portrait.end.left + portrait.end.width / 2 - layoutBox.left));
-    body.style.setProperty('--opening-reveal-y', px(portrait.end.top + portrait.end.height / 2 - (layoutBox.top + window.scrollY - distance)));
     body.classList.remove('hero-morph-measuring');
     enabled = true;
     measuring = false;
