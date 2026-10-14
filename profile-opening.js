@@ -18,6 +18,7 @@
 
   let enabled = false;
   let distance = 0;
+  let lastProgress = 0;
   let frame = 0;
   let measuring = false;
   let printing = false;
@@ -46,6 +47,7 @@
     if (!loading()) header.inert = navigation < .95;
     if (!enabled) return;
     const progress = clamp(window.scrollY / distance);
+    lastProgress = progress;
     const active = progress < 1;
     body.classList.toggle('hero-morph-active', active);
     body.classList.toggle('hero-morph-complete', !active);
@@ -100,7 +102,7 @@
       header.inert = false;
     }
     if (wasEnabled && preservePosition && !printing) {
-      const top = previousY >= distance ? previousY + hero.offsetHeight - header.offsetHeight - distance : 0;
+      const top = previousY >= distance ? previousY + distance - hero.offsetHeight : 0;
       window.scrollTo({ top, behavior: 'instant' });
     }
     render();
@@ -108,6 +110,7 @@
 
   function measure(preservePosition = false) {
     if (measuring || printing) return;
+    const previousHeaderHeight = parseFloat(root.style.getPropertyValue('--header-height')) || header.getBoundingClientRect().height;
     const headerHeight = header.getBoundingClientRect().height;
     root.style.setProperty('--header-height', px(headerHeight));
     body.classList.add('profile-opening-ready');
@@ -147,9 +150,11 @@
     if (preservePosition) {
       let top = previousY;
       if (wasEnabled && previousDistance) {
-        top = previousY < previousDistance ? previousY / previousDistance * distance : previousY + distance - previousDistance;
+        top = previousY < previousDistance
+          ? lastProgress * distance
+          : previousY + headerHeight - previousHeaderHeight;
       } else if (previousY >= previousHeroHeight) {
-        top += distance + headerHeight - previousHeroHeight;
+        top += distance - previousHeroHeight;
       }
       if (Math.abs(top - window.scrollY) > 1) window.scrollTo({ top, behavior: 'instant' });
     }
