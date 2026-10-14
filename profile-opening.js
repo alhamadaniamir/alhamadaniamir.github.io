@@ -9,13 +9,7 @@
   const header = document.querySelector('.site-header');
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const socials = hero.querySelector('.hero-socials');
-  const name = layout.querySelector('.profile-name');
-  const description = layout.querySelector('.intro-lead');
-  const parts = [
-    { source: hero.querySelector('.hero-portrait'), target: layout.querySelector('.profile-photo'), photo: true, delay: 0, duration: .5 },
-    { source: hero.querySelector('h1'), target: name.querySelector('.profile-name-text'), delay: .52, duration: .48, fontDuration: .52 },
-    { source: hero.querySelector('.hero-description'), target: description.querySelector('.intro-lead-text'), delay: .86, duration: .14 },
-  ];
+  const portrait = { source: hero.querySelector('.hero-portrait'), target: layout.querySelector('.profile-photo') };
   const space = document.createElement('div');
   space.className = 'hero-scroll-space';
   space.setAttribute('aria-hidden', 'true');
@@ -44,48 +38,35 @@
 
   function render() {
     frame = 0;
-    if (!enabled || measuring) return;
+    if (measuring || printing) return;
+    const headerProgress = enabled ? window.scrollY / distance : window.scrollY / Math.max(1, hero.offsetHeight);
+    const navigation = ease((headerProgress - .4) / .4);
+    body.style.setProperty('--opening-navigation', String(navigation));
+    body.classList.toggle('opening-header-hidden', navigation === 0);
+    if (!loading()) header.inert = navigation < .95;
+    if (!enabled) return;
     const progress = clamp(window.scrollY / distance);
     const active = progress < 1;
     body.classList.toggle('hero-morph-active', active);
     body.classList.toggle('hero-morph-complete', !active);
     body.style.setProperty('--opening-offset', px(Math.min(0, window.scrollY - distance)));
-    body.style.setProperty('--opening-extras', String(1 - ease(progress / .3)));
-    body.style.setProperty('--opening-cue', String(1 - ease((progress - .85) / .15)));
-    body.style.setProperty('--opening-details', String(ease((progress - .65) / .35)));
-    body.style.setProperty('--opening-progress', String(ease(progress)));
+    const departure = ease((progress - .06) / .32);
+    const arrival = ease((progress - .38) / .5);
+    body.style.setProperty('--opening-extras', String(1 - departure));
+    body.style.setProperty('--opening-copy-shift', px(-20 * departure));
+    body.style.setProperty('--opening-cue', String(1 - ease((progress - .12) / .25)));
+    body.style.setProperty('--opening-details', String(arrival));
+    body.style.setProperty('--opening-arrival-shift', px(18 * (1 - arrival)));
+    body.style.setProperty('--opening-name', String(ease((progress - .7) / .25)));
 
     if (active) {
-      const p = ease(progress);
-      parts.forEach(part => {
-        const itemProgress = ease((progress - part.delay) / part.duration);
-        const { start, end, target } = part;
-        let currentX = mix(start.left, end.left, itemProgress);
-        let currentY = mix(start.top, end.top, itemProgress);
-        if (!part.photo) {
-          const routeX = part.routeX ?? start.left;
-          const movement = itemProgress;
-          if (movement < .5) {
-            currentX = mix(start.left, routeX, movement * 2);
-            currentY = mix(start.top, end.top, movement * 2);
-          } else {
-            currentX = mix(routeX, end.left, (movement - .5) * 2);
-            currentY = end.top;
-          }
-        }
-        target.style.setProperty('--flight-x', px(currentX - end.left));
-        target.style.setProperty('--flight-y', px(currentY - end.top));
-        const typeProgress = part.fontDuration ? ease(progress / part.fontDuration) : itemProgress;
-        target.style.setProperty('--flight-width', px(mix(start.width, end.width, typeProgress)));
-        if (part.photo) {
-          target.style.setProperty('--flight-height', px(mix(start.height, end.height, itemProgress)));
-          target.style.setProperty('--flight-radius', px((1 - itemProgress) * Math.min(start.width, start.height) / 2));
-        } else {
-          for (const property of ['font', 'line', 'spacing']) {
-            target.style.setProperty(`--flight-${property}`, px(mix(start[property], end[property], typeProgress)));
-          }
-        }
-      });
+      const p = ease((progress - .12) / .7);
+      const { start, end, target } = portrait;
+      target.style.setProperty('--flight-x', px(mix(start.left, end.left, p) - end.left));
+      target.style.setProperty('--flight-y', px(mix(start.top, end.top, p) - end.top));
+      target.style.setProperty('--flight-width', px(mix(start.width, end.width, p)));
+      target.style.setProperty('--flight-height', px(mix(start.height, end.height, p)));
+      target.style.setProperty('--flight-radius', px((1 - p) * Math.min(start.width, start.height) / 2));
     }
 
     // The welcome dialog owns inert state until it releases the document.
@@ -93,6 +74,7 @@
       layout.inert = active;
       hero.inert = !active;
       socials.inert = progress > .25;
+      hero.querySelector('.hero-scroll-cue').inert = progress > .35;
       if (!active && pendingFocus) {
         focusContent(pendingFocus);
         pendingFocus = null;
@@ -110,19 +92,27 @@
     enabled = false;
     body.classList.remove('hero-morph-ready', 'hero-morph-active', 'hero-morph-complete', 'hero-morph-measuring');
     space.hidden = true;
-    if (!loading()) { layout.inert = false; hero.inert = false; socials.inert = false; }
+    if (!loading()) {
+      layout.inert = false;
+      hero.inert = false;
+      socials.inert = false;
+      hero.querySelector('.hero-scroll-cue').inert = false;
+      header.inert = false;
+    }
     if (wasEnabled && preservePosition && !printing) {
-      const top = previousY >= distance ? previousY + hero.offsetHeight - distance : 0;
+      const top = previousY >= distance ? previousY + hero.offsetHeight - header.offsetHeight - distance : 0;
       window.scrollTo({ top, behavior: 'instant' });
     }
+    render();
   }
 
   function measure(preservePosition = false) {
     if (measuring || printing) return;
-    if (motion.matches) { disable(preservePosition); return; }
     const headerHeight = header.getBoundingClientRect().height;
     root.style.setProperty('--header-height', px(headerHeight));
-    const available = window.innerHeight - headerHeight;
+    body.classList.add('profile-opening-ready');
+    if (motion.matches) { disable(preservePosition); return; }
+    const available = window.innerHeight;
     // At high browser zoom or in a short landscape view, keep the introduction
     // in normal document flow so all text and links remain reachable.
     if (available < 460) { disable(preservePosition); return; }
@@ -135,9 +125,9 @@
     body.classList.add('hero-morph-ready', 'hero-morph-active', 'hero-morph-measuring');
     body.classList.remove('hero-morph-complete');
     space.hidden = false;
-    distance = Math.round(available * .9);
+    distance = Math.round(hero.clientHeight * .9);
     space.style.height = `${distance}px`;
-    if (hero.scrollHeight > available + 2) {
+    if (hero.scrollHeight > hero.clientHeight + 2) {
       distance = previousDistance;
       measuring = false;
       disable(preservePosition);
@@ -146,24 +136,10 @@
 
     // Read the actual resting layout, with sticky positioning temporarily released.
     // Document coordinates make these destinations independent of restored scroll.
-    parts.forEach(part => {
-      const source = part.source.getBoundingClientRect();
-      const target = part.target.getBoundingClientRect();
-      part.start = { left: source.left, top: source.top, width: source.width, height: source.height };
-      part.end = { left: target.left, top: target.top + window.scrollY - distance, width: target.width, height: target.height };
-      if (!part.photo) {
-        const from = getComputedStyle(part.source);
-        const to = getComputedStyle(part.target);
-        for (const [key, property] of [['font', 'fontSize'], ['line', 'lineHeight'], ['spacing', 'letterSpacing']]) {
-          part.start[key] = parseFloat(from[property]) || 0;
-          part.end[key] = parseFloat(to[property]) || 0;
-        }
-      }
-    });
-    const portraitTarget = parts[0].end;
-    parts[1].routeX = Math.max(parts[1].start.left, portraitTarget.left + portraitTarget.width + 8);
-    name.style.setProperty('--dock-name-height', px(name.getBoundingClientRect().height));
-    description.style.setProperty('--dock-description-height', px(description.getBoundingClientRect().height));
+    const source = portrait.source.getBoundingClientRect();
+    const target = portrait.target.getBoundingClientRect();
+    portrait.start = { left: source.left, top: source.top, width: source.width, height: source.height };
+    portrait.end = { left: target.left, top: target.top + window.scrollY - distance, width: target.width, height: target.height };
     body.classList.remove('hero-morph-measuring');
     enabled = true;
     measuring = false;
@@ -173,7 +149,7 @@
       if (wasEnabled && previousDistance) {
         top = previousY < previousDistance ? previousY / previousDistance * distance : previousY + distance - previousDistance;
       } else if (previousY >= previousHeroHeight) {
-        top += distance - previousHeroHeight;
+        top += distance + headerHeight - previousHeroHeight;
       }
       if (Math.abs(top - window.scrollY) > 1) window.scrollTo({ top, behavior: 'instant' });
     }
@@ -238,8 +214,8 @@
   window.addEventListener('afterprint', () => { printing = false; measure(true); });
   motion.addEventListener('change', () => measure(true));
   new MutationObserver(() => {
-    if (enabled) scheduleRender();
-    else if (!loading()) { hero.inert = false; layout.inert = false; }
+    if (!enabled && !loading()) { hero.inert = false; layout.inert = false; }
+    scheduleRender();
   }).observe(root, { attributes: true, attributeFilter: ['class'] });
   if ('ResizeObserver' in window) {
     let previousHeaderHeight = 0;

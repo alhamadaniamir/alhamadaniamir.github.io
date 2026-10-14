@@ -152,11 +152,13 @@ per page visit, and the initial viewport stays immediately readable. Registratio
 waits for the styled layout and welcome to finish, without waiting for photos or
 videos to download. The welcome replaces the normal page arrival effect when shown.
 
-After the welcome, the homepage opens on a full-screen profile introduction. As
-visitors scroll, the portrait and name move into the existing sidebar and the
-introduction settles into About. The motion follows scroll position in either
-direction; section bookmarks account for the opening distance. Reduced-motion
-preferences and short viewports keep the introduction in normal page flow.
+After the welcome, the homepage opens on a full-screen profile introduction,
+with the top navigation hidden. Scrolling moves the portrait into the sidebar
+and gently reveals the navigation and About section. The introductory text fades
+out before the portfolio text appears; its font size, width, and line breaks stay
+fixed throughout the motion. The transition follows scrolling in either direction,
+and section bookmarks account for the opening distance. Reduced-motion preferences
+and short viewports keep the introduction in normal page flow.
 
 `script.js` uses the browser's intersection observer and animation APIs. Content
 stays visible without JavaScript or animation support. Reduced-motion preferences,

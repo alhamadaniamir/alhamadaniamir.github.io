@@ -669,10 +669,16 @@ html.media-viewer-open { overflow: hidden; }
 
 /* The real sidebar photo, name, and introduction travel from the opening layout.
    Their source elements reserve the opening positions; no visual copies float above the page. */
-.hero-morph-ready .home-hero { position: fixed; z-index: 4; top: var(--header-height, 86px); right: 0; left: 0; height: calc(100svh - var(--header-height, 86px)); min-height: 0; }
+/* Keep type in its natural layout; only opacity and translation change on scroll. */
+.profile-opening-ready .site-header { opacity: var(--opening-navigation, 0); transform: translateY(calc(-18px * (1 - var(--opening-navigation, 0)))); }
+.profile-opening-ready.opening-header-hidden .site-header { visibility: hidden; pointer-events: none; }
+.profile-opening-ready:not(.hero-morph-ready) .home-hero { min-height: 100svh; margin-top: calc(-1 * var(--header-height, 86px)); }
+.hero-morph-ready .home-hero { position: fixed; z-index: 4; top: 0; right: 0; left: 0; height: 100svh; min-height: 0; pointer-events: none; }
+.hero-morph-ready .hero-socials, .hero-morph-ready .hero-scroll-cue { pointer-events: auto; }
 .hero-morph-ready .page-layout { position: relative; z-index: 3; }
-.hero-morph-ready .hero-portrait, .hero-morph-ready #hero-title, .hero-morph-ready .hero-description { opacity: 0; }
-.hero-morph-ready .hero-kicker, .hero-morph-ready .hero-socials, .hero-morph-ready .hero-portrait-ring { opacity: var(--opening-extras, 1); }
+.hero-morph-ready .hero-portrait { opacity: 0; }
+.hero-morph-ready .hero-copy { opacity: var(--opening-extras, 1); transform: translate3d(0, var(--opening-copy-shift, 0px), 0); }
+.hero-morph-ready .hero-portrait-ring { opacity: var(--opening-extras, 1); }
 .hero-morph-ready .hero-scroll-cue { opacity: var(--opening-cue, 1); }
 .hero-morph-complete .home-hero { visibility: hidden; pointer-events: none; }
 .hero-morph-active .page-layout { transform: translateY(var(--opening-offset, 0px)); }
@@ -680,19 +686,14 @@ html.media-viewer-open { overflow: hidden; }
 .hero-morph-active .profile-mark { overflow: visible; background: transparent; border-color: transparent; }
 .hero-morph-active .profile-photo { position: absolute; top: 0; left: 0; width: var(--flight-width); height: var(--flight-height); transform: translate3d(var(--flight-x), var(--flight-y), 0); border-radius: var(--flight-radius); }
 .profile-name-text, .intro-lead-text { display: block; }
-.hero-morph-active .profile-name { height: var(--dock-name-height); }
-.hero-morph-active .intro-lead { height: var(--dock-description-height); }
-.hero-morph-active .profile-name-text, .hero-morph-active .intro-lead-text { width: var(--flight-width); font-size: var(--flight-font); line-height: var(--flight-line); letter-spacing: var(--flight-spacing); transform: translate3d(var(--flight-x), var(--flight-y), 0); transform-origin: top left; }
-.hero-morph-active .profile-name-text { color: color-mix(in srgb, var(--accent), var(--ink) calc(var(--opening-progress) * 100%)); }
-.hero-morph-active .intro-lead-text { color: color-mix(in srgb, var(--muted), var(--ink) calc(var(--opening-progress) * 100%)); }
-.hero-morph-active .profile > :not(.profile-mark, .profile-name), .hero-morph-active .about-section > :not(.intro-lead), .hero-morph-active main > .section:not(.about-section) { opacity: var(--opening-details, 0); }
+.hero-morph-active .profile > :not(.profile-mark) { opacity: var(--opening-name, 0); transform: translate3d(0, calc(10px * (1 - var(--opening-name, 0))), 0); }
+.hero-morph-active .about-section > * { opacity: var(--opening-details, 0); transform: translate3d(0, var(--opening-arrival-shift, 18px), 0); }
+.hero-morph-active main > .section:not(.about-section) { opacity: var(--opening-details, 0); }
 .hero-morph-active .about-section { border-color: color-mix(in srgb, transparent, var(--rule) calc(var(--opening-details, 0) * 100%)); }
 /* Measure the resting layout without disturbing the visible scroll position. */
 .hero-morph-measuring .page-layout { transform: none !important; }
 .hero-morph-measuring .profile { position: relative !important; top: auto !important; max-height: none !important; overflow: visible !important; }
-.hero-morph-measuring .profile-name, .hero-morph-measuring .intro-lead { height: auto !important; }
 .hero-morph-measuring .profile-photo { position: static !important; width: 100% !important; height: 100% !important; transform: none !important; }
-.hero-morph-measuring .profile-name-text, .hero-morph-measuring .intro-lead-text { width: auto !important; font-size: inherit !important; line-height: inherit !important; letter-spacing: inherit !important; transform: none !important; }
 
 @media print {
   .home-hero, .hero-scroll-space { display: none !important; }
