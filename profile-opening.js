@@ -12,9 +12,9 @@
   const name = layout.querySelector('.profile-name');
   const description = layout.querySelector('.intro-lead');
   const parts = [
-    { source: hero.querySelector('.hero-portrait'), target: layout.querySelector('.profile-photo'), photo: true },
-    { source: hero.querySelector('h1'), target: name.querySelector('.profile-name-text') },
-    { source: hero.querySelector('.hero-description'), target: description.querySelector('.intro-lead-text') },
+    { source: hero.querySelector('.hero-portrait'), target: layout.querySelector('.profile-photo'), photo: true, delay: 0, duration: .5 },
+    { source: hero.querySelector('h1'), target: name.querySelector('.profile-name-text'), delay: .52, duration: .48, fontDuration: .52 },
+    { source: hero.querySelector('.hero-description'), target: description.querySelector('.intro-lead-text'), delay: .86, duration: .14 },
   ];
   const space = document.createElement('div');
   space.className = 'hero-scroll-space';
@@ -58,16 +58,31 @@
     if (active) {
       const p = ease(progress);
       parts.forEach(part => {
+        const itemProgress = ease((progress - part.delay) / part.duration);
         const { start, end, target } = part;
-        target.style.setProperty('--flight-x', px(mix(start.left - end.left, 0, p)));
-        target.style.setProperty('--flight-y', px(mix(start.top - end.top, 0, p)));
-        target.style.setProperty('--flight-width', px(mix(start.width, end.width, p)));
+        let currentX = mix(start.left, end.left, itemProgress);
+        let currentY = mix(start.top, end.top, itemProgress);
+        if (!part.photo) {
+          const routeX = part.routeX ?? start.left;
+          const movement = itemProgress;
+          if (movement < .5) {
+            currentX = mix(start.left, routeX, movement * 2);
+            currentY = mix(start.top, end.top, movement * 2);
+          } else {
+            currentX = mix(routeX, end.left, (movement - .5) * 2);
+            currentY = end.top;
+          }
+        }
+        target.style.setProperty('--flight-x', px(currentX - end.left));
+        target.style.setProperty('--flight-y', px(currentY - end.top));
+        const typeProgress = part.fontDuration ? ease(progress / part.fontDuration) : itemProgress;
+        target.style.setProperty('--flight-width', px(mix(start.width, end.width, typeProgress)));
         if (part.photo) {
-          target.style.setProperty('--flight-height', px(mix(start.height, end.height, p)));
-          target.style.setProperty('--flight-radius', px((1 - p) * Math.min(start.width, start.height) / 2));
+          target.style.setProperty('--flight-height', px(mix(start.height, end.height, itemProgress)));
+          target.style.setProperty('--flight-radius', px((1 - itemProgress) * Math.min(start.width, start.height) / 2));
         } else {
           for (const property of ['font', 'line', 'spacing']) {
-            target.style.setProperty(`--flight-${property}`, px(mix(start[property], end[property], p)));
+            target.style.setProperty(`--flight-${property}`, px(mix(start[property], end[property], typeProgress)));
           }
         }
       });
@@ -145,6 +160,8 @@
         }
       }
     });
+    const portraitTarget = parts[0].end;
+    parts[1].routeX = Math.max(parts[1].start.left, portraitTarget.left + portraitTarget.width + 8);
     name.style.setProperty('--dock-name-height', px(name.getBoundingClientRect().height));
     description.style.setProperty('--dock-description-height', px(description.getBoundingClientRect().height));
     body.classList.remove('hero-morph-measuring');
@@ -215,10 +232,10 @@
   window.addEventListener('scroll', scheduleRender, { passive: true });
   window.addEventListener('resize', () => measure(true), { passive: true });
   window.addEventListener('hashchange', () => requestAnimationFrame(followHash));
-  window.addEventListener('pageshow', event => { if (event.persisted) measure(); });
+  window.addEventListener('pageshow', event => { if (event.persisted) measure(true); });
   window.addEventListener('pagehide', () => { cancelAnimationFrame(frame); frame = 0; });
   window.addEventListener('beforeprint', () => { printing = true; disable(false); });
-  window.addEventListener('afterprint', () => { printing = false; measure(); });
+  window.addEventListener('afterprint', () => { printing = false; measure(true); });
   motion.addEventListener('change', () => measure(true));
   new MutationObserver(() => {
     if (enabled) scheduleRender();
@@ -232,7 +249,7 @@
     }).observe(header);
   }
   const styles = document.querySelector('#site-styles');
-  if (styles?.media === 'all') measure();
-  styles?.addEventListener('load', () => { measure(); followHash(); }, { once: true });
+  if (styles?.media === 'all') measure(window.scrollY > 0);
+  styles?.addEventListener('load', () => { measure(window.scrollY > 0); followHash(); }, { once: true });
   requestAnimationFrame(followHash);
 })();

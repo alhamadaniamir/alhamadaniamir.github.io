@@ -3,7 +3,8 @@
 The home page is `index.html`. Dedicated pages provide the full sections:
 `about.html`, `research.html`, `projects.html`, `certifications.html`,
 `education.html`, and `contact.html`. All pages are plain HTML, sharing `style.css` and
-`script.js`, plus `theme.js` for appearance preferences; no build step is needed.
+`script.js`, `profile-opening.js` for the homepage profile transition, and `theme.js`
+for appearance preferences; no build step is needed.
 The main navigation links to homepage sections; the top-right Menu opens the
 dedicated pages. Research appears
 directly below About me in the Menu and has an in-progress note with no entries yet.
@@ -150,6 +151,12 @@ reach them. Small six-to-eight-pixel movements take 760–800 milliseconds, with
 per page visit, and the initial viewport stays immediately readable. Registration
 waits for the styled layout and welcome to finish, without waiting for photos or
 videos to download. The welcome replaces the normal page arrival effect when shown.
+
+After the welcome, the homepage opens on a full-screen profile introduction. As
+visitors scroll, the portrait and name move into the existing sidebar and the
+introduction settles into About. The motion follows scroll position in either
+direction; section bookmarks account for the opening distance. Reduced-motion
+preferences and short viewports keep the introduction in normal page flow.
 
 `script.js` uses the browser's intersection observer and animation APIs. Content
 stays visible without JavaScript or animation support. Reduced-motion preferences,

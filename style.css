@@ -676,7 +676,7 @@ html.media-viewer-open { overflow: hidden; }
 .hero-morph-ready .hero-scroll-cue { opacity: var(--opening-cue, 1); }
 .hero-morph-complete .home-hero { visibility: hidden; pointer-events: none; }
 .hero-morph-active .page-layout { transform: translateY(var(--opening-offset, 0px)); }
-.hero-morph-active .profile { position: relative; top: auto; max-height: none; overflow: visible; }
+.hero-morph-active .profile { position: relative; top: auto; max-height: none; overflow: visible; border-color: color-mix(in srgb, transparent, var(--rule) calc(var(--opening-details, 0) * 100%)); }
 .hero-morph-active .profile-mark { overflow: visible; background: transparent; border-color: transparent; }
 .hero-morph-active .profile-photo { position: absolute; top: 0; left: 0; width: var(--flight-width); height: var(--flight-height); transform: translate3d(var(--flight-x), var(--flight-y), 0); border-radius: var(--flight-radius); }
 .profile-name-text, .intro-lead-text { display: block; }
