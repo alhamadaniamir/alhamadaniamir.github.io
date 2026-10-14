@@ -15,7 +15,7 @@
   function renderTheme(theme) {
     const dark = theme === 'dark';
     root.dataset.theme = dark ? 'dark' : 'light';
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#151d19' : '#f3eddf');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#151d19' : '#f7f3e9');
     document.querySelector('meta[name="color-scheme"]')?.setAttribute('content', dark ? 'dark' : 'light');
     controls.forEach(control => {
       control.setAttribute('aria-checked', String(dark));

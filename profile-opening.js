@@ -28,7 +28,7 @@
   let touchStart = null;
   let completed = false;
   const sessionKey = 'portfolio-profile-welcome-seen';
-  const entryDuration = 3000;
+  const entryDuration = 2000;
   const clamp = value => Math.min(1, Math.max(0, value));
   const ease = value => { const p = clamp(value); return p * p * (3 - 2 * p); };
   const mix = (a, b, p) => a + (b - a) * p;
@@ -73,24 +73,24 @@
     body.classList.toggle('hero-morph-complete', !active);
     body.style.setProperty('--opening-offset', px(Math.min(0, window.scrollY - distance)));
     const departure = ease((progress - .04) / .28);
-    const arrival = ease((progress - .43) / .49);
     body.style.setProperty('--opening-extras', String(1 - departure));
     body.style.setProperty('--opening-copy-shift', px(-20 * departure));
     body.style.setProperty('--opening-ring-scale', String(.96 + .12 * departure));
-    body.style.setProperty('--opening-title', String(ease((progress - .29) / .42)));
     body.style.setProperty('--opening-cue', String(1 - ease((progress - .12) / .25)));
-    body.style.setProperty('--opening-details', String(arrival));
-    body.style.setProperty('--opening-arrival-shift', px(24 * (1 - arrival)));
-    body.style.setProperty('--opening-name', String(ease((progress - .7) / .23)));
+    const reveal = ease((progress - .22) / .68);
+    body.style.setProperty('--opening-reveal-radius', px(Math.hypot(window.innerWidth, window.innerHeight) * reveal));
+    body.style.setProperty('--opening-reveal-opacity', String(ease((progress - .2) / .25)));
+    body.style.setProperty('--opening-sidebar-opacity', String(ease((progress - .76) / .22)));
+    body.style.setProperty('--opening-glow', String(1 - ease((progress - .4) / .5)));
 
     if (active) {
-      const p = ease((progress - .04) / .74);
-      const { start, end, target } = portrait;
-      target.style.setProperty('--flight-x', px(mix(start.left, end.left, p) - end.left));
-      target.style.setProperty('--flight-y', px(mix(start.top, end.top, p) - end.top - Math.sin(Math.PI * p) * 14));
-      target.style.setProperty('--flight-width', px(mix(start.width, end.width, p)));
-      target.style.setProperty('--flight-height', px(mix(start.height, end.height, p)));
-      target.style.setProperty('--flight-radius', px((1 - p) * Math.min(start.width, start.height) / 2));
+      const p = ease((progress - .03) / .77);
+      const { start, end, source } = portrait;
+      source.style.setProperty('--flight-x', px(mix(start.left, end.left, p)));
+      source.style.setProperty('--flight-y', px(mix(start.top, end.top, p) - Math.sin(Math.PI * p) * 18));
+      source.style.setProperty('--flight-width', px(mix(start.width, end.width, p)));
+      source.style.setProperty('--flight-height', px(mix(start.height, end.height, p)));
+      source.style.setProperty('--flight-radius', px((1 - p) * Math.min(start.width, start.height) / 2));
     }
 
     // The welcome dialog owns inert state until it releases the document.
@@ -246,6 +246,9 @@
     const target = portrait.target.getBoundingClientRect();
     portrait.start = { left: source.left, top: source.top, width: source.width, height: source.height };
     portrait.end = { left: target.left, top: target.top + window.scrollY - distance, width: target.width, height: target.height };
+    const layoutBox = layout.getBoundingClientRect();
+    body.style.setProperty('--opening-reveal-x', px(portrait.end.left + portrait.end.width / 2 - layoutBox.left));
+    body.style.setProperty('--opening-reveal-y', px(portrait.end.top + portrait.end.height / 2 - (layoutBox.top + window.scrollY - distance)));
     body.classList.remove('hero-morph-measuring');
     enabled = true;
     measuring = false;

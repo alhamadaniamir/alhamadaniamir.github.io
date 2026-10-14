@@ -103,11 +103,11 @@ the palette. The site uses light colors and hides the switch without JavaScript.
 ## Page, Menu, and scroll transitions
 
 The first direct homepage visit in a browser tab opens with **Portfolio** and
-Amir's name on the dark theme's deep green background (#151d19), using the
+“Think deeper. Build with purpose.” on the dark theme's deep green background (#151d19), using the
 existing serif type in italic. A fine line expands beneath the title. After 1.8 seconds,
 the word zooms toward the viewer, centering on its final “o”. The entire word
 uses the same soft green (#9ecdb2) throughout. Only the inner opening of the
-final “o” is filled with the portfolio's ivory (#f3eddf) from the start,
+final “o” is filled with the portfolio's ivory (#f7f3e9) from the start,
 aligned with the italic letter. The inner outline is traced from the rendered
 font and shared by the white fill and the expanding opening. The fill sits
 behind the green letter so its stroke stays intact. This center blends into the
@@ -154,11 +154,11 @@ videos to download. The welcome replaces the normal page arrival effect when sho
 
 After the welcome, the homepage opens on a full-screen profile introduction,
 with the top navigation hidden and a compact résumé PDF download to the right
-of the social links. On phones the download uses a compact PDF label to fit beside
-the icons. One downward wheel action, upward swipe, or Page Down starts a three-
-second transition that matches the Portfolio opening: the portrait gently curves
-into the sidebar, the opening ring expands and fades, and the About heading arrives
-before its paragraphs and sidebar links. Navigation fades in during the move, and
+of the social links. The Résumé label remains visible at every screen size; its PDF
+badge is hidden on smaller screens to keep the button beside the icons. One downward
+wheel action, upward swipe, or Page Down starts a two-second transition: the portrait
+glows green and moves into the sidebar as a circular reveal expands across the
+portfolio behind it. Navigation fades in during the move, and
 normal page scrolling resumes on arrival. The introductory text fades out before
 the portfolio text appears; its font size, width, and line breaks stay fixed
 throughout the motion. After entry, the introduction and its scroll space
