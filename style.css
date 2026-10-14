@@ -102,9 +102,11 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, .profile::-webkit-scrollbar, .
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   body:not(.hero-entry-running) .hero-portrait:hover { scale: 1.025; translate: 0 -3px; }
 }
-.hero-scroll-cue { position: absolute; right: 48px; bottom: 28px; display: inline-flex; align-items: center; gap: 11px; color: var(--muted); font: 9px/1.5 var(--mono); letter-spacing: .7px; transition: color .2s ease; }
-.hero-scroll-cue:hover { color: var(--accent); }
-.hero-scroll-cue svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; animation: hero-cue-bob 1.8s ease-in-out infinite; }
+.hero-scroll-cue { position: absolute; right: 48px; bottom: 28px; display: inline-flex; align-items: center; gap: 12px; min-height: 44px; padding: 8px 0; color: var(--accent); font: 600 13px/1.4 var(--sans); letter-spacing: .1px; transition: color .2s ease; }
+.hero-scroll-cue span { text-decoration: underline; text-decoration-color: var(--border-accent); text-underline-offset: 5px; text-decoration-thickness: 1px; }
+.hero-scroll-cue:hover { color: var(--accent-dark); }
+.hero-scroll-cue:hover span { text-decoration-color: currentColor; }
+.hero-scroll-cue svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; animation: hero-cue-bob 1.8s ease-in-out infinite; }
 @keyframes hero-cue-bob { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(3px); } }
 .profile { position: sticky; top: calc(var(--header-height, 86px) + 46px); align-self: start; max-height: calc(100vh - var(--header-height, 86px) - 70px); overflow-y: auto; padding-bottom: 40px; scrollbar-width: none; -ms-overflow-style: none; }
 .profile::-webkit-scrollbar { display: none; }
@@ -121,8 +123,8 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, .profile::-webkit-scrollbar, .
 .profile-links { display: grid; gap: 12px; margin-top: 28px; padding-top: 23px; border-top: 1px solid var(--rule); max-width: 194px; }
 .profile-links a { display: flex; align-items: center; gap: 10px; width: 100%; font-size: 12px; line-height: 1.5; color: var(--muted); transition: color .15s ease; }
 .profile-links a:hover { color: var(--accent); }
-.profile-links .profile-resume { min-height: 40px; margin-top: 3px; padding: 10px 12px; border: 1px solid var(--border-accent); border-radius: 8px; background: var(--soft-green); color: var(--accent); font-weight: 600; }
-.profile-links .profile-resume:hover { border-color: var(--accent); background: color-mix(in srgb, var(--soft-green) 70%, var(--paper)); }
+.profile-links .profile-resume { color: var(--accent); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+.profile-links .profile-resume:hover { color: var(--accent-dark); }
 .profile-links a > span:last-child { margin-left: auto; }
 .profile-links svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .social-links { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 18px; }
@@ -590,7 +592,6 @@ html.media-viewer-open { overflow: hidden; }
   .profile-school { grid-column: 2; margin-top: 1px; font-size: 10px; max-width: none; }
   .profile-links { grid-column: 2; display: flex; align-items: center; flex-wrap: wrap; gap: 9px 19px; border: 0; padding: 0; margin: 12px 0 0; max-width: none; }
   .profile-links a { width: auto; gap: 5px; font-size: 10px; }
-  .profile-links .profile-resume { width: auto; min-height: 34px; margin-top: 0; padding: 7px 10px; }
   .profile-links a > span:last-child { display: none; }
   .profile-links svg { width: 12px; height: 12px; }
   .social-links { gap: 10px 18px; }
