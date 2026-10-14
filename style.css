@@ -123,7 +123,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, .profile::-webkit-scrollbar, .
 .profile-links { display: grid; gap: 12px; margin-top: 28px; padding-top: 23px; border-top: 1px solid var(--rule); max-width: 194px; }
 .profile-links a { display: flex; align-items: center; gap: 10px; width: 100%; font-size: 12px; line-height: 1.5; color: var(--muted); transition: color .15s ease; }
 .profile-links a:hover { color: var(--accent); }
-.profile-links .profile-resume { color: var(--accent); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+.profile-links .profile-resume { padding: 5px 8px; border-radius: 0; background: var(--soft-green); color: var(--accent); font-weight: 600; text-decoration: none; }
 .profile-links .profile-resume:hover { color: var(--accent-dark); }
 .profile-links a > span:last-child { margin-left: auto; }
 .profile-links svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }

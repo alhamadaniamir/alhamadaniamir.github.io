@@ -156,7 +156,7 @@ After the welcome, the homepage opens on a full-screen profile introduction,
 with the top navigation hidden and a compact View Resume link to the right of
 the social links. It opens the PDF in a new tab. The full label remains visible
 at every screen size; its PDF badge is hidden on smaller screens. One downward
-wheel action, upward swipe, or Page Down starts a two-second transition: the portrait
+wheel action, upward swipe, or Page Down starts a 1.6-second transition: the portrait
 moves into the sidebar, while the two heading lines and About paragraphs arrive
 alternately from the left and right and settle into place. The portrait has a soft
 green halo and a slight lift on hover, with no increase in glow intensity. Navigation
