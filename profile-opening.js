@@ -305,6 +305,16 @@
     if (target && layout.contains(target)) navigateTo(target, 'instant');
   }
 
+  function isReturnVisit() {
+    const navigation = performance.getEntriesByType('navigation')[0];
+    if (location.hash || (navigation && navigation.type !== 'navigate')) return true;
+    try {
+      if (new URL(document.referrer).origin === location.origin) return true;
+    } catch { /* A direct visit has no referrer. */ }
+    try { return sessionStorage.getItem(sessionKey) === '1'; }
+    catch { return false; }
+  }
+
   document.addEventListener('portfolio:enter-main', () => completeOpening(false));
 
   document.addEventListener('click', event => {
@@ -348,7 +358,9 @@
   window.addEventListener('scroll', scheduleRender, { passive: true });
   window.addEventListener('resize', () => measure(true), { passive: true });
   window.addEventListener('hashchange', () => requestAnimationFrame(followHash));
-  window.addEventListener('pageshow', event => { if (event.persisted) measure(true); });
+  window.addEventListener('pageshow', event => {
+    if (event.persisted) { completeOpening(); render(); }
+  });
   window.addEventListener('pagehide', () => { cancelEntry(); cancelAnimationFrame(frame); frame = 0; });
   window.addEventListener('beforeprint', () => { printing = true; disable(false); });
   window.addEventListener('afterprint', () => { printing = false; measure(true); });
@@ -357,9 +369,14 @@
     if (!enabled && !loading()) { hero.inert = completed; layout.inert = false; }
     scheduleRender();
   }).observe(root, { attributes: true, attributeFilter: ['class'] });
-  try {
-    if (sessionStorage.getItem(sessionKey) === '1') completeOpening(false);
-  } catch { /* Allow the introduction normally if storage is blocked. */ }
+  // The HTML starts with the greeting hidden, so a return visit cannot paint it
+  // while this deferred script or the stylesheet is still loading.
+  if (isReturnVisit()) completeOpening(false);
+  else {
+    hero.hidden = false;
+    // Remember it when offered, including visits that leave before scrolling.
+    try { sessionStorage.setItem(sessionKey, '1'); } catch { /* This visit still works without storage. */ }
+  }
   if ('ResizeObserver' in window) {
     let previousHeaderHeight = 0;
     new ResizeObserver(() => {

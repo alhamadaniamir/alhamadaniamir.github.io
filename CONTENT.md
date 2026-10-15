@@ -170,6 +170,11 @@ visits in the same tab. Section bookmarks open their destination directly.
 Reduced-motion preferences and short viewports keep the introduction in normal
 page flow.
 
+The profile welcome is offered once per tab session and starts hidden in the HTML
+until that first visit is confirmed. Internal returns, bookmarked sections, reloads,
+and browser history go directly to the main content, including when the opening
+was left unfinished. Portfolio links target the About section explicitly.
+
 The sidebar displays an **Open to work** badge beneath the student role and
 highlights the résumé link across the full sidebar width beneath LinkedIn. The
 dropdown menus contain the portfolio pages; the résumé is available from the
