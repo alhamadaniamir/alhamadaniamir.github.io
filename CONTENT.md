@@ -180,10 +180,14 @@ highlights the résumé link across the full sidebar width beneath LinkedIn. The
 dropdown menus contain the portfolio pages; the résumé is available from the
 welcome screen and sidebar.
 
-The top bookmarks scroll to their sections and replay a short text entrance on
-every click, including repeated visits. Scrolling takes about half a second and
-the heading settles immediately afterward. Manual scrolling or keyboard movement
-cancels this motion; reduced-motion preferences make section changes immediate.
+The top bookmarks scroll to their sections and replay a gentle fade on every
+click, including repeated visits. Scrolling takes about half a second; the fade
+finishes the roughly one-second sequence without moving the title. Automatic
+scroll entrances pause during this sequence so they cannot restart a heading.
+Ordinary scrolling moves each content group once, without separate nested title
+motion or blur. Heading hover effects use color and an underline. Manual scrolling
+or keyboard movement cancels navigation motion; reduced-motion preferences make
+section changes immediate.
 Full-page links record their destination for a reliable one-second arrival even
 when the browser omits referrer details.
 

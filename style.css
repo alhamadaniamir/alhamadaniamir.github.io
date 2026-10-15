@@ -201,7 +201,7 @@ h1 em { color: var(--accent); font-weight: 400; }
 .prose strong { color: var(--accent); font-weight: 600; }
 .prose p, .approach-section > p:not(.section-eyebrow) { color: var(--muted); font-size: 15px; line-height: 1.85; }
 .prose p + p { margin-top: 18px; }
-.about-section h1, .archive-intro h1, .section h2, .archive-section h2, .project h3, .personal-interest h3, .education-item h3, .toolkit-group h3, .certificate-info h3, .engineering-decision h4 { position: relative; width: fit-content; max-width: 100%; transition: color .28s ease, transform .35s cubic-bezier(.22, 1, .36, 1); }
+.about-section h1, .archive-intro h1, .section h2, .archive-section h2, .project h3, .personal-interest h3, .education-item h3, .toolkit-group h3, .certificate-info h3, .engineering-decision h4 { position: relative; width: fit-content; max-width: 100%; transition: color .28s ease; }
 .intro-actions { display: flex; flex-wrap: wrap; gap: 0 28px; }
 .text-link { display: inline-flex; align-items: center; gap: 20px; margin-top: 25px; color: var(--accent); font-size: 13px; font-weight: 600; }
 .text-link span { transition: transform .2s ease; }
@@ -228,7 +228,7 @@ h2 { font-family: var(--serif); font-size: 32px; font-weight: 400; line-height: 
 .project-topline { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 11px; }
 .project-category, .project-number { color: var(--panel-ink); font-family: var(--mono); font-size: 11px; line-height: 1.7; letter-spacing: .5px; transition: color .25s ease; }
 .project-number { letter-spacing: 0; }
-.project h3 { font-family: var(--serif); font-size: 30px; font-weight: 400; line-height: 1.3; letter-spacing: -.6px; transition: color .28s ease, transform .35s cubic-bezier(.22, 1, .36, 1); }
+.project h3 { font-family: var(--serif); font-size: 30px; font-weight: 400; line-height: 1.3; letter-spacing: -.6px; transition: color .28s ease; }
 .project-subtitle { margin-top: 4px; font-size: 14px; font-weight: 600; color: var(--accent); }
 .project > p:not(.project-subtitle) { margin-top: 15px; font-size: 15px; line-height: 1.8; color: var(--ink); }
 .project > p:not(.project-subtitle, .project-connection) { max-width: 72ch; }
@@ -341,12 +341,12 @@ a.certificate-preview:focus-visible img { border-color: var(--accent); }
 
 @media (hover: hover) and (pointer: fine) {
   .section h2::after, .archive-section h2::after, .archive-intro h1::after, .about-section h1::after, .project h3::after, .personal-interest h3::after, .education-item h3::after, .toolkit-group h3::after, .certificate-info h3::after, .engineering-decision h4::after { content: ""; position: absolute; left: 0; bottom: -.16em; width: 42px; height: 1px; background: currentColor; opacity: .65; transform: scaleX(0); transform-origin: left; transition: transform .38s cubic-bezier(.22, 1, .36, 1); pointer-events: none; }
-  .section h2:hover, .archive-section h2:hover, .archive-intro h1:hover, .about-section h1:hover, .project h3:hover, .personal-interest h3:hover, .education-item h3:hover, .toolkit-group h3:hover, .certificate-info h3:hover, .engineering-decision h4:hover { color: var(--accent); transform: translateX(2px); }
+  .section h2:hover, .archive-section h2:hover, .archive-intro h1:hover, .about-section h1:hover, .project h3:hover, .personal-interest h3:hover, .education-item h3:hover, .toolkit-group h3:hover, .certificate-info h3:hover, .engineering-decision h4:hover { color: var(--accent); }
   .section h2:hover::after, .archive-section h2:hover::after, .archive-intro h1:hover::after, .about-section h1:hover::after, .project h3:hover::after, .personal-interest h3:hover::after, .education-item h3:hover::after, .toolkit-group h3:hover::after, .certificate-info h3:hover::after, .engineering-decision h4:hover::after { transform: scaleX(1); }
   .project::before { content: ""; position: absolute; top: 34px; bottom: 38px; left: -12px; width: 2px; background: var(--accent); opacity: 0; transform: scaleY(.08); transform-origin: top; transition: opacity .24s ease, transform .4s cubic-bezier(.22, 1, .36, 1); pointer-events: none; }
   .project:hover::before, .project:focus-within::before { opacity: .75; transform: scaleY(1); }
   .project:hover .project-category, .project:hover .project-number, .project:focus-within .project-category, .project:focus-within .project-number { color: var(--accent); }
-  .project:hover h3 { color: var(--accent); transform: translateX(3px); }
+  .project:hover h3 { color: var(--accent); }
   .media-image-link:hover { box-shadow: 0 5px 18px var(--shadow); }
   .media-image-link:hover .project-image { transform: scale(1.018); border-color: var(--accent); }
   .certificate-card:hover { translate: 0 -2px; border-color: var(--border-accent); box-shadow: 0 5px 16px var(--shadow); }

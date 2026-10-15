@@ -555,6 +555,9 @@
     }
   }
 
+  let sectionNavigationActive = false;
+  let finishVisibleReveals = () => {};
+
   function initScrollReveals() {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (reducedMotion.matches ||
@@ -605,7 +608,7 @@
         const group = groups.get(entry.target);
         observer.unobserve(entry.target);
         groups.delete(entry.target);
-        if (!group || reducedMotion.matches || document.hidden ||
+        if (!group || sectionNavigationActive || reducedMotion.matches || document.hidden ||
             group.items.some((item) => item.contains(document.activeElement))) return;
 
         const section = entry.target.closest('.section');
@@ -614,31 +617,31 @@
         group.items.forEach((item, index) => {
           // Give headings a small lead over copy and cards, without a long cascade.
           const delay = Math.min(stagger + index, 3) * 90;
-          const isHeading = item.matches('h1, h2, h3, .section-heading');
-          const nestedHeading = isHeading ? null : item.querySelector('h1, h2, h3');
-          const targets = [{ element: item, heading: isHeading }];
-          if (nestedHeading) targets.push({ element: nestedHeading, heading: true });
-          targets.forEach(({ element, heading }) => {
-            const distance = heading ? Math.max(group.distance, 12) : group.distance;
-            const frames = heading
-              ? [{ opacity: 0, transform: `translateY(${distance}px)`, filter: 'blur(2.5px)' }, { opacity: 1, transform: 'translateY(0)', filter: 'blur(0)' }]
-              : [{ opacity: 0, transform: `translateY(${distance}px)` }, { opacity: 1, transform: 'translateY(0)' }];
-            // Titles rise and sharpen into focus; supporting copy keeps its quieter fade.
-            const animation = element.animate(frames, {
+          const heading = item.matches('h1, h2, h3, .section-heading');
+          const distance = heading ? Math.max(group.distance, 12) : group.distance;
+          // Move each group once; its heading travels with it instead of moving again.
+          const animation = item.animate(
+            [{ opacity: 0, transform: `translateY(${distance}px)` }, { opacity: 1, transform: 'translateY(0)' }],
+            {
               duration: heading ? Math.max(group.duration, 900) : group.duration,
               delay,
               easing: 'cubic-bezier(.22, 1, .36, 1)',
               fill: 'backwards',
-            });
-            animation.id = 'scroll-reveal';
-            activeAnimations.add(animation);
-            const cleanup = () => activeAnimations.delete(animation);
-            animation.finished.then(cleanup, cleanup);
-          });
+            },
+          );
+          animation.id = 'scroll-reveal';
+          activeAnimations.add(animation);
+          const cleanup = () => activeAnimations.delete(animation);
+          animation.finished.then(cleanup, cleanup);
         });
       });
     }, { threshold: 0, rootMargin: '0px 0px 24px 0px' });
     groups.forEach((_, target) => observer.observe(target));
+
+    finishVisibleReveals = () => {
+      activeAnimations.forEach(animation => animation.finish());
+      activeAnimations.clear();
+    };
 
     function stopReveals() {
       observer.disconnect();
@@ -772,30 +775,34 @@
     sectionScrollFrame = 0;
     sectionEffects.forEach(animation => animation.cancel());
     sectionEffects.clear();
+    sectionNavigationActive = false;
   }
 
   function revealSection(target) {
-    if (navigationMotion.matches || typeof target.animate !== 'function') return;
+    if (navigationMotion.matches || typeof target.animate !== 'function') { sectionNavigationActive = false; return; }
     const elements = [...target.querySelectorAll(':scope > .section-eyebrow, :scope > .section-heading, :scope > h1, :scope > h2, :scope > .section-intro, :scope > .intro-lead, :scope > p')].slice(0, 3);
+    if (!elements.length) { sectionNavigationActive = false; return; }
     elements.forEach((element, index) => {
-      // Cancel the one-time scroll entrance so repeat visits have one clear effect.
-      element.getAnimations({ subtree: true }).forEach(animation => {
-        if (animation.id === 'scroll-reveal' || animation.id === 'bookmark-arrive') animation.cancel();
-      });
-      const shift = (index % 2 ? 1 : -1) * (window.innerWidth <= 760 ? 8 : 14);
+      // Keep titles in their resting position. A soft fade never restarts their motion.
       const animation = element.animate(
-        [{ opacity: .25, transform: `translate3d(${shift}px, 10px, 0)` }, { opacity: 1, transform: 'translate3d(0, 0, 0)' }],
-        { duration: 460, delay: index * 40, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'backwards' },
+        [{ opacity: 1 }, { opacity: .82, offset: .3 }, { opacity: 1 }],
+        { duration: 400, delay: index * 30, easing: 'ease-in-out' },
       );
       animation.id = 'bookmark-arrive';
       sectionEffects.add(animation);
-      animation.finished.then(() => sectionEffects.delete(animation), () => sectionEffects.delete(animation));
+      const cleanup = () => {
+        sectionEffects.delete(animation);
+        if (!sectionEffects.size && !sectionScrollFrame) sectionNavigationActive = false;
+      };
+      animation.finished.then(cleanup, cleanup);
     });
   }
 
   function moveToSection(target, keyboard) {
     stopSectionMotion();
     document.dispatchEvent(new Event('portfolio:enter-main'));
+    sectionNavigationActive = true;
+    finishVisibleReveals();
     const destination = () => Math.max(0, Math.min(
       target.getBoundingClientRect().top + window.scrollY - (header?.offsetHeight || 0) - 24,
       document.documentElement.scrollHeight - window.innerHeight,
