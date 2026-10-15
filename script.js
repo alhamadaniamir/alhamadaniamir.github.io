@@ -287,26 +287,49 @@
     });
   });
 
+  const pageIntentKey = 'portfolio-page-navigation';
+  const portfolioPages = new Set(['index.html', 'about.html', 'projects.html', 'certifications.html', 'research.html', 'education.html', 'contact.html']);
+  const canonicalPagePath = url => url.pathname.endsWith('/') ? `${url.pathname}index.html` : url.pathname;
+
+  // An explicit link visit also works when the browser omits the referrer.
+  document.addEventListener('click', event => {
+    const link = event.target.closest('a[href]');
+    if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    const destination = new URL(link.href, location.href);
+    const path = canonicalPagePath(destination);
+    const currentPath = canonicalPagePath(new URL(location.href));
+    if (destination.origin !== location.origin || !portfolioPages.has(path.split('/').pop()) ||
+        path.slice(0, path.lastIndexOf('/') + 1) !== currentPath.slice(0, currentPath.lastIndexOf('/') + 1) ||
+        (path === currentPath && destination.hash)) return;
+    try { sessionStorage.setItem(pageIntentKey, JSON.stringify({ path, time: Date.now() })); } catch { /* Referrer-based entry remains available. */ }
+  });
+
   function initPageTransitions() {
+    let requested = false;
+    try {
+      const intent = JSON.parse(sessionStorage.getItem(pageIntentKey) || 'null');
+      requested = intent?.path === canonicalPagePath(new URL(location.href)) && Date.now() - intent.time < 15000;
+      if (requested) sessionStorage.removeItem(pageIntentKey);
+    } catch { /* Normal arrival does not require storage. */ }
     const content = document.querySelector('main');
     if (!content || typeof content.animate !== 'function' ||
         window.portfolioPageTransition ||
         document.documentElement.matches('.welcome-active, .welcome-pending')) return;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (reducedMotion.matches) return;
-    const pages = new Set(['index.html', 'about.html', 'projects.html', 'certifications.html', 'research.html', 'education.html', 'contact.html']);
-    const canonicalPath = (url) => url.pathname.endsWith('/') ? `${url.pathname}index.html` : url.pathname;
     const current = new URL(window.location.href);
-    const currentPath = canonicalPath(current);
+    const currentPath = canonicalPagePath(current);
     const directory = currentPath.slice(0, currentPath.lastIndexOf('/') + 1);
     const navigation = performance.getEntriesByType('navigation')[0];
     if (navigation && navigation.type !== 'navigate') return;
-    let previous;
-    try { previous = new URL(document.referrer); } catch { return; }
-    const previousPath = canonicalPath(previous);
-    if (previous.origin !== current.origin || previous.protocol !== current.protocol ||
-        previousPath === currentPath || previousPath.slice(0, previousPath.lastIndexOf('/') + 1) !== directory ||
-        !pages.has(previousPath.slice(previousPath.lastIndexOf('/') + 1))) return;
+    if (!requested) {
+      let previous;
+      try { previous = new URL(document.referrer); } catch { return; }
+      const previousPath = canonicalPagePath(previous);
+      if (previous.origin !== current.origin || previous.protocol !== current.protocol ||
+          previousPath === currentPath || previousPath.slice(0, previousPath.lastIndexOf('/') + 1) !== directory ||
+          !portfolioPages.has(previousPath.slice(previousPath.lastIndexOf('/') + 1))) return;
+    }
 
     let entered = false;
     let entranceAnimation = null;
@@ -349,8 +372,8 @@
       readinessObserver.disconnect();
       try {
         const animation = content.animate(
-          [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'translateY(0)' }],
-          { duration: 580, easing: 'cubic-bezier(.22, 1, .36, 1)' },
+          [{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'translateY(0)' }],
+          { duration: 1000, easing: 'cubic-bezier(.22, 1, .36, 1)' },
         );
         animation.id = 'page-enter';
         entranceAnimation = animation;
@@ -740,12 +763,96 @@
     unlockTimer = window.setTimeout(releaseAnchorLock, 1200);
   }
 
+  const navigationMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let sectionScrollFrame = 0;
+  const sectionEffects = new Set();
+
+  function stopSectionMotion() {
+    cancelAnimationFrame(sectionScrollFrame);
+    sectionScrollFrame = 0;
+    sectionEffects.forEach(animation => animation.cancel());
+    sectionEffects.clear();
+  }
+
+  function revealSection(target) {
+    if (navigationMotion.matches || typeof target.animate !== 'function') return;
+    const elements = [...target.querySelectorAll(':scope > .section-eyebrow, :scope > .section-heading, :scope > h1, :scope > h2, :scope > .section-intro, :scope > .intro-lead, :scope > p')].slice(0, 3);
+    elements.forEach((element, index) => {
+      // Cancel the one-time scroll entrance so repeat visits have one clear effect.
+      element.getAnimations({ subtree: true }).forEach(animation => {
+        if (animation.id === 'scroll-reveal' || animation.id === 'bookmark-arrive') animation.cancel();
+      });
+      const shift = (index % 2 ? 1 : -1) * (window.innerWidth <= 760 ? 8 : 14);
+      const animation = element.animate(
+        [{ opacity: .25, transform: `translate3d(${shift}px, 10px, 0)` }, { opacity: 1, transform: 'translate3d(0, 0, 0)' }],
+        { duration: 460, delay: index * 40, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'backwards' },
+      );
+      animation.id = 'bookmark-arrive';
+      sectionEffects.add(animation);
+      animation.finished.then(() => sectionEffects.delete(animation), () => sectionEffects.delete(animation));
+    });
+  }
+
+  function moveToSection(target, keyboard) {
+    stopSectionMotion();
+    document.dispatchEvent(new Event('portfolio:enter-main'));
+    const destination = () => Math.max(0, Math.min(
+      target.getBoundingClientRect().top + window.scrollY - (header?.offsetHeight || 0) - 24,
+      document.documentElement.scrollHeight - window.innerHeight,
+    ));
+    const from = window.scrollY;
+    const to = destination();
+    const arrive = () => {
+      sectionScrollFrame = 0;
+      window.scrollTo({ top: destination(), behavior: 'instant' });
+      if (keyboard) {
+        const temporary = !target.hasAttribute('tabindex');
+        if (temporary) {
+          target.tabIndex = -1;
+          target.addEventListener('blur', () => target.removeAttribute('tabindex'), { once: true });
+        }
+        target.focus({ preventScroll: true });
+      }
+      revealSection(target);
+      scheduleNavigation();
+    };
+    if (navigationMotion.matches || Math.abs(to - from) < 2) { arrive(); return; }
+    const start = performance.now();
+    function step(time) {
+      const p = Math.min(1, (time - start) / 540);
+      const eased = p * p * (3 - 2 * p);
+      window.scrollTo({ top: from + (to - from) * eased, behavior: 'instant' });
+      if (p < 1) sectionScrollFrame = requestAnimationFrame(step);
+      else arrive();
+    }
+    sectionScrollFrame = requestAnimationFrame(step);
+  }
+
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener('click', (event) => {
       if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      if (link.matches('.hero-scroll-cue')) return;
+      let target;
+      try { target = document.getElementById(decodeURIComponent(link.hash.slice(1))); } catch { return; }
+      if (!target || (!sections.includes(target) && !link.closest('.archive-jumps'))) return;
+      event.preventDefault();
       activateAnchor(link.hash.slice(1));
+      if (location.hash !== link.hash) history.pushState(null, '', link.hash);
+      moveToSection(target, event.detail === 0);
     });
   });
+
+  window.addEventListener('wheel', stopSectionMotion, { passive: true });
+  window.addEventListener('touchstart', stopSectionMotion, { passive: true });
+  window.addEventListener('keydown', event => {
+    if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' ', 'Escape', 'Tab'].includes(event.key)) stopSectionMotion();
+  });
+  window.addEventListener('pagehide', stopSectionMotion);
+  window.addEventListener('beforeprint', stopSectionMotion);
+  window.addEventListener('popstate', stopSectionMotion);
+  window.addEventListener('hashchange', stopSectionMotion);
+  window.addEventListener('resize', stopSectionMotion, { passive: true });
+  navigationMotion.addEventListener('change', event => { if (event.matches) stopSectionMotion(); });
 
   window.addEventListener('scroll', scheduleNavigation, { passive: true });
   window.addEventListener('resize', scheduleNavigation, { passive: true });

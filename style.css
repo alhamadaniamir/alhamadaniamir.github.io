@@ -120,7 +120,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, .profile::-webkit-scrollbar, .
 .profile-availability { display: flex; align-items: center; gap: 7px; width: fit-content; margin-top: 10px; padding: 5px 10px; border: 1px solid var(--border-accent); border-radius: 999px; background: var(--soft-green); color: var(--accent); font-size: 11px; font-weight: 600; line-height: 1.5; }
 .profile-availability::before { content: ""; flex: 0 0 6px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 .profile-school { margin-top: 4px; color: var(--muted); font-size: 12px; line-height: 1.7; max-width: 205px; }
-.profile-links { display: grid; gap: 12px; margin-top: 28px; padding-top: 23px; border-top: 1px solid var(--rule); max-width: 194px; }
+.profile-links { display: grid; gap: 12px; margin-top: 28px; padding-top: 23px; border-top: 1px solid var(--rule); max-width: 100%; }
 .profile-links a { display: flex; align-items: center; gap: 10px; width: 100%; font-size: 12px; line-height: 1.5; color: var(--muted); transition: color .15s ease; }
 .profile-links a:hover { color: var(--accent); }
 .profile-links .profile-resume { width: 100%; flex-basis: 100%; padding: 5px 0; border-radius: 0; background: var(--soft-green); color: var(--accent); font-weight: 600; text-decoration: none; }
@@ -162,14 +162,14 @@ html.theme-reveal::view-transition { pointer-events: none; }
 @media (prefers-reduced-motion: no-preference) {
   html:not(.theme-reveal) .site-header { view-transition-name: site-header; }
   html:active-view-transition-type(page)::view-transition-old(root) { animation: page-depart .26s ease-out both; mix-blend-mode: normal; }
-  html:active-view-transition-type(page)::view-transition-new(root) { animation: page-arrive .56s .06s cubic-bezier(.22, 1, .36, 1) both; mix-blend-mode: normal; }
+  html:active-view-transition-type(page)::view-transition-new(root) { animation: page-arrive .96s .04s cubic-bezier(.22, 1, .36, 1) both; mix-blend-mode: normal; }
   html:active-view-transition-type(page)::view-transition-group(site-header),
   html:active-view-transition-type(page)::view-transition-old(site-header),
   html:active-view-transition-type(page)::view-transition-new(site-header) { animation: none; mix-blend-mode: normal; }
   html:active-view-transition-type(page)::view-transition { pointer-events: none; }
 }
 @keyframes page-depart { to { opacity: 0; transform: translateY(-8px); } }
-@keyframes page-arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes page-arrive { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 
 @keyframes detail-reveal { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 .project-details[open] > .details-content { animation: detail-reveal .28s ease-out; }
@@ -521,7 +521,7 @@ html.media-viewer-open { overflow: hidden; }
   .page-layout { max-width: 1280px; grid-template-columns: 250px minmax(0, 1fr); column-gap: 100px; padding-top: 88px; }
   .profile-mark { width: 212px; height: 230px; }
   .profile-art { width: 212px; height: 212px; }
-  .profile-links { max-width: 212px; }
+  .profile-links { max-width: 100%; }
   .site-footer { max-width: 1184px; }
   .prose p { font-size: 16px; }
   h1 { font-size: 56px; }
@@ -533,7 +533,7 @@ html.media-viewer-open { overflow: hidden; }
   .profile-mark { width: 170px; height: 188px; }
   .profile-art { width: 170px; height: 170px; }
   .profile-name { font-size: 29px; }
-  .profile-links { max-width: 170px; }
+  .profile-links { max-width: 100%; }
   .profile-school { max-width: 170px; }
   .main-nav { gap: 4px; }
   .header-resume { margin-left: 28px; }

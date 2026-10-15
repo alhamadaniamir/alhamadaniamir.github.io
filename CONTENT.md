@@ -156,7 +156,7 @@ After the welcome, the homepage opens on a full-screen profile introduction,
 with the top navigation hidden and a compact View Resume link to the right of
 the social links. It opens the PDF in a new tab. The full label remains visible
 at every screen size; its PDF badge is hidden on smaller screens. One downward
-wheel action, upward swipe, or Page Down starts a 1.6-second transition: the portrait
+wheel action, upward swipe, or Page Down starts a one-second transition: the portrait
 moves into the sidebar, while the two heading lines and About paragraphs arrive
 alternately from the left and right and settle into place. The portrait has a soft
 green halo and a slight lift on hover, with no increase in glow intensity. Navigation
@@ -171,8 +171,16 @@ Reduced-motion preferences and short viewports keep the introduction in normal
 page flow.
 
 The sidebar displays an **Open to work** badge beneath the student role and
-highlights the résumé link beneath LinkedIn. The dropdown menus contain the
-portfolio pages; the résumé is available from the welcome screen and sidebar.
+highlights the résumé link across the full sidebar width beneath LinkedIn. The
+dropdown menus contain the portfolio pages; the résumé is available from the
+welcome screen and sidebar.
+
+The top bookmarks scroll to their sections and replay a short text entrance on
+every click, including repeated visits. Scrolling takes about half a second and
+the heading settles immediately afterward. Manual scrolling or keyboard movement
+cancels this motion; reduced-motion preferences make section changes immediate.
+Full-page links record their destination for a reliable one-second arrival even
+when the browser omits referrer details.
 
 `script.js` uses the browser's intersection observer and animation APIs. Content
 stays visible without JavaScript or animation support. Reduced-motion preferences,

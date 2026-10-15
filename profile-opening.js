@@ -31,7 +31,7 @@
   let completed = false;
   let autoplayProgress = null;
   const sessionKey = 'portfolio-profile-welcome-seen';
-  const entryDuration = 1600;
+  const entryDuration = 1000;
   const clamp = value => Math.min(1, Math.max(0, value));
   const ease = value => { const p = clamp(value); return p * p * (3 - 2 * p); };
   const mix = (a, b, p) => a + (b - a) * p;
@@ -304,6 +304,8 @@
     try { target = id && document.getElementById(decodeURIComponent(id)); } catch { return; }
     if (target && layout.contains(target)) navigateTo(target, 'instant');
   }
+
+  document.addEventListener('portfolio:enter-main', () => completeOpening(false));
 
   document.addEventListener('click', event => {
     const link = event.target.closest('a[href^="#"]');
