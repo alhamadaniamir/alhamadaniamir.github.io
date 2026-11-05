@@ -175,7 +175,7 @@ until that first visit is confirmed. Internal returns, bookmarked sections, relo
 and browser history go directly to the main content, including when the opening
 was left unfinished. Portfolio links target the About section explicitly.
 
-The sidebar displays an **Open to work** badge beneath the student role and
+The sidebar displays an **Open to work** badge beneath the Computer Engineer role and
 highlights the résumé link across the full sidebar width beneath LinkedIn. The
 dropdown menus contain the portfolio pages; the résumé is available from the
 welcome screen and sidebar.
@@ -314,9 +314,8 @@ the result without watching the video.
 
 ## Certifications
 
-The home page shows seven selected certificates and seminar records in a continuously moving row.
-These include Google and Cisco cybersecurity, ISC2 CC training, cloud security,
-digital marketing, blockchain, and peacebuilding.
+The home page shows four selected certificates and seminar records in a continuously moving row.
+These include Google and Cisco cybersecurity, ISC2 CC training, and cloud security.
 Cards gently grow as they reach the center, then return to their normal size.
 Clicking the strip pauses or resumes it; opening a certificate leaves it paused.
 Keyboard focus also pauses movement. Visitors can browse with the arrows or
