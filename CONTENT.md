@@ -381,7 +381,7 @@ publish; these local changes do not update the live site automatically.
   Section bookmarks move to a second row on narrow or zoomed screens, and the
   measured header height keeps section headings clear of the sticky navigation.
 - Edit your Word résumé, export it to PDF, and replace
-  `assets/Amir-Al-Hamadani-Resume.pdf`. Website text is edited separately.
+  `assets/ResumeForME.pdf`. Website text is edited separately.
   If your browser still shows an older PDF, refresh its tab or open it with a
   version query such as `?v=2026-09-11`.
 
