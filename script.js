@@ -4,6 +4,25 @@
   const year = document.querySelector('#year');
   if (year) year.textContent = String(new Date().getFullYear());
 
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="engineering-marks" aria-hidden="true">
+      <span class="engineering-mark engineering-mark--circuit">V = IR</span>
+      <span class="engineering-mark engineering-mark--robot">
+        <span class="engineering-arm"><i></i><i></i><i></i></span>
+      </span>
+      <span class="engineering-mark engineering-mark--controller">
+        <span class="engineering-chip"></span>
+      </span>
+      <span class="engineering-mark engineering-mark--torque">τ = r × F</span>
+    </div>
+  `);
+  document.querySelector('.about-section > .section-eyebrow')?.insertAdjacentHTML(
+    'beforeend', '<span class="engineering-inline" aria-hidden="true">V = IR</span>',
+  );
+  document.querySelector('.work-section > .section-heading')?.insertAdjacentHTML(
+    'beforeend', '<span class="engineering-inline" aria-hidden="true"><span class="engineering-chip"></span></span>',
+  );
+
   function initCertificateReels() {
     document.querySelectorAll('.home-page .certificate-list').forEach((group, reelIndex) => {
       const cards = [...group.querySelectorAll(':scope > .certificate-card')];
