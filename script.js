@@ -4,21 +4,6 @@
   const year = document.querySelector('#year');
   if (year) year.textContent = String(new Date().getFullYear());
 
-  document.body.insertAdjacentHTML('beforeend', `
-    <div class="engineering-marks" aria-hidden="true">
-      <span class="engineering-mark engineering-mark--voltage">V = IR</span>
-      <span class="engineering-mark engineering-mark--torque">τ = r × F</span>
-      <span class="engineering-mark engineering-mark--position">Δx ≈ J Δθ</span>
-      <span class="engineering-mark engineering-mark--period">f = 1/T</span>
-      <span class="engineering-mark engineering-mark--power">P = IV</span>
-      <span class="engineering-mark engineering-mark--signal"><i></i><span>PWM</span></span>
-      <span class="engineering-mark engineering-hardware engineering-mark--arm"></span>
-      <span class="engineering-mark engineering-hardware engineering-mark--board"></span>
-      <span class="engineering-mark engineering-hardware engineering-mark--motor"></span>
-      <span class="engineering-mark engineering-hardware engineering-mark--chip"></span>
-    </div>
-  `);
-
   function initCertificateReels() {
     document.querySelectorAll('.home-page .certificate-list').forEach((group, reelIndex) => {
       const cards = [...group.querySelectorAll(':scope > .certificate-card')];
