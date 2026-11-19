@@ -107,7 +107,7 @@ body { isolation: isolate; }
 .engineering-hardware {
   width: clamp(62px, 6.8vw, 96px);
   aspect-ratio: 1;
-  background: url("assets/engineering-icons.svg") no-repeat 0 0 / 400% 300%;
+  background: url("assets/engineering-hardware-catalog.webp") no-repeat 0 0 / 400% 300%;
   opacity: .53;
   transition: opacity .24s ease;
 }
