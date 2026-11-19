@@ -75,6 +75,13 @@ body { isolation: isolate; }
   overflow: hidden;
   color: var(--accent);
 }
+/* Keep foreground lettering legible as artwork passes behind a line. */
+@media screen {
+  :where(.about-section, .archive-intro, .profile) :where(h1, h2, p, .profile-links a:not(.profile-resume)) {
+    paint-order: stroke fill;
+    -webkit-text-stroke: 2.5px var(--paper);
+  }
+}
 .engineering-mark {
   position: absolute;
   top: 0;
@@ -85,34 +92,33 @@ body { isolation: isolate; }
   display: grid;
   justify-items: start;
   gap: 1px;
-  color: var(--accent);
-  font: 750 clamp(14px, 1.18vw, 18px) / 1.3 "Equation Rounded", ui-rounded, var(--sans);
+  color: color-mix(in srgb, var(--accent) 54%, var(--paper));
+  font: 750 clamp(15px, 1.19vw, 18px) / 1.3 "Equation Rounded", ui-rounded, var(--sans);
   letter-spacing: .018em;
   white-space: nowrap;
-  opacity: .35;
+  -webkit-font-smoothing: auto;
   transition: opacity .24s ease;
 }
 .engineering-equation small {
-  font: 600 .64em / 1.2 var(--sans);
+  font: 650 clamp(12px, .9vw, 14px) / 1.25 var(--sans);
   letter-spacing: .035em;
 }
-.engineering-equation.is-changing { opacity: 0; }
+
 .engineering-hardware {
-  width: clamp(52px, 6.6vw, 92px);
+  width: clamp(62px, 6.8vw, 96px);
   aspect-ratio: 1;
-  background: url("assets/engineering-icons.svg") no-repeat 0 0 / 200% 200%;
-  opacity: .42;
+  background: url("assets/engineering-icons.svg") no-repeat 0 0 / 400% 300%;
+  opacity: .53;
+  transition: opacity .24s ease;
 }
-.engineering-mark--board { background-position: right top; }
-.engineering-mark--motor { background-position: left bottom; }
-.engineering-mark--chip { background-position: right bottom; }
+.engineering-mark.is-changing { opacity: 0; }
 [data-theme="dark"] .engineering-hardware { filter: brightness(1.45); }
 html:is(.page-preparing, .page-loading, .welcome-active, .welcome-pending, .media-viewer-open) .engineering-marks {
   visibility: hidden;
 }
 @media (max-width: 760px) {
-  .engineering-equation { opacity: .28; }
-  .engineering-hardware { opacity: .32; }
+  .engineering-equation { color: color-mix(in srgb, var(--accent) 47%, var(--paper)); }
+  .engineering-hardware { opacity: .44; }
 }
 @media (prefers-reduced-motion: reduce) {
   .engineering-equation { transition: none; }

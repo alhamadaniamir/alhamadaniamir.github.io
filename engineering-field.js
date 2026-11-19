@@ -30,9 +30,47 @@
     ['Constant speed', 'distance = v × t'],
     ['One byte', '2⁸ = 256 values'],
     ['Symbol rate', 'baud = symbols ÷ time'],
-    ['Model accuracy', 'accuracy = correct ÷ total']
+    ['Model accuracy', 'accuracy = correct ÷ total'],
+    ['Wheel circumference', 'C = 2πr'],
+    ['Cache misses', 'misses = reads − hits'],
+    ['Packet payload', 'data = size − headers'],
+    ['Series resistance', 'R = R₁ + R₂'],
+    ['Turn distance', 'arc = rθ'],
+    ['CPU cycles', 'cycles = time × Hz'],
+    ['Packet loss', 'lost = sent − received'],
+    ['PWM duty cycle', 'duty = on-time ÷ period'],
+    ['Shaft speed', 'Hz = RPM ÷ 60'],
+    ['24-bit RGB pixels', 'bytes = pixels × 3'],
+    ['Time per bit', 'T = 1 ÷ bit rate'],
+    ['Electric charge', 'Q = I × t'],
+    ['Gear teeth (out / in)', 'ratio = N₂ ÷ N₁'],
+    ['4-byte words', 'bytes = words × 4'],
+    ['Wavelength', 'λ = speed ÷ f'],
+    ['Battery energy', 'Wh = V × Ah'],
+    ['Linear momentum', 'p = m × v'],
+    ['Binary place value', 'weight = 2ⁿ'],
+    ['Link utilization', 'load = rate ÷ capacity'],
+    ['RC time constant', 'τ = R × C'],
+    ['Uniform rotation', 'θ = ω × t'],
+    ['Four-bit word', '1 nibble = 4 bits'],
+    ['Parity bit (even)', 'p = ones mod 2'],
+    ['Kinetic energy', 'E = ½mv²'],
+    ['Distance by sonar', 'd = sound speed × t/2'],
+    ['Processor speedup', 'S = old time ÷ new time'],
+    ['Sampling period', 'Tₛ = 1 ÷ fₛ'],
+    ['Capacitor charge', 'Q = C × V'],
+    ['Net force', 'F = m × a'],
+    ['Hexadecimal', 'FF₁₆ = 255'],
+    ['Ping time', 'RTT = end − start'],
+    ['Lift energy', 'E = m × g × h'],
+    ['Wheel encoder', 'turns = pulses ÷ PPR'],
+    ['ADC levels', 'levels = 2ⁿ'],
+    ['Audio frames', 'frames = seconds × Hz'],
+    ['Control error', 'e = target − measured']
   ];
-  const icons = ['arm', 'board', 'motor', 'chip'];
+  // Row-major order of the twelve illustrations in the hardware sprite.
+  const icons = ['esp32', 'hexapod', 'rc-car', 'arm', 'nano', 'servo', 'sonar', 'camera',
+    'stepper', 'chip', 'wheel', 'gripper'];
   const gap = 12;
   const edge = 9;
   const field = document.createElement('div');
@@ -41,8 +79,11 @@
   document.body.append(field);
 
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const canHover = matchMedia('(any-hover: hover) and (any-pointer: fine)');
+  let pointer = null;
   const covered = '.page-preparing,.page-loading,.welcome-active,.welcome-pending,.media-viewer-open';
-  let marks = [], equations = [];
+  let marks = [], equations = [], hardware = [];
+  let nextIcon = 0, nextHardware = 0, changingIcon = null;
   let width = 0, height = 0, nextFormula = 0, nextEquation = 0;
   let frame = 0, lastTime = 0, elapsed = 0, changing = null;
 
@@ -52,6 +93,12 @@
     mark.label.textContent = formula[0];
     mark.value.textContent = formula[1];
     mark.formula = formula;
+  }
+
+  function setIcon(mark) {
+    const index = nextIcon++ % icons.length;
+    mark.element.dataset.icon = icons[index];
+    mark.element.style.backgroundPosition = `${index % 4 * 100 / 3}% ${Math.floor(index / 4) * 50}%`;
   }
 
   function measure(mark) {
@@ -71,7 +118,11 @@
     const x = mark.x + (mark.w - mark.textWidth) / 2;
     const y = mark.y + (mark.h - mark.textHeight) / 2;
     const angle = mark.icon ? 0 : mark.tilt + mark.sway * Math.sin(mark.phase);
-    mark.element.style.transform = `translate3d(${x.toFixed(2)}px,${y.toFixed(2)}px,0) rotate(${angle.toFixed(2)}deg)`;
+    // Keep live type on the display's pixel grid and use a flat transform.
+    const dpr = window.devicePixelRatio || 1;
+    const left = mark.icon ? x : Math.round(x * dpr) / dpr;
+    const top = mark.icon ? y : Math.round(y * dpr) / dpr;
+    mark.element.style.transform = `translate(${left.toFixed(2)}px,${top.toFixed(2)}px) rotate(${angle.toFixed(2)}deg)`;
   }
 
   function hasRoom(mark, x, y, w, h) {
@@ -85,10 +136,10 @@
     width = field.clientWidth;
     height = field.clientHeight;
     if (oldWidth === width && oldHeight === height) return;
-    const cols = Math.min(4, Math.max(1, Math.floor(width / (width <= 760 ? 183 : 240))));
-    const rows = Math.min(4, Math.max(1, Math.floor(height / 170)));
+    const cols = Math.min(width >= 1600 ? 6 : 5, Math.max(1, Math.floor(width / (width <= 760 ? 182 : 235))));
+    const rows = Math.min(5, Math.max(1, Math.floor(height / (width <= 760 ? 140 : 165))));
     const count = width >= 175 && height >= 120 ? rows * cols : 0;
-    const iconCount = Math.min(4, Math.ceil(count / 4), count - 1);
+    const iconCount = Math.min(icons.length, Math.ceil(count / 3), count - 1);
     // Mobile browser chrome can change the height while scrolling. Keep existing
     // trajectories whenever the resized field can still hold them.
     if (count && count === marks.length && oldWidth === width) {
@@ -100,29 +151,31 @@
       }
     }
     changing = null;
-    nextEquation = 0;
+    changingIcon = null;
+    nextHardware = nextIcon = nextEquation = 0;
     elapsed = 0;
     marks = [];
     field.replaceChildren();
-    const iconSlots = new Map();
+    const iconSlots = new Set();
     for (let i = 0; i < iconCount; i++) {
-      const offset = [.83, .15, .68, .35][i];
-      iconSlots.set(Math.floor((i + offset) * count / iconCount), icons[i]);
+      const offset = (.81 + i * .37) % 1;
+      iconSlots.add(Math.floor((i + offset) * count / iconCount));
     }
     for (let i = 0; i < count; i++) {
       const element = document.createElement('span');
-      const icon = iconSlots.get(i);
-      element.className = icon ? 'engineering-mark engineering-hardware engineering-mark--' + icon :
+      const icon = iconSlots.has(i);
+      element.className = icon ? 'engineering-mark engineering-hardware' :
         'engineering-mark engineering-equation';
       field.append(element);
       const angle = .68 + i * 2.4;
       const speed = 14 + i % 5 * 2;
       const mark = {
-        element, icon, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
-        tilt: (i % 2 ? 1 : -1) * (9 + i * 7 % 18), sway: 7 + i % 7,
+        element, icon, speed, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+        tilt: (i % 2 ? 1 : -1) * (6 + i * 5 % 13), sway: 4 + i % 5,
         phase: i * 1.74, turnRate: .18 + (i % 6) * .023
       };
-      if (!icon) {
+      if (icon) setIcon(mark);
+      else {
         mark.label = document.createElement('small');
         mark.value = document.createElement('span');
         element.append(mark.label, mark.value);
@@ -138,6 +191,7 @@
       render(m);
     });
     equations = marks.filter(mark => !mark.icon);
+    hardware = marks.filter(mark => mark.icon);
     syncMotion();
   }
 
@@ -176,6 +230,10 @@
     if (!changing && elapsed >= 3.2) {
       changing = equations[nextEquation++ % equations.length];
       changing.element.classList.add('is-changing');
+      if (hardware.length && nextEquation % 2 === 0) {
+        changingIcon = hardware[nextHardware++ % hardware.length];
+        changingIcon.element.classList.add('is-changing');
+      }
     }
     if (!changing || elapsed < 3.48) return;
     const m = changing;
@@ -192,9 +250,36 @@
     } else {
       setFormula(m, previous);
     }
+    if (changingIcon) {
+      setIcon(changingIcon);
+      changingIcon.element.classList.remove('is-changing');
+      changingIcon = null;
+    }
     m.element.classList.remove('is-changing');
     changing = null;
     elapsed = 0;
+  }
+
+  function steer(mark, dt) {
+    const pace = Math.hypot(mark.vx, mark.vy);
+    let dx = mark.vx / (pace || 1), dy = mark.vy / (pace || 1);
+    let influence = 0;
+    if (pointer) {
+      const awayX = mark.x + mark.w / 2 - pointer.x;
+      const awayY = mark.y + mark.h / 2 - pointer.y;
+      const distance = Math.hypot(Math.max(0, Math.abs(awayX) - mark.w / 2),
+        Math.max(0, Math.abs(awayY) - mark.h / 2));
+      influence = Math.max(0, 1 - distance / 125) ** 2;
+      const length = Math.hypot(awayX, awayY);
+      if (influence && length > .1) {
+        dx = awayX / length;
+        dy = awayY / length;
+      }
+    }
+    const response = 1 - Math.exp(-(1 + 5 * influence) * dt);
+    const targetSpeed = mark.speed + influence * 78;
+    mark.vx += (dx * targetSpeed - mark.vx) * response;
+    mark.vy += (dy * targetSpeed - mark.vy) * response;
   }
 
   function tick(time) {
@@ -203,6 +288,7 @@
     cycleFormula(dt);
     for (const m of marks) {
       m.phase += m.turnRate * dt;
+      steer(m, dt);
       advance(m, true, dt);
       advance(m, false, dt);
       render(m);
@@ -213,9 +299,12 @@
   function syncMotion() {
     if (document.hidden || reducedMotion.matches || document.documentElement.matches(covered) || !equations.length) {
       cancelAnimationFrame(frame);
+      pointer = null;
       frame = lastTime = 0;
       if (changing) {
         changing.element.classList.remove('is-changing');
+        changingIcon?.element.classList.remove('is-changing');
+        changingIcon = null;
         changing = null;
         elapsed = 0;
       }
@@ -223,6 +312,17 @@
   }
 
   function start() {
+    window.addEventListener('pointermove', event => {
+      if (event.pointerType === 'touch' || !canHover.matches || !frame) {
+        pointer = null;
+        return;
+      }
+      const bounds = field.getBoundingClientRect();
+      pointer = event.clientY >= bounds.top ? { x: event.clientX - bounds.left, y: event.clientY - bounds.top } : null;
+    }, { passive: true });
+    window.addEventListener('pointerout', event => { if (!event.relatedTarget) pointer = null; });
+    window.addEventListener('pointercancel', () => { pointer = null; });
+    window.addEventListener('blur', () => { pointer = null; });
     window.addEventListener('resize', layout, { passive: true });
     const header = document.querySelector('.site-header');
     if (header && 'ResizeObserver' in window) {

@@ -1,39 +1,165 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
-  <title>Engineering component illustrations</title>
-  <g stroke="#315f50" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round">
-    <!-- Articulated arm -->
-    <g>
-      <path fill="#c3d8c7" d="M19 78h34l3 5H16zM25 78l3-13h16l4 13z"/>
-      <path fill="#91b29d" d="M32 66 16 40l8-7 19 28z"/>
-      <path fill="#c3d8c7" d="m17 32 34-19 6 9-34 21z"/>
-      <path fill="#91b29d" d="m55 14 17 19-6 6-18-18z"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="384" height="288" viewBox="0 0 384 288">
+  <title>Embedded hardware and robotics illustrations</title>
+
+  <defs>
+    <linearGradient id="alloy" x2=".78" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#fcf8dd"/><stop offset=".38" stop-color="#c1cfc2"/>
+      <stop offset=".73" stop-color="#839791"/><stop offset="1" stop-color="#dae1d3"/>
+    </linearGradient>
+    <linearGradient id="enamel" x2=".85" y2="1">
+      <stop stop-color="#87a99a"/><stop offset=".4" stop-color="#558b77"/><stop offset="1" stop-color="#2d6159"/>
+    </linearGradient>
+    <linearGradient id="graphite" x2=".55" y2="1">
+      <stop stop-color="#586661"/><stop offset=".55" stop-color="#2f403d"/><stop offset="1" stop-color="#172c2b"/>
+    </linearGradient>
+    <linearGradient id="bronze" x2=".85" y2="1">
+      <stop stop-color="#e7cea3"/><stop offset=".55" stop-color="#b39467"/><stop offset="1" stop-color="#896744"/>
+    </linearGradient>
+    <g id="screw"><circle r="2" fill="url(#alloy)" stroke-width=".9"/><path d="m-1 .7 2-1.4" stroke-width=".8"/></g>
+    <g id="header">
+      <path d="M0 0h43" fill="none" stroke="#263d37" stroke-width="5.7"/>
+      <path d="M0 0h43" fill="none" stroke="#d3bb86" stroke-width="2.4" stroke-dasharray="1 4" stroke-linecap="butt"/>
+    </g>
+    <g id="tire">
+      <rect x="-7" y="-11" width="14" height="22" rx="4.5" fill="url(#graphite)"/>
+      <path d="m-5-8 4 2 6-1m-10 3 4 2 6-1m-10 3 4 2 6-1m-10 3 4 2 6-1" fill="none" stroke="#83918a" stroke-width="1.1"/>
+    </g>
+    <g id="leg" fill="none">
+      <path d="M37 39 24 32 14 36 9 46" stroke="#23413a" stroke-width="6.4"/>
+      <path d="M37 38 24 31 14 35 9 45" stroke="#a4b7a3" stroke-width="3.2"/>
+      <circle cx="25" cy="31" r="3" fill="url(#bronze)" stroke-width="1.3"/>
+      <circle cx="14" cy="35" r="2.2" fill="url(#alloy)" stroke-width="1"/>
+      <path d="m9 45-1 4" stroke="#293c36" stroke-width="3.5"/>
+    </g>
+    <g id="transducer">
+      <circle r="14" cy="2.5" fill="#677e75"/><circle r="14" fill="url(#alloy)"/>
+      <circle r="10.3" fill="#445d56"/>
+      <path d="M-7-5H7m-15 3h16m-16 3h16m-14 3H7m-10-12V8m4-17V9m4-16V7" stroke="#96aaa0" stroke-width=".9"/>
+    </g>
+  </defs>
+  <g stroke="#344d43" stroke-width="1.75" stroke-linejoin="round" stroke-linecap="round">
+  <!-- ESP32 development board -->
+  <g transform="translate(0 0)">
+<g transform="rotate(-12 48 48)">
+      <rect x="8" y="24" width="80" height="50" rx="5" fill="#294641"/>
+      <rect x="8" y="21" width="80" height="49" rx="5" fill="url(#enamel)"/>
+      <use href="#header" x="21" y="27"/><use href="#header" x="21" y="64"/>
+      <rect x="6" y="37" width="16" height="16" rx="2.5" fill="url(#alloy)"/>
+      <path d="M7 40h3v10H7" fill="#2f423c"/>
+      <rect x="34" y="33" width="26" height="24" rx="2" fill="url(#alloy)"/>
+      <path d="M38 39h11m-11 4h17m-17 3h9" fill="none" stroke="#6c7e75" stroke-width="1"/>
+      <path d="M62 55h16V35h-5v9h-4v-9h-5v13" fill="none" stroke="#d8b37d" stroke-width="1.8"/>
+      <rect x="25" y="41" width="5" height="9" fill="#37463d"/><use href="#screw" x="82" y="27"/><use href="#screw" x="82" y="64"/>
+    </g>
+  </g>
+  <!-- Six-legged walking robot -->
+  <g transform="translate(96 0)">
+<g transform="rotate(-12 48 48)">
+      <use href="#leg" transform="rotate(22 38 40) translate(1 -8)"/>
+      <use href="#leg" transform="translate(-2 7)"/><use href="#leg" transform="rotate(-20 37 59) translate(0 22)"/>
+      <g transform="translate(96 0) scale(-1 1)">
+        <use href="#leg" transform="rotate(22 38 40) translate(1 -8)"/>
+        <use href="#leg" transform="translate(-2 7)"/><use href="#leg" transform="rotate(-20 37 59) translate(0 22)"/>
+      </g>
+      <path d="m39 23 17 1 8 11-2 28-9 9-14-3-6-12 1-26z" fill="#40534b"/>
+      <path d="m39 20 17 1 8 11-2 28-9 9-14-3-6-12 1-26z" fill="url(#enamel)"/>
+      <path d="m41 28 12-1 5 7-2 23-6 5-10-3-2-9z" fill="url(#alloy)"/>
+      <rect x="42" y="32" width="11" height="18" rx="2" fill="#465a4d"/>
+      <path d="m44 37 7 0m-7 4h7m-8 13h12" stroke="#b9b99c" stroke-width="1.4"/>
+      <use href="#screw" x="38" y="33"/><use href="#screw" x="58" y="59"/>
+    </g>
+  </g>
+  <!-- RC rally car -->
+  <g transform="translate(192 0)">
+<g transform="rotate(32 48 48)">
+      <path d="M27 30h42M24 65h48" stroke="#304840" stroke-width="5"/>
+      <use href="#tire" x="27" y="28"/><use href="#tire" x="69" y="28"/>
+      <use href="#tire" x="25" y="65"/><use href="#tire" x="71" y="65"/>
+      <path d="m38 14 17-1 8 7 4 44-6 14-25 1-6-13 3-44z" fill="url(#enamel)"/>
+      <path d="m38 19 19-1 4 9-26 1z" fill="#c0c6a8"/>
+      <path d="m39 34 17-1 4 13-23 1z" fill="url(#graphite)"/>
+      <path d="m43 35 4-1-7 9h-2z" fill="#acc6bb" stroke="none"/>
+      <path d="m39 51 19-1 2 11-23 1z" fill="#738f80"/>
+      <path d="m35 31 5 1m17-2 4-1" stroke="#f1d398" stroke-width="2.6"/>
+      <path d="m41 64-3 10m17-11 3 10" fill="none" stroke="#d0b888" stroke-width="2.4"/>
+      <rect x="24" y="75" width="47" height="6" rx="1.4" fill="url(#graphite)"/>
+    </g>
+  </g>
+  <!-- Industrial robot arm -->
+  <g transform="translate(288 0)">
+<g>
+      <path fill="url(#alloy)" d="M19 78h34l3 5H16zM25 78l3-13h16l4 13z"/>
+      <path fill="url(#enamel)" d="M32 66 16 40l8-7 19 28z"/>
+      <path fill="url(#alloy)" d="m17 32 34-19 6 9-34 21z"/>
+      <path fill="url(#enamel)" d="m55 14 17 19-6 6-18-18z"/>
       <path d="m70 35 6 6m-6 2-1 9 6 5m2-17 8 3 1 8" fill="none"/>
-      <circle cx="36" cy="63" r="8" fill="#d5e2d4"/>
-      <circle cx="21" cy="37" r="7.5" fill="#d5e2d4"/>
-      <circle cx="53" cy="18" r="5.5" fill="#d5e2d4"/>
-      <circle cx="69" cy="35" r="4" fill="#d5e2d4"/>
+      <circle cx="36" cy="63" r="8" fill="url(#alloy)"/>
+      <circle cx="21" cy="37" r="7.5" fill="url(#alloy)"/>
+      <circle cx="53" cy="18" r="5.5" fill="url(#alloy)"/>
+      <circle cx="69" cy="35" r="4" fill="url(#alloy)"/>
       <path d="m31 32 12-7" fill="none" stroke-width="2"/>
       <g fill="#315f50" stroke="none">
         <circle cx="36" cy="63" r="2.4"/>
         <circle cx="21" cy="37" r="2.2"/>
       </g>
     </g>
-    <!-- Microcontroller development board with its antenna and header pins -->
-    <g transform="translate(96) rotate(-12 48 48)">
-      <rect x="11" y="24" width="74" height="48" rx="6" fill="#a7c2ae"/>
-      <rect x="8" y="39" width="15" height="18" rx="2" fill="#e0e9dc"/>
-      <path d="M12 44v8" fill="none" stroke-width="2"/>
-      <rect x="31" y="36" width="29" height="24" rx="2" fill="#d5e2d4"/>
-      <path d="M37 42h12m-12 5h7m19 8h13V41h-5v7h-4V38h12" fill="none" stroke-width="2"/>
-      <path d="M19 30h58m-58 36h58" fill="none" stroke-width="3.6" stroke-dasharray=".1 7.2"/>
+  </g>
+  <!-- Nano-style microcontroller board -->
+  <g transform="translate(0 96)">
+<g transform="rotate(12 48 48)">
+      <path d="M12 32h72v37H12z" fill="#41544b"/>
+      <rect x="12" y="28" width="72" height="37" rx="3" fill="url(#enamel)"/>
+      <use href="#header" transform="translate(20 32) scale(1.26 1)"/><use href="#header" transform="translate(20 61) scale(1.26 1)"/>
+      <rect x="9" y="39" width="15" height="17" rx="2" fill="url(#alloy)"/>
+      <rect x="34" y="38" width="17" height="17" rx="1" transform="rotate(45 42 46)" fill="url(#graphite)"/>
+      <rect x="55" y="40" width="6" height="11" rx="2" fill="url(#alloy)"/>
+      <rect x="66" y="40" width="8" height="8" fill="url(#bronze)"/><circle cx="70" cy="44" r="2.2" fill="#343f39"/>
+      <path d="M25 36h7m-6 18h6m20 1h6m9-2h7" stroke="#c5b482" stroke-width="1.5"/>
     </g>
-    <!-- Stepper motor with mounting holes and a projecting shaft -->
-    <g transform="translate(0 96)">
+  </g>
+  <!-- Hobby servo and horn -->
+  <g transform="translate(96 96)">
+<path d="M59 65q4 13 16 9t14-17" fill="none" stroke="#a18058" stroke-width="3.5"/>
+    <path d="M59 68q5 15 18 8t13-16" fill="none" stroke="#405047" stroke-width="2"/>
+    <path d="m18 46 32-13 20 9 0 26-32 11-20-9z" fill="url(#enamel)"/>
+    <path d="m18 46 20 9 32-13-20-9z" fill="url(#alloy)"/>
+    <path d="m38 55 0 24m5-12 21-8m-21 12 21-8" fill="none" stroke="#496d60"/>
+    <path d="m13 48 10-4 9 4-10 5zm47-6 12-4 8 4-12 5z" fill="url(#graphite)"/>
+    <ellipse cx="35" cy="43" rx="11" ry="6" fill="#9aab9c"/>
+    <path d="m29 41-13-6q-3-3 1-4l17 6 21-10q5-2 6 2l-21 13-1 5-6 2z" fill="url(#alloy)"/>
+    <use href="#screw" x="35" y="41"/><path d="m45 34 10-5" stroke="#7c9184" stroke-dasharray="1 3"/>
+  </g>
+  <!-- Ultrasonic rangefinder -->
+  <g transform="translate(192 96)">
+<g transform="rotate(-9 48 48)">
+      <path d="M10 34h76v31H10z" fill="#344e43"/><rect x="9" y="29" width="77" height="32" rx="3" fill="url(#enamel)"/>
+      <use href="#transducer" x="29" y="42"/><use href="#transducer" x="66" y="42"/>
+      <rect x="38" y="57" width="20" height="5" rx="1" fill="url(#graphite)"/>
+      <path d="M40 62v11m5-11v12m5-12v12m5-12v10" stroke="#b8986a" stroke-width="2.2"/>
+      <use href="#screw" x="14" y="34"/><use href="#screw" x="81" y="56"/>
+    </g>
+  </g>
+  <!-- Camera microcontroller module -->
+  <g transform="translate(288 96)">
+<g transform="rotate(-10 48 48)">
+      <rect x="21" y="16" width="55" height="68" rx="4" fill="#354d46"/>
+      <rect x="20" y="13" width="55" height="67" rx="4" fill="url(#enamel)"/>
+      <use href="#header" transform="translate(25 22) rotate(90)"/><use href="#header" transform="translate(69 22) rotate(90)"/>
+      <rect x="33" y="21" width="29" height="18" rx="1" fill="url(#alloy)"/>
+      <path d="m38 34 3 15h11l-3-15" fill="url(#bronze)"/>
+      <rect x="32" y="43" width="27" height="27" rx="3" fill="url(#graphite)"/>
+      <circle cx="45.5" cy="56.5" r="10.5" fill="url(#alloy)"/><circle cx="45.5" cy="56.5" r="7.6" fill="#243a37"/>
+      <circle cx="43" cy="54" r="2.6" fill="#9ccac6"/><use href="#screw" x="25" y="73"/><use href="#screw" x="69" y="73"/>
+    </g>
+  </g>
+  <!-- Stepper motor -->
+  <g transform="translate(0 192)">
+<g>
       <path fill="#bbd2bf" d="m20 25 14-12 32 5 9 9-15 12z"/>
       <path fill="#80a28e" d="m60 36 15-11 1 38-15 13z"/>
       <path d="m65 40 6-5m-6 12 6-5m-6 12 6-5" fill="none" stroke-width="2"/>
-      <path fill="#d5e2d4" d="m17 25 38 5 7 7 1 39-6 5-37-6-6-7-1-37z"/>
-      <ellipse cx="37" cy="52" rx="15" ry="16" fill="#a7c2ae"/>
+      <path fill="url(#alloy)" d="m17 25 38 5 7 7 1 39-6 5-37-6-6-7-1-37z"/>
+      <ellipse cx="37" cy="52" rx="15" ry="16" fill="url(#enamel)"/>
       <path d="M32 46c4-1 8 3 8 7 0 2-1 3-2 4L24 68l-7-9z" fill="#c5d8c8"/>
       <ellipse cx="21" cy="63" rx="4.5" ry="6" transform="rotate(-33 21 63)" fill="#e0e9dc"/>
       <g fill="#315f50" stroke="none">
@@ -41,13 +167,39 @@
         <circle cx="55" cy="72" r="2.2"/><circle cx="22" cy="70" r="1.8"/>
       </g>
     </g>
-    <!-- Integrated circuit with pin-one index -->
-    <g transform="translate(96 96) rotate(10 48 48)">
+  </g>
+  <!-- Microcontroller package -->
+  <g transform="translate(96 192)">
+<g transform="rotate(10 48 48)"><g>
       <path d="M31 26V16m9 10V16m9 10V16m9 10V16m9 10V16M31 70v10m9-10v10m9-10v10m9-10v10m9-10v10M26 30H16m10 9H16m10 9H16m10 9H16m10 9H16m54-36h10m-10 9h10m-10 9h10m-10 9h10m-10 9h10" fill="none" stroke-width="3.2"/>
-      <rect x="24" y="24" width="48" height="48" rx="5" fill="#a7c2ae"/>
-      <rect x="32" y="32" width="32" height="32" rx="2" fill="#d5e2d4"/>
+      <rect x="24" y="24" width="48" height="48" rx="5" fill="url(#enamel)"/>
+      <rect x="32" y="32" width="32" height="32" rx="2" fill="url(#alloy)"/>
       <path d="M41 44h9v8h6m-15 4v-5" fill="none" stroke-width="2.3"/>
       <circle cx="29" cy="29" r="1.7" fill="#315f50" stroke="none"/>
+    </g></g>
+  </g>
+  <!-- Robot drive wheel -->
+  <g transform="translate(192 192)">
+<g transform="rotate(-17 48 48)">
+      <ellipse cx="52" cy="49" rx="30" ry="34" fill="url(#graphite)"/>
+      <path d="m59 18 9 5m-3-1 8 6m-4-1 8 6m-5 0 7 6m-5 0 6 6m-5 0 5 6m-6 0 5 6m-6 0 4 6m-6 0 3 5" fill="none" stroke="#859188" stroke-width="2"/>
+      <ellipse cx="44" cy="48" rx="25" ry="32" fill="#41554b"/>
+      <ellipse cx="44" cy="48" rx="18.5" ry="24" fill="url(#bronze)"/>
+      <ellipse cx="44" cy="48" rx="13" ry="18" fill="#586c5e"/>
+      <path d="m44 30 0 35m-11-23 22 13m-21 1 21-16" stroke="#bba983" stroke-width="4"/>
+      <ellipse cx="44" cy="48" rx="6.5" ry="8" fill="url(#alloy)"/><use href="#screw" x="44" y="48"/>
     </g>
+  </g>
+  <!-- Two-finger parallel gripper -->
+  <g transform="translate(288 192)">
+<g transform="rotate(20 48 48)">
+      <path d="m25 19 6 0 2 14 8 10-5 7-11-14zm46 0-6 0-2 14-8 10 5 7 11-14z" fill="url(#alloy)"/>
+      <path d="m25 19 6 0 0 8-6 1zm46 0-6 0 0 8 6 1z" fill="url(#graphite)"/>
+      <path d="m36 42 14 11-5 6-13-11zm24 0L45 53l5 6 14-11z" fill="url(#bronze)"/>
+      <path d="M29 49h36v17l-8 7H34l-5-7z" fill="url(#enamel)"/>
+      <rect x="38" y="69" width="19" height="10" rx="2" fill="url(#graphite)"/>
+      <use href="#screw" x="35" y="54"/><use href="#screw" x="59" y="54"/><path d="M36 62h21" stroke="#96b19f"/>
+    </g>
+  </g>
   </g>
 </svg>
