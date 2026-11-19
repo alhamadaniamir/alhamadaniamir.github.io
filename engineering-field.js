@@ -138,8 +138,9 @@
     if (oldWidth === width && oldHeight === height) return;
     const cols = Math.min(4, Math.max(1, Math.floor(width / (width <= 760 ? 183 : 240))));
     const rows = Math.min(4, Math.max(1, Math.floor(height / 170)));
-    const count = width >= 175 && height >= 120 ? rows * cols : 0;
-    const iconCount = Math.min(4, Math.ceil(count / 4), count - 1);
+    const cellCount = width >= 175 && height >= 120 ? rows * cols : 0;
+    const iconCount = Math.min(4, Math.ceil(cellCount / 4), Math.max(0, cellCount - 1));
+    const count = Math.min(cellCount, Math.max(iconCount + 1, cellCount - 2));
     // Mobile browser chrome can change the height while scrolling. Keep existing
     // trajectories whenever the resized field can still hold them.
     if (count && count === marks.length && oldWidth === width) {
@@ -186,8 +187,9 @@
     const cellWidth = width / cols, cellHeight = height / rows;
     marks.forEach((m, i) => {
       Object.assign(m, measure(m));
-      m.x = i % cols * cellWidth + edge + (.11 + (i * .618) % .78) * (cellWidth - m.w - 2 * edge);
-      m.y = Math.floor(i / cols) * cellHeight + edge + (.24 + (i * .414) % .69) * (cellHeight - m.h - 2 * edge);
+      const cell = Math.round(i * (cellCount - 1) / Math.max(1, count - 1));
+      m.x = cell % cols * cellWidth + edge + (.11 + (i * .618) % .78) * (cellWidth - m.w - 2 * edge);
+      m.y = Math.floor(cell / cols) * cellHeight + edge + (.24 + (i * .414) % .69) * (cellHeight - m.h - 2 * edge);
       render(m);
     });
     equations = marks.filter(mark => !mark.icon);
