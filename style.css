@@ -56,6 +56,14 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, .profile::-webkit-scrollbar, .
 .skip-link { position: fixed; z-index: 20; top: 12px; left: 12px; padding: 10px 18px; background: var(--accent); color: var(--paper); transform: translateY(-160%); }
 .skip-link:focus { transform: translateY(0); }
 
+@font-face {
+  font-family: "Equation Rounded";
+  src: url("assets/fonts/nunito-equations.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 750;
+  font-display: swap;
+}
+
 /* A layer beneath the page lets the artwork drift across the viewport. */
 body { isolation: isolate; }
 .engineering-marks {
@@ -74,24 +82,19 @@ body { isolation: isolate; }
   width: max-content;
 }
 .engineering-equation {
-  padding: 4px 13px 5px;
-  border: 1px solid color-mix(in srgb, var(--accent) 58%, transparent);
-  border-radius: 999px;
-  background: linear-gradient(150deg, var(--paper), var(--soft-green));
-  color: var(--accent-dark);
-  font: italic clamp(13px, 1.12vw, 17px) / 1.2 var(--serif);
+  display: grid;
+  justify-items: start;
+  gap: 1px;
+  color: var(--accent);
+  font: 750 clamp(14px, 1.18vw, 18px) / 1.3 "Equation Rounded", ui-rounded, var(--sans);
+  letter-spacing: .018em;
   white-space: nowrap;
-  opacity: .32;
+  opacity: .35;
   transition: opacity .24s ease;
 }
-.engineering-equation::before {
-  content: "";
-  position: absolute;
-  inset: 2px auto auto 10px;
-  width: 26%;
-  height: 1px;
-  border-radius: 50%;
-  background: var(--paper);
+.engineering-equation small {
+  font: 600 .64em / 1.2 var(--sans);
+  letter-spacing: .035em;
 }
 .engineering-equation.is-changing { opacity: 0; }
 .engineering-hardware {
@@ -108,7 +111,7 @@ html:is(.page-preparing, .page-loading, .welcome-active, .welcome-pending, .medi
   visibility: hidden;
 }
 @media (max-width: 760px) {
-  .engineering-equation { opacity: .24; padding-inline: 10px; }
+  .engineering-equation { opacity: .28; }
   .engineering-hardware { opacity: .32; }
 }
 @media (prefers-reduced-motion: reduce) {
