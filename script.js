@@ -311,7 +311,7 @@
       requested = intent?.path === canonicalPagePath(new URL(location.href)) && Date.now() - intent.time < 15000;
       if (requested) sessionStorage.removeItem(pageIntentKey);
     } catch { /* Normal arrival does not require storage. */ }
-    const content = document.querySelector('main');
+    const content = document.querySelector('.home-page .page-layout, .archive-main');
     if (!content || typeof content.animate !== 'function' ||
         window.portfolioPageTransition ||
         document.documentElement.matches('.welcome-active, .welcome-pending')) return;
@@ -372,8 +372,8 @@
       readinessObserver.disconnect();
       try {
         const animation = content.animate(
-          [{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'translateY(0)' }],
-          { duration: 1000, easing: 'cubic-bezier(.22, 1, .36, 1)' },
+          [{ opacity: .7 }, { opacity: 1 }],
+          { duration: 320, easing: 'cubic-bezier(.2, .65, .3, 1)' },
         );
         animation.id = 'page-enter';
         entranceAnimation = animation;
