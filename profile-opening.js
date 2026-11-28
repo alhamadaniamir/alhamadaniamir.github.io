@@ -31,7 +31,7 @@
   let completed = false;
   let autoplayProgress = null;
   const sessionKey = 'portfolio-profile-welcome-seen';
-  const entryDuration = 1000;
+  const entryDuration = 920;
   const clamp = value => Math.min(1, Math.max(0, value));
   const ease = value => { const p = clamp(value); return p * p * (3 - 2 * p); };
   const mix = (a, b, p) => a + (b - a) * p;
@@ -65,7 +65,7 @@
       return;
     }
     const headerProgress = enabled ? (autoplayProgress ?? window.scrollY / distance) : window.scrollY / Math.max(1, hero.offsetHeight);
-    const navigation = ease((headerProgress - .4) / .4);
+    const navigation = ease((headerProgress - .4) / .46);
     header.style.setProperty('--opening-navigation', String(navigation));
     body.classList.toggle('opening-header-hidden', navigation === 0);
     if (!loading()) header.inert = navigation < .95;
@@ -76,29 +76,33 @@
     body.classList.toggle('hero-morph-active', active);
     body.classList.toggle('hero-morph-complete', !active);
     layout.style.setProperty('--opening-offset', px(Math.min(0, window.scrollY - distance)));
-    const departure = ease((progress - .04) / .28);
+    const departure = ease((progress - .04) / .34);
     hero.style.setProperty('--opening-extras', String(1 - departure));
-    hero.style.setProperty('--opening-copy-shift', px(-20 * departure));
-    hero.style.setProperty('--opening-ring-scale', String(.96 + .12 * departure));
+    hero.style.setProperty('--opening-copy-shift', px(-12 * departure));
+    hero.style.setProperty('--opening-ring-scale', String(.96 + .06 * departure));
     hero.style.setProperty('--opening-cue', String(1 - ease((progress - .12) / .25)));
-    layout.style.setProperty('--opening-reveal-opacity', String(ease((progress - .23) / .22)));
-    profile.style.setProperty('--opening-sidebar-opacity', String(ease((progress - .76) / .22)));
+    const reveal = ease((progress - .24) / .46);
+    layout.style.setProperty('--opening-reveal-opacity', String(reveal));
+    layout.style.setProperty('--opening-reveal-y', px(12 * (1 - reveal)));
+    profile.style.setProperty('--opening-sidebar-opacity', String(ease((progress - .62) / .36)));
     hero.style.setProperty('--opening-glow', String(1 - ease((progress - .4) / .5)));
+    // Once the portraits align, show the sidebar photo under the departing one.
+    profile.style.setProperty('--opening-portrait-opacity', String(ease((progress - .8) / .08)));
+    hero.style.setProperty('--opening-flight-opacity', String(1 - ease((progress - .88) / .11)));
     textPieces.forEach((piece, index) => {
-      const delay = index < 2 ? .3 + index * .04 : .4 + (index - 2) * .04;
-      const p = clamp((progress - delay) / (index < 2 ? .45 : .4));
-      const t = p - 1;
-      const settle = 1 + 2.08 * t * t * t + 1.08 * t * t;
-      const travel = window.innerWidth <= 760 ? 12 : 28;
-      piece.style.setProperty('--piece-shift', px((index % 2 ? 1 : -1) * travel * (1 - settle)));
-      piece.style.setProperty('--piece-opacity', String(ease(p)));
+      const delay = index < 2 ? .31 + index * .04 : .42 + (index - 2) * .04;
+      const p = ease((progress - delay) / .4);
+      const travel = window.innerWidth <= 760 ? 8 : 18;
+      piece.style.setProperty('--piece-shift', px((index % 2 ? 1 : -1) * travel * (1 - p)));
+      piece.style.setProperty('--piece-opacity', String(p));
     });
 
     if (active) {
       const p = ease((progress - .03) / .77);
       const { start, end, source } = portrait;
+      const lift = window.innerWidth <= 760 ? 5 : 12;
       source.style.setProperty('--flight-x', px(mix(start.left, end.left, p) - start.left));
-      source.style.setProperty('--flight-y', px(mix(start.top, end.top, p) - start.top - Math.sin(Math.PI * p) * 18));
+      source.style.setProperty('--flight-y', px(mix(start.top, end.top, p) - start.top - Math.sin(Math.PI * p) * lift));
       source.style.setProperty('--flight-width', px(mix(start.width, end.width, p)));
       source.style.setProperty('--flight-height', px(mix(start.height, end.height, p)));
       source.style.setProperty('--flight-radius', px((1 - p) * Math.min(start.width, start.height) / 2));

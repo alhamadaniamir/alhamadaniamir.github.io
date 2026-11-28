@@ -116,8 +116,8 @@
     const cols = Math.min(4, Math.max(1, Math.floor(width / (width <= 760 ? 183 : 240))));
     const rows = Math.min(4, Math.max(1, Math.floor(height / 170)));
     const cellCount = width >= 175 && height >= 120 ? rows * cols : 0;
-    const iconCount = Math.min(4, Math.ceil(cellCount / 4), Math.max(0, cellCount - 1));
-    const count = Math.min(cellCount, Math.max(iconCount + 1, cellCount - 2));
+    const iconCount = Math.min(3, Math.max(1, Math.ceil(cellCount / 4) - 1), Math.max(0, cellCount - 1));
+    const count = Math.min(cellCount, Math.max(iconCount + 1, cellCount - 4));
     // Mobile browser chrome can change the height while scrolling. Keep existing
     // trajectories whenever the resized field can still hold them.
     if (count && count === marks.length && oldWidth === width) {
